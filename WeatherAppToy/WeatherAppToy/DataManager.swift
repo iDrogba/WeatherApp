@@ -10,7 +10,8 @@ import Alamofire
 
 class DataManager {
     static func getTest() {
-            let url = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=20220627&base_time=0500&nx=52&ny=30"
+        let url = RequestInfo.requestInfo.getURL("60", "127")
+        
             AF.request(url,
                        method: .get,
                        parameters: nil,
@@ -22,4 +23,82 @@ class DataManager {
                     print(json)
             }
         }
+}
+
+
+
+class RequestInfo {
+    static let requestInfo = RequestInfo()
+    
+    let baseURL: String = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"
+    let serviceKey: String = "a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D"
+    let pageNo: String = "1"
+    let numOfRows: String = "1000"
+    let dataType: String = "JSON"
+    var baseDate: String = ""
+    var baseTime: String = ""
+    var nX: String = ""
+    var nY: String = ""
+    
+    init() {
+        self.setBaseDateBaseTime()
+    }
+    
+    func getURL(_ nX: String, _ nY: String) -> String {
+        self.nX = nX
+        self.nY = nY
+        
+        var url = self.baseURL
+        url += "serviceKey=" + self.serviceKey
+        url += "&pageNo=" + self.pageNo
+        url += "&numOfRows=" + self.numOfRows
+        url += "&dataType=" + self.dataType
+        url += "&base_date=" + self.baseDate
+        url += "&base_time=" + self.baseTime
+        url += "&nx=" + self.nX
+        url += "&ny=" + self.nY
+        
+        return url
+    }
+    
+    private func setBaseDateBaseTime() {
+        let dateFormatter: DateFormatter = DateFormatter()
+        let timeFormatter: DateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        timeFormatter.dateFormat = "HHmm"
+        var currentDate: String = dateFormatter.string(from: Date())
+        var currentTime: String = timeFormatter.string(from: Date())
+        
+        guard let IntCurrentTime = Int(currentTime) else {
+            return
+        }
+   
+        if IntCurrentTime > 2330 {
+            currentTime = "2300"
+        } else if IntCurrentTime > 2030 {
+            currentTime = "2000"
+        } else if IntCurrentTime > 1730 {
+            currentTime = "1700"
+        } else if IntCurrentTime > 1430 {
+            currentTime = "1400"
+        } else if IntCurrentTime > 1130 {
+            currentTime = "1100"
+        } else if IntCurrentTime > 830 {
+            currentTime = "0800"
+        } else if IntCurrentTime > 530 {
+            currentTime = "0500"
+        } else if IntCurrentTime > 230 {
+            currentTime = "0200"
+        } else {
+            currentTime = "2300"
+            guard let yesterdayDate = Calendar.current.date(byAdding: .day, value: -1, to: Date()) else {
+                return
+            }
+            currentDate = dateFormatter.string(from: yesterdayDate)
+        }
+print(currentDate)
+        print(currentTime)
+        self.baseDate = currentDate
+        self.baseTime = currentTime
+    }
 }

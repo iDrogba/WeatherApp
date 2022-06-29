@@ -8,42 +8,39 @@
 import Foundation
 import Alamofire
 
-class DataManager {
-    static func getTest() {
+class APIRequestManager {
+    static func getData() {
         let url = RequestInfo.requestInfo.getURL("60", "127")
-        
-            AF.request(url,
-                       method: .get,
-                       parameters: nil,
-                       encoding: URLEncoding.default,
-                       headers: ["Content-Type":"application/json", "Accept":"application/json"])
-                .validate(statusCode: 200..<300)
-                .responseJSON { (json) in
-                    //여기서 가져온 데이터를 자유롭게 활용하세요.
-                    print(json)
+
+        AF.request(url,
+                   method: .get,
+                   parameters: nil,
+                   encoding: URLEncoding.default,
+                   headers: ["Content-Type":"application/json", "Accept":"application/json"])
+            .validate(statusCode: 200..<300)
+            .responseJSON { data in
+                print(data)
             }
-        }
+    }
 }
-
-
 
 class RequestInfo {
     static let requestInfo = RequestInfo()
-    
+
     let baseURL: String = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"
     let serviceKey: String = "a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D"
     let pageNo: String = "1"
-    let numOfRows: String = "1000"
+    let numOfRows: String = "10"
     let dataType: String = "JSON"
     var baseDate: String = ""
     var baseTime: String = ""
     var nX: String = ""
     var nY: String = ""
-    
+
     init() {
         self.setBaseDateBaseTime()
     }
-    
+
     func getURL(_ nX: String, _ nY: String) -> String {
         self.nX = nX
         self.nY = nY
@@ -60,7 +57,7 @@ class RequestInfo {
         
         return url
     }
-    
+
     private func setBaseDateBaseTime() {
         let dateFormatter: DateFormatter = DateFormatter()
         let timeFormatter: DateFormatter = DateFormatter()
@@ -96,8 +93,7 @@ class RequestInfo {
             }
             currentDate = dateFormatter.string(from: yesterdayDate)
         }
-print(currentDate)
-        print(currentTime)
+
         self.baseDate = currentDate
         self.baseTime = currentTime
     }

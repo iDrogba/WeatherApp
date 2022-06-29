@@ -16,8 +16,10 @@
 		0A7B40392869E1E000EB49F4 /* WeatherAppToyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7B40382869E1E000EB49F4 /* WeatherAppToyTests.swift */; };
 		0A7B40432869E1E000EB49F4 /* WeatherAppToyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7B40422869E1E000EB49F4 /* WeatherAppToyUITests.swift */; };
 		0A7B40452869E1E000EB49F4 /* WeatherAppToyUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7B40442869E1E000EB49F4 /* WeatherAppToyUITestsLaunchTests.swift */; };
-		0A7B40522869E20200EB49F4 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7B40512869E20200EB49F4 /* DataManager.swift */; };
+		0A7B40522869E20200EB49F4 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7B40512869E20200EB49F4 /* APIRequest.swift */; };
 		0A7B40552869E27100EB49F4 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 0A7B40542869E27100EB49F4 /* Alamofire */; };
+		0ADD6BAA286AB47E00050C99 /* RegionalCodeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADD6BA9286AB47E00050C99 /* RegionalCodeModel.swift */; };
+		0ADD6BAC286BDA5D00050C99 /* RegionalData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 0ADD6BAB286BDA5D00050C99 /* RegionalData.csv */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,7 +53,9 @@
 		0A7B403E2869E1E000EB49F4 /* WeatherAppToyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeatherAppToyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A7B40422869E1E000EB49F4 /* WeatherAppToyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAppToyUITests.swift; sourceTree = "<group>"; };
 		0A7B40442869E1E000EB49F4 /* WeatherAppToyUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAppToyUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		0A7B40512869E20200EB49F4 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		0A7B40512869E20200EB49F4 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
+		0ADD6BA9286AB47E00050C99 /* RegionalCodeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionalCodeModel.swift; sourceTree = "<group>"; };
+		0ADD6BAB286BDA5D00050C99 /* RegionalData.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RegionalData.csv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +114,9 @@
 				0A7B402A2869E1E000EB49F4 /* Assets.xcassets */,
 				0A7B402C2869E1E000EB49F4 /* LaunchScreen.storyboard */,
 				0A7B402F2869E1E000EB49F4 /* Info.plist */,
-				0A7B40512869E20200EB49F4 /* DataManager.swift */,
+				0A7B40512869E20200EB49F4 /* APIRequest.swift */,
+				0ADD6BA9286AB47E00050C99 /* RegionalCodeModel.swift */,
+				0ADD6BAB286BDA5D00050C99 /* RegionalData.csv */,
 			);
 			path = WeatherAppToy;
 			sourceTree = "<group>";
@@ -243,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A7B402E2869E1E000EB49F4 /* LaunchScreen.storyboard in Resources */,
+				0ADD6BAC286BDA5D00050C99 /* RegionalData.csv in Resources */,
 				0A7B402B2869E1E000EB49F4 /* Assets.xcassets in Resources */,
 				0A7B40292869E1DF00EB49F4 /* Main.storyboard in Resources */,
 			);
@@ -269,8 +276,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0ADD6BAA286AB47E00050C99 /* RegionalCodeModel.swift in Sources */,
 				0A7B40262869E1DF00EB49F4 /* ViewController.swift in Sources */,
-				0A7B40522869E20200EB49F4 /* DataManager.swift in Sources */,
+				0A7B40522869E20200EB49F4 /* APIRequest.swift in Sources */,
 				0A7B40222869E1DF00EB49F4 /* AppDelegate.swift in Sources */,
 				0A7B40242869E1DF00EB49F4 /* SceneDelegate.swift in Sources */,
 			);

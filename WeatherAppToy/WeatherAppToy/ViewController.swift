@@ -12,7 +12,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        DataManager.getTest()
+        APIRequestManager.getData()
+        print(RegionalDataManager.regionalDataManager.regionalDataString)
     }
 
 

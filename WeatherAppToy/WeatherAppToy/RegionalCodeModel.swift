@@ -23,7 +23,7 @@ struct RegionalDataModel {
 }
 
 class RegionalDataManager {
-    static let regionalDataManager = RegionalDataManager()
+    static let shared = RegionalDataManager()
     var regionalDataArray: [RegionalDataModel] = []
     var regionalDataString:[[String]] = []
 

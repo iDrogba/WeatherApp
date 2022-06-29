@@ -20,6 +20,7 @@
 		0A7B40552869E27100EB49F4 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 0A7B40542869E27100EB49F4 /* Alamofire */; };
 		0ADD6BAA286AB47E00050C99 /* RegionalCodeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADD6BA9286AB47E00050C99 /* RegionalCodeModel.swift */; };
 		0ADD6BAC286BDA5D00050C99 /* RegionalData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 0ADD6BAB286BDA5D00050C99 /* RegionalData.csv */; };
+		0ADD6BAE286C0C4800050C99 /* ShortTermForecastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADD6BAD286C0C4800050C99 /* ShortTermForecastModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		0A7B40512869E20200EB49F4 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
 		0ADD6BA9286AB47E00050C99 /* RegionalCodeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionalCodeModel.swift; sourceTree = "<group>"; };
 		0ADD6BAB286BDA5D00050C99 /* RegionalData.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RegionalData.csv; sourceTree = "<group>"; };
+		0ADD6BAD286C0C4800050C99 /* ShortTermForecastModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortTermForecastModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +119,7 @@
 				0A7B40512869E20200EB49F4 /* APIRequest.swift */,
 				0ADD6BA9286AB47E00050C99 /* RegionalCodeModel.swift */,
 				0ADD6BAB286BDA5D00050C99 /* RegionalData.csv */,
+				0ADD6BAD286C0C4800050C99 /* ShortTermForecastModel.swift */,
 			);
 			path = WeatherAppToy;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0ADD6BAA286AB47E00050C99 /* RegionalCodeModel.swift in Sources */,
+				0ADD6BAE286C0C4800050C99 /* ShortTermForecastModel.swift in Sources */,
 				0A7B40262869E1DF00EB49F4 /* ViewController.swift in Sources */,
 				0A7B40522869E20200EB49F4 /* APIRequest.swift in Sources */,
 				0A7B40222869E1DF00EB49F4 /* AppDelegate.swift in Sources */,

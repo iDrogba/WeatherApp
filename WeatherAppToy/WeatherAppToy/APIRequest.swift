@@ -10,7 +10,7 @@ import Alamofire
 
 class APIRequestManager {
     static func getData() {
-        let url = RequestInfo.requestInfo.getURL("60", "127")
+        let url = RequestInfo.shared.getURL("60", "127")
 
         AF.request(url,
                    method: .get,
@@ -25,7 +25,7 @@ class APIRequestManager {
 }
 
 class RequestInfo {
-    static let requestInfo = RequestInfo()
+    static let shared = RequestInfo()
 
     let baseURL: String = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"
     let serviceKey: String = "a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D"

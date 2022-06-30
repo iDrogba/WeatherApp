@@ -14,10 +14,10 @@ struct RegionalDataModel {
     let third: String
     let nX: String
     let nY:String
-    
+
     static func parseStringToRegionalCodeModel(_ stringData: [String]) -> RegionalDataModel {
         let regionalDataModel = RegionalDataModel(regionalCode: stringData[0], first: stringData[1], second: stringData[2], third: stringData[3], nX: stringData[4], nY: stringData[5])
-        
+
         return regionalDataModel
     }
 }

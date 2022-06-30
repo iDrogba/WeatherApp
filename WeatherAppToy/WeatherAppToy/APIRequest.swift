@@ -18,8 +18,22 @@ class APIRequestManager {
                    encoding: URLEncoding.default,
                    headers: ["Content-Type":"application/json", "Accept":"application/json"])
             .validate(statusCode: 200..<300)
-            .responseJSON { data in
-                print(data)
+            .responseJSON { jsonData in
+                switch jsonData.result{
+                case .success:
+                    guard let result = jsonData.data else {return}
+                    
+                    do {
+                        let decoder = JSONDecoder()
+                        let json = try decoder.decode(APIResponse.self, from: result)
+                        print(json.response.body.items.item)
+                    } catch {
+                        print("error!\(error)")
+                    }
+                    
+                default:
+                    return
+                }
             }
     }
 }

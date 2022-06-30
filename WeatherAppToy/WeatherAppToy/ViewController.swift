@@ -13,7 +13,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         APIRequestManager.getData()
-        print(RegionalDataManager.shared.regionalDataString)
+        //print(RegionalDataManager.shared.regionalDataString)
     }
 
 

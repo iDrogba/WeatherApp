@@ -7,21 +7,6 @@
 
 import Foundation
 
-struct ShortTermForecastNetworkingModel: Codable {
-    let baseDate: String
-    let baseTime: String
-    let category: ShortTermForecastNetworkingCategory
-    let fcstDate: String
-    let fcstTime: String
-    let fcstValue: String
-    let nx: String
-    let ny: String
-}
-
-enum ShortTermForecastNetworkingCategory: Codable {
-    case POP, PTY, PCP, REH, SNO, SKY, TMP, TMN, TMX, UUU, VVV, WAV, VEC, WSD
-}
-
 struct ShortTermForecastModel {
     let regionalCode: String
     let regionName: String
@@ -36,4 +21,39 @@ struct ShortTermForecastModel {
 
 class ShortTermForecastModelManager {
     
+}
+
+// MARK: - APIResponse
+struct APIResponse: Codable {
+    let response: Response
+}
+
+// MARK: - Response
+struct Response: Codable {
+    let header: Header
+    let body: Body
+}
+
+// MARK: - Header
+struct Header: Codable {
+    let resultCode, resultMsg: String
+}
+
+// MARK: - Body
+struct Body: Codable {
+    let dataType: String
+    let items: Items
+    let pageNo, numOfRows, totalCount: Int
+}
+
+// MARK: - Items
+struct Items: Codable {
+    let item: [Item]
+}
+
+// MARK: - Item
+struct Item: Codable {
+    let baseDate, baseTime, category, fcstDate: String
+    let fcstTime, fcstValue: String
+    let nx, ny: Int
 }

@@ -1,5 +1,5 @@
-# WeatherApp
-__너와 나 우리끼리 모여 집중해서 공부 끼리공부__
+# Time to surf
+__서핑 앱__
 
 ## Members
 

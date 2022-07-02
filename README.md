@@ -2,6 +2,9 @@
 __서핑 앱__
 
 ## Members
+|Drogba|Lena|
+|:---|:---|
+|[Drogba](https://github.com/iDrogba)|[Lena](https://github.com/lenamin)|
 
 ## Git Commit Message
 |*Type*|*Subject*|

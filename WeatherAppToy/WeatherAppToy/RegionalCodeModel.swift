@@ -33,13 +33,11 @@ class RegionalDataManager {
 
     func saveRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
-
         userDefaults.set(regionalCode, forKey: regionalCode)
     }
 
     private func loadRegionalDataFromCSV() {
         guard let path = Bundle.main.path(forResource: "RegionalData", ofType: "csv") else { return }
-
         self.parseCSVAt(url: URL(fileURLWithPath: path))
 
         for index in 1 ..< regionalDataString.count - 1 {

@@ -44,7 +44,7 @@ class RequestInfo {
     let baseURL: String = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"
     let serviceKey: String = "a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D"
     let pageNo: String = "1"
-    let numOfRows: String = "10"
+    let numOfRows: String = "100"
     let dataType: String = "JSON"
     var baseDate: String = ""
     var baseTime: String = ""
@@ -58,7 +58,6 @@ class RequestInfo {
     func getURL(_ nX: String, _ nY: String) -> String {
         self.nX = nX
         self.nY = nY
-        
         var url = self.baseURL
         url += "serviceKey=" + self.serviceKey
         url += "&pageNo=" + self.pageNo
@@ -80,10 +79,8 @@ class RequestInfo {
         var currentDate: String = dateFormatter.string(from: Date())
         var currentTime: String = timeFormatter.string(from: Date())
         
-        guard let IntCurrentTime = Int(currentTime) else {
-            return
-        }
-   
+        guard let IntCurrentTime = Int(currentTime) else { return }
+
         if IntCurrentTime > 2330 {
             currentTime = "2300"
         } else if IntCurrentTime > 2030 {

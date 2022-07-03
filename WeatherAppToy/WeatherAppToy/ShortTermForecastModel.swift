@@ -9,51 +9,25 @@ import Foundation
 
 struct ShortTermForecastModel {
     let regionalCode: String
-    let regionName: String
-    let baseDate: String
-    let baseTime: String
-    var temparature: String
-    var rain: String
-    var wave: String
-    var wind: String
-    var windDirection: String
+    let regionName: String = ""
+    let nX: String = ""
+    let nY: String = ""
+    let forecastDate: String = ""
+    let forecastTime: String = ""
+    var temparature: String = ""
+    var rain: String = ""
+    var wave: String = ""
+    var wind: String = ""
+    var windDirection: String = ""
 }
 
 class ShortTermForecastModelManager {
+    static let shared = ShortTermForecastModelManager()
+    var shortTermForecastArray: [ShortTermForecastModel] = []
     
-}
-
-// MARK: - APIResponse
-struct APIResponse: Codable {
-    let response: Response
-}
-
-// MARK: - Response
-struct Response: Codable {
-    let header: Header
-    let body: Body
-}
-
-// MARK: - Header
-struct Header: Codable {
-    let resultCode, resultMsg: String
-}
-
-// MARK: - Body
-struct Body: Codable {
-    let dataType: String
-    let items: Items
-    let pageNo, numOfRows, totalCount: Int
-}
-
-// MARK: - Items
-struct Items: Codable {
-    let item: [Item]
-}
-
-// MARK: - Item
-struct Item: Codable {
-    let baseDate, baseTime, category, fcstDate: String
-    let fcstTime, fcstValue: String
-    let nx, ny: Int
+    func setShortTermForecastArrayWith(_ item : [Item], regionalCode: String) {
+        for item in item {
+            
+        }
+    }
 }

@@ -30,6 +30,7 @@ struct ShortTermForecastModel {
     var WSD: String = ""
     
     init(_ regionalCode: String, _ item: Item) {
+        self.regionalCode = regionalCode
         self.forecastDate = item.fcstDate
         self.forecastTime = item.fcstTime
         setValueByCategory(item)
@@ -77,10 +78,10 @@ class ShortTermForecastModelManager {
     static let shared = ShortTermForecastModelManager()
     var shortTermForecastModels: [String:[ShortTermForecastModel]] = [:]
     
-    func setShortTermForecastModelsWith(_ item : [Item], regionalCode: String) {
+    func setShortTermForecastModelsWith(_ items : [Item], regionalCode: String) {
         guard shortTermForecastModels[regionalCode] == nil else { return }
-        shortTermForecastModels[regionalCode] = []
-        for item in item {
+        self.shortTermForecastModels[regionalCode] = []
+        for item in items {
             let modelIndex = shortTermForecastModels[regionalCode]?.firstIndex{ $0.forecastDate == item.fcstDate && $0.forecastTime == item.fcstTime }
             if let modelIndex = modelIndex {
                 shortTermForecastModels[regionalCode]?[modelIndex].setValueByCategory(item)
@@ -88,5 +89,6 @@ class ShortTermForecastModelManager {
                 shortTermForecastModels[regionalCode]?.append(ShortTermForecastModel.init(regionalCode, item))
             }
         }
+        
     }
 }

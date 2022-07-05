@@ -9,29 +9,61 @@ import Foundation
 import Alamofire
 
 class APIRequestManager {
-    static func getData() {
-        let url = RequestInfo.shared.getURL("60", "127")
+    static func getData() async {
+        var urlSets: [(RegionalDataModel,String)] = []
+        for addedRegionalData in RegionalDataManager.shared.addedRegionalDataArray {
+            let url = RequestInfo.shared.getURL(addedRegionalData.nX, addedRegionalData.nY)
+            urlSets.append((addedRegionalData, url))
+        }
+        for urlSet in urlSets {
+            AF.request(urlSet.1,
+                       method: .get,
+                       parameters: nil,
+                       encoding: URLEncoding.default,
+                       headers: ["Content-Type":"application/json", "Accept":"application/json"])
+                .validate(statusCode: 200..<300)
+                .responseJSON { jsonData in
+                    switch jsonData.result {
+                    case .success:
+                        guard let result = jsonData.data else {return}
 
-        AF.request(url,
+                        do {
+                            let decoder = JSONDecoder()
+                            let json = try decoder.decode(APIResponse.self, from: result)
+                            ShortTermForecastModelManager.shared.setShortTermForecastModelsWith(json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
+
+                        } catch {
+                            print("error!\(error)")
+                        }
+
+                    default:
+                        return
+                    }
+                }
+        }
+    }
+    
+    static func AFRequest(_ urlSet: (RegionalDataModel,String)) async {
+        AF.request(urlSet.1,
                    method: .get,
                    parameters: nil,
                    encoding: URLEncoding.default,
                    headers: ["Content-Type":"application/json", "Accept":"application/json"])
             .validate(statusCode: 200..<300)
             .responseJSON { jsonData in
-                switch jsonData.result{
+                switch jsonData.result {
                 case .success:
                     guard let result = jsonData.data else {return}
-                    
+
                     do {
                         let decoder = JSONDecoder()
                         let json = try decoder.decode(APIResponse.self, from: result)
-                        ShortTermForecastModelManager.shared.setShortTermForecastModelsWith(json.response.body.items.item, regionalCode: "121010")
-                       // print(json.response.body.items.item)
+                        ShortTermForecastModelManager.shared.setShortTermForecastModelsWith(json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
+
                     } catch {
                         print("error!\(error)")
                     }
-                    
+
                 default:
                     return
                 }

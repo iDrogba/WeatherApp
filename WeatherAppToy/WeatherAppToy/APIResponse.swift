@@ -38,7 +38,11 @@ struct Items: Codable {
 // MARK: - Item
 struct Item: Codable {
     let baseDate, baseTime: String
-    let category: String
+    let category: Category
     let fcstDate, fcstTime, fcstValue: String
     let nx, ny: Int
+}
+
+enum Category: String, Codable {
+    case POP, PTY, PCP, REH, SNO, SKY, TMP, TMN, TMX, UUU, VVV, WAV, VEC, WSD
 }

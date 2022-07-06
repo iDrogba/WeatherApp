@@ -15,6 +15,10 @@ class APIRequestManager {
             let url = RequestInfo.shared.getURL(addedRegionalData.nX, addedRegionalData.nY)
             urlSets.append((addedRegionalData, url))
         }
+        await AFRequest(urlSets)
+    }
+    
+    static func AFRequest(_ urlSets: [(RegionalDataModel,String)]) async {
         for urlSet in urlSets {
             AF.request(urlSet.1,
                        method: .get,
@@ -22,7 +26,7 @@ class APIRequestManager {
                        encoding: URLEncoding.default,
                        headers: ["Content-Type":"application/json", "Accept":"application/json"])
                 .validate(statusCode: 200..<300)
-                .responseJSON { jsonData in
+                .responseData { jsonData in
                     switch jsonData.result {
                     case .success:
                         guard let result = jsonData.data else {return}
@@ -39,35 +43,10 @@ class APIRequestManager {
                     default:
                         return
                     }
+                    print(ShortTermForecastModelManager.shared.shortTermForecastModels)
                 }
         }
-    }
-    
-    static func AFRequest(_ urlSet: (RegionalDataModel,String)) async {
-        AF.request(urlSet.1,
-                   method: .get,
-                   parameters: nil,
-                   encoding: URLEncoding.default,
-                   headers: ["Content-Type":"application/json", "Accept":"application/json"])
-            .validate(statusCode: 200..<300)
-            .responseJSON { jsonData in
-                switch jsonData.result {
-                case .success:
-                    guard let result = jsonData.data else {return}
-
-                    do {
-                        let decoder = JSONDecoder()
-                        let json = try decoder.decode(APIResponse.self, from: result)
-                        ShortTermForecastModelManager.shared.setShortTermForecastModelsWith(json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
-
-                    } catch {
-                        print("error!\(error)")
-                    }
-
-                default:
-                    return
-                }
-            }
+        
     }
 }
 

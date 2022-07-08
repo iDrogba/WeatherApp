@@ -65,5 +65,11 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let cellWidth = collectionView.bounds.width - 20
+        let cellHeight = collectionView.bounds.height * 0.15
+        let itemSize = CGSize(width: cellWidth, height: cellHeight)
+        return itemSize
+    }
     
 }

@@ -9,8 +9,19 @@ import UIKit
 
 class MainViewController: UIViewController {
     
+    private let titleLabel: UILabel = {
+       let label = UILabel()
+        label.text = "날씨"
+        label.font = .systemFont(ofSize: 24, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
+        searchBar.searchBarStyle = .prominent
+        searchBar.backgroundImage = UIImage()
+            
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
@@ -25,6 +36,8 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        view.addSubview(titleLabel)
         view.addSubview(searchBar)
         view.addSubview(mainCollectionView)
         applyConstraints()
@@ -38,17 +51,22 @@ class MainViewController: UIViewController {
     }
     
     private func applyConstraints() {
+        let titleLabelConstraints = [
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+        ]
         let searchBarConstraints = [
             searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0),
             searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0),
         ]
         let mainCollectionViewConstraints = [
             mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             mainCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
-            mainCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 0)
+            mainCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10)
         ]
+        NSLayoutConstraint.activate(titleLabelConstraints)
         NSLayoutConstraint.activate(searchBarConstraints)
         NSLayoutConstraint.activate(mainCollectionViewConstraints)
     }

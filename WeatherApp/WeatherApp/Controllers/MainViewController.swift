@@ -21,7 +21,7 @@ class MainViewController: UIViewController {
         let searchBar = UISearchBar()
         searchBar.searchBarStyle = .prominent
         searchBar.backgroundImage = UIImage()
-            
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "지역으로 검색", attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText])
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
@@ -30,6 +30,7 @@ class MainViewController: UIViewController {
         let mainCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.init())
         mainCollectionView.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
         mainCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        mainCollectionView.showsVerticalScrollIndicator = false
         
         return mainCollectionView
     }()
@@ -56,8 +57,8 @@ class MainViewController: UIViewController {
             titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
         ]
         let searchBarConstraints = [
-            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0),
+            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0),
         ]
         let mainCollectionViewConstraints = [
@@ -84,7 +85,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let cellWidth = collectionView.bounds.width - 20
+        let cellWidth = collectionView.bounds.width - 40
         let cellHeight = collectionView.bounds.height * 0.15
         let itemSize = CGSize(width: cellWidth, height: cellHeight)
         return itemSize

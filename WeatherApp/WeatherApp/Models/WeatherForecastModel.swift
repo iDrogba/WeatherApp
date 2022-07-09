@@ -1,13 +1,13 @@
 //
-//  ShortTermForecastModel.swift
-//  WeatherAppToy
+//  WeatherForecastModel.swift
+//  WeatherApp
 //
-//  Created by 김상현 on 2022/06/29.
+//  Created by 김상현 on 2022/07/09.
 //
 
 import Foundation
 
-struct ShortTermForecastModel {
+struct WeatherForecastModel {
     var regionalCode: String = ""
     var regionName: String = ""
     var nX: Int = 0
@@ -74,19 +74,19 @@ struct ShortTermForecastModel {
     }
 }
 
-class ShortTermForecastModelManager {
-    static let shared = ShortTermForecastModelManager()
-    var shortTermForecastModels: [String:[ShortTermForecastModel]] = [:]
+class WeatherForecastModelManager {
+    static let shared = WeatherForecastModelManager()
+    var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
     func setShortTermForecastModelsWith(_ items : [Item], regionalCode: String) {
-        guard shortTermForecastModels[regionalCode] == nil else { return }
-        self.shortTermForecastModels[regionalCode] = []
+        guard weatherForecastModels[regionalCode] == nil else { return }
+        self.weatherForecastModels[regionalCode] = []
         for item in items {
-            let modelIndex = shortTermForecastModels[regionalCode]?.firstIndex{ $0.forecastDate == item.fcstDate && $0.forecastTime == item.fcstTime }
+            let modelIndex = weatherForecastModels[regionalCode]?.firstIndex{ $0.forecastDate == item.fcstDate && $0.forecastTime == item.fcstTime }
             if let modelIndex = modelIndex {
-                shortTermForecastModels[regionalCode]?[modelIndex].setValueByCategory(item)
+                weatherForecastModels[regionalCode]?[modelIndex].setValueByCategory(item)
             } else {
-                shortTermForecastModels[regionalCode]?.append(ShortTermForecastModel.init(regionalCode, item))
+                weatherForecastModels[regionalCode]?.append(WeatherForecastModel.init(regionalCode, item))
             }
         }
     }

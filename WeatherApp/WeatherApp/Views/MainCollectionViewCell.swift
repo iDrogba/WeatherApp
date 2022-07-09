@@ -12,7 +12,7 @@ class MainCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setConstraints()
+        setUI()
         self.backgroundColor = .blue
     }
     
@@ -20,8 +20,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setConstraints() {
-//        let cellConstraints = [
-//        ]
+    private func setUI() {
+        self.layer.cornerRadius = 4
     }
 }

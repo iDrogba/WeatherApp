@@ -78,7 +78,7 @@ class WeatherForecastModelManager {
     static let shared = WeatherForecastModelManager()
     var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
-    func setShortTermForecastModelsWith(_ items : [Item], regionalCode: String) {
+    func setShortTermForecastModels(items : [Item], regionalCode: String) {
         guard weatherForecastModels[regionalCode] == nil else { return }
         self.weatherForecastModels[regionalCode] = []
         for item in items {

@@ -38,6 +38,19 @@ class RegionalDataManager {
         self.setSelectedRegionalDataArray()
     }
 
+    func searchRegionalDataModel(_ searchTerm: String) -> [RegionalDataModel?] {
+        var retrivedRegionalData: [RegionalDataModel?] = []
+        
+        for regionalData in regionalDataArray {
+            let regionalTerm = regionalData.first + regionalData.second + regionalData.third
+            if regionalTerm.contains(searchTerm) {
+                retrivedRegionalData.append(regionalData)
+            }
+        }
+        
+        return retrivedRegionalData
+    }
+    
     func addSelectedRegionalCodeAtUserDefaults(_ regionalCode: String) async {
         let userDefaults = UserDefaults.standard
         var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()

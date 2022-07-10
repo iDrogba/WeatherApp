@@ -45,6 +45,7 @@ class MainViewController: UIViewController {
 
         mainCollectionView.dataSource = self
         mainCollectionView.delegate = self
+        searchBar.delegate = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -91,4 +92,21 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         return itemSize
     }
     
+}
+
+extension MainViewController: UISearchBarDelegate {
+    private func dissmissKeyboard() {
+        searchBar.resignFirstResponder()
+    }
+    
+        
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        dissmissKeyboard()
+        
+        // 검색어가 있는지
+        guard let searchTerm = searchBar.text, searchTerm.isEmpty == false else { return }
+            print(RegionalDataManager.shared.searchRegionalDataModel(searchTerm))
+        
+      //  print("--> 검색어: \(searchTerm)")
+    }
 }

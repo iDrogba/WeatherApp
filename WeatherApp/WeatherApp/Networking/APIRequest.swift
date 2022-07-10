@@ -34,7 +34,7 @@ class APIRequestManager {
                         do {
                             let decoder = JSONDecoder()
                             let json = try decoder.decode(APIResponse.self, from: result)
-                            WeatherForecastModelManager.shared.setShortTermForecastModels(items: json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
+                            WeatherForecastModelManager.shared.setWeatherForecastModels(items: json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
 
                         } catch {
                             print("error!\(error)")

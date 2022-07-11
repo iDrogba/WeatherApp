@@ -11,7 +11,7 @@ import Alamofire
 class APIRequestManager {
     static func fetchData() async {
         var urlSets: [(RegionalDataModel,String)] = []
-        for addedRegionalData in RegionalDataManager.shared.selectedRegionalDataArray {
+        for addedRegionalData in RegionalDataManager.shared.searchedRegionalDataArray {
             let url = RequestInfo.shared.fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
             urlSets.append((addedRegionalData, url))
         }

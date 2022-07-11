@@ -31,15 +31,15 @@ class RegionalDataManager {
     let fileName = "RegionalData"
     var stringRegionalData:[[String]] = []
     var regionalDataArray: [RegionalDataModel] = []
-    var selectedRegionalDataArray: [RegionalDataModel] = []
+    var searchedRegionalDataArray: [RegionalDataModel] = []
 
     init() {
         self.fetchSavedRegionalDataFromCSV()
         self.setSelectedRegionalDataArray()
     }
 
-    func searchRegionalDataModel(_ searchTerm: String) -> [RegionalDataModel?] {
-        var retrivedRegionalData: [RegionalDataModel?] = []
+    func setSearchedRegionalDataModel(_ searchTerm: String) {
+        var retrivedRegionalData: [RegionalDataModel] = []
         
         for regionalData in regionalDataArray {
             let regionalTerm = regionalData.first + regionalData.second + regionalData.third
@@ -47,8 +47,7 @@ class RegionalDataManager {
                 retrivedRegionalData.append(regionalData)
             }
         }
-        
-        return retrivedRegionalData
+        searchedRegionalDataArray = retrivedRegionalData
     }
     
     func addSelectedRegionalCodeAtUserDefaults(_ regionalCode: String) async {
@@ -67,7 +66,7 @@ class RegionalDataManager {
         for savedRegionalCode in savedRegionalCodes {
             let index = regionalDataArray.firstIndex{ $0.regionalCode == savedRegionalCode }
             if let index = index {
-                self.selectedRegionalDataArray.append(regionalDataArray[index])
+                self.searchedRegionalDataArray.append(regionalDataArray[index])
             }
         }
     }

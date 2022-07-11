@@ -7,7 +7,32 @@
 
 import UIKit
 
+class SearchTableViewCell: UITableViewCell {
+    static let reuseIdentifier = "searchTableViewCell"
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setUI(_ regionalDataModel: RegionalDataModel) {
+        self.textLabel?.text = regionalDataModel.first + " " + regionalDataModel.second + " " + regionalDataModel.third
+
+    }
+}
+
 class MainViewController: UIViewController {
+    private let searchTableView: UITableView = {
+        let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
+        searchTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
+        searchTableView.translatesAutoresizingMaskIntoConstraints = false
+        searchTableView.showsVerticalScrollIndicator = false
+        
+        return searchTableView
+    }()
     
     private let titleLabel: UILabel = {
        let label = UILabel()
@@ -35,21 +60,25 @@ class MainViewController: UIViewController {
         return mainCollectionView
     }()
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.searchBar.endEditing(true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         view.addSubview(titleLabel)
         view.addSubview(searchBar)
         view.addSubview(mainCollectionView)
+        view.addSubview(searchTableView)
         applyConstraints()
-
+        searchTableView.isHidden = true
+        
         mainCollectionView.dataSource = self
         mainCollectionView.delegate = self
         searchBar.delegate = self
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+        searchTableView.dataSource = self
+        searchTableView.delegate = self
     }
     
     private func applyConstraints() {
@@ -68,15 +97,23 @@ class MainViewController: UIViewController {
             mainCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
             mainCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10)
         ]
+        let searchTableViewConstraints = [
+            searchTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            searchTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ]
+        
         NSLayoutConstraint.activate(titleLabelConstraints)
         NSLayoutConstraint.activate(searchBarConstraints)
         NSLayoutConstraint.activate(mainCollectionViewConstraints)
+        NSLayoutConstraint.activate(searchTableViewConstraints)
     }
 }
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return 20
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -99,14 +136,35 @@ extension MainViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
     }
     
-        
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         dissmissKeyboard()
-        
-        // 검색어가 있는지
-        guard let searchTerm = searchBar.text, searchTerm.isEmpty == false else { return }
-            print(RegionalDataManager.shared.searchRegionalDataModel(searchTerm))
-        
-      //  print("--> 검색어: \(searchTerm)")
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchTableView.isHidden = false
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchTableView.isHidden = true
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        RegionalDataManager.shared.setSearchedRegionalDataModel(searchText)
+        searchTableView.reloadData()
+    }
+}
+
+extension MainViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return RegionalDataManager.shared.searchedRegionalDataArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as? SearchTableViewCell else {
+            return UITableViewCell()
+        }
+        let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
+        cell.setUI(regionalDataModel)
+        return cell
     }
 }

@@ -41,14 +41,19 @@ class RegionalDataManager {
     func setSearchedRegionalDataModel(_ searchTerm: String) {
         var retrivedRegionalData: [RegionalDataModel] = []
         
-    out:for regionalData in regionalDataArray {
-        let regionalTerm = regionalData.first + regionalData.second + regionalData.third
-    inner:for searchChar in searchTerm {
-        if searchChar == " " { continue inner}
-        if regionalTerm.contains(searchChar) == false {
-            continue out
+        guard searchTerm != "" else {
+            searchedRegionalDataArray = retrivedRegionalData
+            return
         }
-    }
+        
+    outer:for regionalData in regionalDataArray {
+        let regionalTerm = regionalData.first + regionalData.second + regionalData.third
+        inner:for searchChar in searchTerm {
+            if searchChar == " " { continue inner}
+            if regionalTerm.contains(searchChar) == false {
+                continue outer
+            }
+        }
         retrivedRegionalData.append(regionalData)
     }
         searchedRegionalDataArray = retrivedRegionalData

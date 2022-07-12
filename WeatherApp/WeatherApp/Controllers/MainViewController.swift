@@ -52,6 +52,8 @@ class MainViewController: UIViewController {
         searchBar.backgroundImage = UIImage()
         searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "지역으로 검색", attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText])
         searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.showsCancelButton = false
+
         return searchBar
     }()
     
@@ -84,6 +86,8 @@ class MainViewController: UIViewController {
         searchTableView.dataSource = self
         searchTableView.delegate = self
         
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
 //        mainCollectionView.isPagingEnabled = true
 //        let layout = mainCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
 //        layout.scrollDirection = .horizontal
@@ -180,6 +184,10 @@ extension MainViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchTableView.isHidden = false
+        searchBar.showsCancelButton = true
+        guard let searchTerm = searchBar.text else { return }
+        RegionalDataManager.shared.setSearchedRegionalDataModel(searchTerm)
+        searchTableView.reloadData()
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
@@ -192,6 +200,12 @@ extension MainViewController: UISearchBarDelegate {
         }
         RegionalDataManager.shared.setSearchedRegionalDataModel(searchText)
         searchTableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.showsCancelButton = false
+        searchBar.endEditing(true)
     }
 }
 

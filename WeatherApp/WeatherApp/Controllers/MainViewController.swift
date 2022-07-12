@@ -7,22 +7,6 @@
 
 import UIKit
 
-class SearchTableViewCell: UITableViewCell {
-    static let reuseIdentifier = "searchTableViewCell"
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setUI(_ regionalDataModel: RegionalDataModel) {
-        self.textLabel?.text = regionalDataModel.first + " " + regionalDataModel.second + " " + regionalDataModel.third
-    }
-}
-
 class MainViewController: UIViewController {
     private var currentIndex: CGFloat = 0
     private let searchTableView: UITableView = {
@@ -85,9 +69,6 @@ class MainViewController: UIViewController {
         
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
-//        mainCollectionView.isPagingEnabled = true
-//        let layout = mainCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
-//        layout.scrollDirection = .horizontal
     }
     
     private func applyConstraints() {
@@ -120,6 +101,7 @@ class MainViewController: UIViewController {
     }
 }
 
+// MARK: Collectioinview
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 5
@@ -139,35 +121,6 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         
         return itemSize
     }
-    
-//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//
-//        let layout = mainCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
-//        let cellWidthIncludingSpacing = layout.itemSize.width + layout.minimumLineSpacing
-//
-//        var offset = targetContentOffset.pointee
-//        let index = (offset.x + scrollView.contentInset.left) / cellWidthIncludingSpacing
-//        var roundedIndex = round(index)
-//
-//        if scrollView.contentOffset.x > targetContentOffset.pointee.x {
-//            roundedIndex = floor(index)
-//        } else if scrollView.contentOffset.x < targetContentOffset.pointee.x {
-//            roundedIndex = ceil(index)
-//        } else {
-//            roundedIndex = round(index)
-//        }
-//
-//        if currentIndex > roundedIndex {
-//            currentIndex -= 1
-//            roundedIndex = currentIndex
-//        } else if currentIndex < roundedIndex {
-//            currentIndex += 1
-//            roundedIndex = currentIndex
-//        }
-//
-//        offset = CGPoint(x: roundedIndex * cellWidthIncludingSpacing - scrollView.contentInset.left, y: -scrollView.contentInset.top)
-//        targetContentOffset.pointee = offset
-//    }
 }
 
 extension MainViewController: UISearchBarDelegate {

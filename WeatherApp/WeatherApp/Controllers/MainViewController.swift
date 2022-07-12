@@ -31,9 +31,6 @@ class MainViewController: UIViewController {
         searchTableView.translatesAutoresizingMaskIntoConstraints = false
         searchTableView.showsVerticalScrollIndicator = false
         searchTableView.alpha = 0.4
-        let searchTableViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(searchTableViewTapped(_:)))
-        searchTableViewTapGesture.cancelsTouchesInView = false
-        searchTableView.addGestureRecognizer(searchTableViewTapGesture)
 
         return searchTableView
     }()
@@ -192,6 +189,7 @@ extension MainViewController: UISearchBarDelegate {
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searchTableView.isHidden = true
+        searchBar.showsCancelButton = false
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -204,7 +202,6 @@ extension MainViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
-        searchBar.showsCancelButton = false
         searchBar.endEditing(true)
     }
 }
@@ -228,18 +225,5 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
         cell.setUI(regionalDataModel)
         return cell
-    }
-    
-    @objc func searchTableViewTapped(_ gesture: UITapGestureRecognizer)  {
-        //if recognizer.state == UIGestureRecognizer.State.ended {
-//            let tapLocation = recognizer.locationInView(self.tableView)
-//            if let tapIndexPath = self.tableView.indexPathForRowAtPoint(tapLocation) {
-//                if let tappedCell = self.tableView.cellForRowAtIndexPath(tapIndexPath) as? MyTableViewCell {
-//                    //do what you want to cell here
-//
-//                }
-//            }
-   // }
-            searchTableView.endEditing(true)
     }
 }

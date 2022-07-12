@@ -11,15 +11,14 @@ class RegionWeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        
-        view.addSubview(cityLabel)
-        view.addSubview(temperatureLabel)
-        view.addSubview(degreeLabel)
-        view.addSubview(tempStackView)
-        view.addSubview(descriptionLabel)
-        view.addSubview(waveHeightLabel)
-        
+                
+        view.backgroundColor = .black
+
+        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, waveHeightLabel, weekWeatherTableView].forEach {
+            view.addSubview($0)
+        }
+        weekWeatherTableView.delegate = self
+        weekWeatherTableView.dataSource = self
         configureConstraints()
     }
     
@@ -27,10 +26,19 @@ class RegionWeatherViewController: UIViewController {
         super.viewDidLayoutSubviews()
     }
     
-    var cityLabel: UILabel = {
+    private var weekWeatherTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
+        return tableView
+    }()
+    
+    private var cityLabel: UILabel = {
         let label = UILabel()
         label.text = "포항시"
         label.font = .systemFont(ofSize: 37, weight: .regular)
+        label.textColor = .white
+        label.shadowOffset = CGSize(width: 2, height: 2)
+        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
         return label
     }()
     
@@ -38,6 +46,9 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "34"
         label.font = .systemFont(ofSize: 96, weight: .semibold)
+        label.textColor = .white
+        label.shadowOffset = CGSize(width: 2, height: 2)
+        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
         return label
     }()
     
@@ -45,6 +56,9 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "℃"
         label.font = .systemFont(ofSize: 40, weight: .light)
+        label.textColor = .white
+        label.shadowOffset = CGSize(width: 2, height: 2)
+        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
         return label
     }()
     
@@ -62,6 +76,9 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "34°"
         label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.textColor = .white
+        label.shadowOffset = CGSize(width: 2, height: 2)
+        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
         return label
     }()
     
@@ -69,6 +86,7 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "23°"
         label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.textColor = .white
         return label
     }()
     
@@ -76,6 +94,9 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "서핑하기 좋아요"
         label.font = .systemFont(ofSize: 25, weight: .regular)
+        label.textColor = .white
+        label.shadowOffset = CGSize(width: 2, height: 2)
+        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
         return label
     }()
     
@@ -83,6 +104,9 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "0.4m"
         label.font = .systemFont(ofSize: 20, weight: .light)
+        label.textColor = .white
+        label.shadowOffset = CGSize(width: 2, height: 2)
+        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
         return label
     }()
     
@@ -95,6 +119,7 @@ class RegionWeatherViewController: UIViewController {
         tempStackView.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         waveHeightLabel.translatesAutoresizingMaskIntoConstraints = false
+        weekWeatherTableView.translatesAutoresizingMaskIntoConstraints = false
         
         cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         cityLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height * 0.1).isActive = true
@@ -113,13 +138,32 @@ class RegionWeatherViewController: UIViewController {
         
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 5).isActive = true
+        
+        weekWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        weekWeatherTableView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: 10).isActive = true
+        weekWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    }
+}
+
+extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return weekWeather.count
     }
     
-//    func createLabel(labelText: String, textSize: CGFloat, textWeight: UIFont.Weight) -> UILabel {
-//        let label = UILabel()
-//        label.text = labelText
-//        label.font = .systemFont(ofSize: textSize, weight: textWeight)
-//        return label
-//    }
-
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = weekWeatherTableView.dequeueReusableCell(withIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UITableViewCell() }
+        
+        cell.backgroundColor = .black
+        cell.configure(day: weekWeather[indexPath.row].day,
+                       imageName: weekWeather[indexPath.row].weatherImageName,
+                       min: weekWeather[indexPath.row].minTemperature,
+                       max: weekWeather[indexPath.row].maxTemperature)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
 }

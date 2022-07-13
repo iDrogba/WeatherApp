@@ -79,7 +79,7 @@ class WeatherForecastModelManager {
     /**
      행정구역을 키값으로 날씨 예보 모델을 구분한 딕셔너리.
      
-     [행정구혁 코드 : [날씨 예보 모델]]
+     [행정구역 코드 : [날씨 예보 모델]]
      */
     var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
     

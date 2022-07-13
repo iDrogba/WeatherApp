@@ -8,8 +8,6 @@
 import UIKit
 
 class MainCollectionViewCell: UICollectionViewCell {
-    static let reuseIdentifier = "MainCollectionViewCell"
-    
     private let surfConditionLabel: UILabel = {
         let surfConditionLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         surfConditionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -87,13 +85,13 @@ class MainCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.addSubview(imageView)
-        self.addSubview(regionLabel)
-        self.addSubview(currentTemperatuerLabel)
-        self.addSubview(minTemperatureLabel)
-        self.addSubview(maxTemperatureLabel)
-        self.addSubview(weatherLabel)
-        self.addSubview(surfConditionLabel)
+        self.contentView.addSubview(imageView)
+        self.contentView.addSubview(regionLabel)
+        self.contentView.addSubview(currentTemperatuerLabel)
+        self.contentView.addSubview(minTemperatureLabel)
+        self.contentView.addSubview(maxTemperatureLabel)
+        self.contentView.addSubview(weatherLabel)
+        self.contentView.addSubview(surfConditionLabel)
         self.backgroundColor = .gray
         self.clipsToBounds = true
     }
@@ -116,14 +114,14 @@ class MainCollectionViewCell: UICollectionViewCell {
     
     func setConstraints() {
         let imageViewConstraints = [
-            imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
-            imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
+            imageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
+            imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10),
             imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
-            imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            imageView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
         ]
         let regionLabelConstraints = [
-            regionLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            regionLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 15)
+            regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            regionLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 15)
         ]
         let temperatureLabelConstraints = [
             currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
@@ -131,18 +129,18 @@ class MainCollectionViewCell: UICollectionViewCell {
         ]
         let maxTemperatureLabelConstraints = [
             maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
-            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
         ]
         let minTemperatureLabelConstraints = [
-            minTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
-            minTemperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
+            minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
+            minTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
         ]
         let weatherLabelConstraints = [
             weatherLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: 0),
             weatherLabel.bottomAnchor.constraint(equalTo: maxTemperatureLabel.topAnchor, constant: 0)
         ]
         let surfConditionLabelConstraints = [
-            surfConditionLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
             surfConditionLabel.centerYAnchor.constraint(equalTo: maxTemperatureLabel.centerYAnchor, constant: 0)
         ]
         NSLayoutConstraint.activate(imageViewConstraints)

@@ -56,6 +56,10 @@ class MainCollectionViewCell: UICollectionViewCell {
         temperatuerLabel.text = "25°"
         temperatuerLabel.font = .systemFont(ofSize: 48, weight: .medium)
         temperatuerLabel.textColor = .white
+        temperatuerLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
+        temperatuerLabel.layer.shadowOpacity = 0.5
+        temperatuerLabel.layer.shadowRadius = 2
+        temperatuerLabel.layer.shadowColor = CGColor.init(srgbRed: 0, green: 0, blue: 0, alpha: 1)
         
         return temperatuerLabel
     }()
@@ -66,6 +70,10 @@ class MainCollectionViewCell: UICollectionViewCell {
         regionLabel.text = "포항시"
         regionLabel.font = .systemFont(ofSize: 24, weight: .semibold)
         regionLabel.textColor = .white
+        regionLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
+        regionLabel.layer.shadowOpacity = 0.5
+        regionLabel.layer.shadowRadius = 2
+        regionLabel.layer.shadowColor = CGColor.init(srgbRed: 0, green: 0, blue: 0, alpha: 1)
         
         return regionLabel
     }()

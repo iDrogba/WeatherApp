@@ -38,7 +38,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 37, weight: .regular)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
+        label.shadowColor = customShadow
         return label
     }()
     
@@ -48,7 +48,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 96, weight: .semibold)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
+        label.shadowColor = customShadow
         return label
     }()
     
@@ -58,7 +58,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 40, weight: .light)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
+        label.shadowColor = customShadow
         return label
     }()
     
@@ -78,7 +78,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 35, weight: .regular)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
+        label.shadowColor = customShadow
         return label
     }()
     
@@ -96,7 +96,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 25, weight: .regular)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
+        label.shadowColor = customShadow
         return label
     }()
     
@@ -106,7 +106,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .light)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = UIColor(white: 150 / 255, alpha: 0.2)
+        label.shadowColor = customShadow
         return label
     }()
     

@@ -10,7 +10,37 @@ import UIKit
 class MainCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = "MainCollectionViewCell"
     
-    private let temperatuerLabel: UILabel = {
+    private let weatherLabel: UILabel = {
+        let weatherLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        weatherLabel.translatesAutoresizingMaskIntoConstraints = false
+        weatherLabel.text = "흐림"
+        weatherLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        weatherLabel.textColor = .white
+        
+        return weatherLabel
+    }()
+    
+    private let minTemperatureLabel: UILabel = {
+        let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        minTemperatureLabel.text = "최저:17°"
+        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        minTemperatureLabel.textColor = .white
+        
+        return minTemperatureLabel
+    }()
+    
+    private let maxTemperatureLabel: UILabel = {
+        let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        maxTemperatureLabel.text = "최고:28°"
+        maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        maxTemperatureLabel.textColor = .white
+        
+        return maxTemperatureLabel
+    }()
+    
+    private let currentTemperatuerLabel: UILabel = {
         let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
         temperatuerLabel.text = "25°"
@@ -41,7 +71,10 @@ class MainCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         self.addSubview(imageView)
         self.addSubview(regionLabel)
-        self.addSubview(temperatuerLabel)
+        self.addSubview(currentTemperatuerLabel)
+        self.addSubview(minTemperatureLabel)
+        self.addSubview(maxTemperatureLabel)
+        self.addSubview(weatherLabel)
         self.backgroundColor = .gray
         self.clipsToBounds = true
     }
@@ -74,11 +107,26 @@ class MainCollectionViewCell: UICollectionViewCell {
             regionLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 15)
         ]
         let temperatureLabelConstraints = [
-            temperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
-            temperatuerLabel.topAnchor.constraint(equalTo: regionLabel.topAnchor, constant: 0),
+            currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            currentTemperatuerLabel.topAnchor.constraint(equalTo: regionLabel.topAnchor, constant: 0),
+        ]
+        let maxTemperatureLabelConstraints = [
+            maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
+        ]
+        let minTemperatureLabelConstraints = [
+            minTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            minTemperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
+        ]
+        let weatherLabelConstraints = [
+            weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            weatherLabel.centerYAnchor.constraint(equalTo: maxTemperatureLabel.centerYAnchor, constant: 0)
         ]
         NSLayoutConstraint.activate(imageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
         NSLayoutConstraint.activate(temperatureLabelConstraints)
+        NSLayoutConstraint.activate(maxTemperatureLabelConstraints)
+        NSLayoutConstraint.activate(minTemperatureLabelConstraints)
+        NSLayoutConstraint.activate(weatherLabelConstraints)
     }
 }

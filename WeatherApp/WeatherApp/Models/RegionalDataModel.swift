@@ -12,16 +12,16 @@ struct RegionalDataModel {
     let first: String
     let second: String
     let third: String
-    let nX: String
-    let nY:String
+    let positionX: String
+    let positionY:String
 
-    init(_ stringData: [String]) {
-        self.regionalCode = stringData[0]
-        self.first = stringData[1]
-        self.second = stringData[2]
-        self.third = stringData[3]
-        self.nX = stringData[4]
-        self.nY = stringData[5]
+    init(_ stringRegionalData: [String]) {
+        self.regionalCode = stringRegionalData[0]
+        self.first = stringRegionalData[1]
+        self.second = stringRegionalData[2]
+        self.third = stringRegionalData[3]
+        self.positionX = stringRegionalData[4]
+        self.positionY = stringRegionalData[5]
     }
 }
 
@@ -29,16 +29,37 @@ class RegionalDataManager {
     static let shared = RegionalDataManager()
     let userDefaultsKey = "RegionalCode"
     let fileName = "RegionalData"
-    var regionalDataString:[[String]] = []
+    var stringRegionalData:[[String]] = []
     var regionalDataArray: [RegionalDataModel] = []
-    var addedRegionalDataArray: [RegionalDataModel] = []
+    var searchedRegionalDataArray: [RegionalDataModel] = []
 
     init() {
-        self.loadSavedRegionalDataFromCSV()
-        self.setAddedRegionalDataArray()
+        self.fetchSavedRegionalDataFromCSV()
+        self.setSelectedRegionalDataArray()
     }
 
-    func addRegionalCodeAtUserDefaults(_ regionalCode: String) async {
+    func setSearchedRegionalDataModel(_ searchTerm: String) {
+        var retrivedRegionalData: [RegionalDataModel] = []
+        
+        guard searchTerm != "" else {
+            searchedRegionalDataArray = retrivedRegionalData
+            return
+        }
+        
+    outer:for regionalData in regionalDataArray {
+        let regionalTerm = regionalData.first + regionalData.second + regionalData.third
+        inner:for searchChar in searchTerm {
+            if searchChar == " " { continue inner}
+            if regionalTerm.contains(searchChar) == false {
+                continue outer
+            }
+        }
+        retrivedRegionalData.append(regionalData)
+    }
+        searchedRegionalDataArray = retrivedRegionalData
+    }
+    
+    func addSelectedRegionalCodeAtUserDefaults(_ regionalCode: String) async {
         let userDefaults = UserDefaults.standard
         var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         savedRegionalCodes.append(regionalCode)
@@ -47,26 +68,26 @@ class RegionalDataManager {
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
     
-    func setAddedRegionalDataArray() {
+    func setSelectedRegionalDataArray() {
         let userDefaults = UserDefaults.standard
         let savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         
         for savedRegionalCode in savedRegionalCodes {
             let index = regionalDataArray.firstIndex{ $0.regionalCode == savedRegionalCode }
             if let index = index {
-                self.addedRegionalDataArray.append(regionalDataArray[index])
+                self.searchedRegionalDataArray.append(regionalDataArray[index])
             }
         }
     }
 
-    private func loadSavedRegionalDataFromCSV() {
+    private func fetchSavedRegionalDataFromCSV() {
         guard let path = Bundle.main.path(forResource: self.fileName, ofType: "csv") else { return }
         self.parseCSVAt(URL(fileURLWithPath: path))
 
-        for index in 1 ..< regionalDataString.count - 1 {
-            guard regionalDataString[index].count > 5 else { return }
+        for index in 1 ..< stringRegionalData.count - 1 {
+            guard stringRegionalData[index].count > 5 else { return }
             
-            let regionalDataModel = RegionalDataModel.init(regionalDataString[index])
+            let regionalDataModel = RegionalDataModel.init(stringRegionalData[index])
             self.regionalDataArray.append(regionalDataModel)
         }
     }
@@ -78,7 +99,7 @@ class RegionalDataManager {
             
             if let dataArray = dataEncoded?.components(separatedBy: "\n").map({$0.components(separatedBy: ",")}) {
                 for item in dataArray {
-                    regionalDataString.append(item)
+                    stringRegionalData.append(item)
                 }
             }
         } catch {

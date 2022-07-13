@@ -9,10 +9,10 @@ import Foundation
 import Alamofire
 
 class APIRequestManager {
-    static func getData() async {
+    static func fetchData() async {
         var urlSets: [(RegionalDataModel,String)] = []
-        for addedRegionalData in RegionalDataManager.shared.addedRegionalDataArray {
-            let url = RequestInfo.shared.getURL(addedRegionalData.nX, addedRegionalData.nY)
+        for addedRegionalData in RegionalDataManager.shared.searchedRegionalDataArray {
+            let url = RequestInfo.shared.fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
             urlSets.append((addedRegionalData, url))
         }
         await AFRequest(urlSets)
@@ -34,7 +34,7 @@ class APIRequestManager {
                         do {
                             let decoder = JSONDecoder()
                             let json = try decoder.decode(APIResponse.self, from: result)
-                            ShortTermForecastModelManager.shared.setShortTermForecastModelsWith(json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
+                            WeatherForecastModelManager.shared.setWeatherForecastModels(items: json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
 
                         } catch {
                             print("error!\(error)")
@@ -43,10 +43,9 @@ class APIRequestManager {
                     default:
                         return
                     }
-                    print(ShortTermForecastModelManager.shared.shortTermForecastModels)
+                    print(WeatherForecastModelManager.shared.weatherForecastModels)
                 }
         }
-        
     }
 }
 
@@ -60,16 +59,16 @@ class RequestInfo {
     let dataType: String = "JSON"
     var baseDate: String = ""
     var baseTime: String = ""
-    var nX: String = ""
-    var nY: String = ""
+    var positionX: String = ""
+    var positionY: String = ""
 
     init() {
         self.setBaseDateBaseTime()
     }
 
-    func getURL(_ nX: String, _ nY: String) -> String {
-        self.nX = nX
-        self.nY = nY
+    func fetchURL(_ nX: String, _ nY: String) -> String {
+        self.positionX = nX
+        self.positionY = nY
         var url = self.baseURL
         url += "serviceKey=" + self.serviceKey
         url += "&pageNo=" + self.pageNo
@@ -77,8 +76,8 @@ class RequestInfo {
         url += "&dataType=" + self.dataType
         url += "&base_date=" + self.baseDate
         url += "&base_time=" + self.baseTime
-        url += "&nx=" + self.nX
-        url += "&ny=" + self.nY
+        url += "&nx=" + self.positionX
+        url += "&ny=" + self.positionY
         
         return url
     }

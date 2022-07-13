@@ -76,9 +76,14 @@ struct WeatherForecastModel {
 
 class WeatherForecastModelManager {
     static let shared = WeatherForecastModelManager()
+    /**
+     행정구역을 키값으로 날씨 예보 모델을 구분한 딕셔너리.
+     
+     [행정구혁 코드 : [날씨 예보 모델]]
+     */
     var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
-    func setShortTermForecastModelsWith(_ items : [Item], regionalCode: String) {
+    func setWeatherForecastModels(items : [Item], regionalCode: String) {
         guard weatherForecastModels[regionalCode] == nil else { return }
         self.weatherForecastModels[regionalCode] = []
         for item in items {

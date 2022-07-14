@@ -76,16 +76,24 @@ class MainCollectionViewCell: UICollectionViewCell {
         return regionLabel
     }()
     
-    private let imageView: UIImageView = {
+    private let foregroundImageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.contentView.addSubview(imageView)
+        self.contentView.addSubview(backgroundImageView)
+        self.contentView.addSubview(foregroundImageView)
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(currentTemperatuerLabel)
         self.contentView.addSubview(minTemperatureLabel)
@@ -94,6 +102,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         self.contentView.addSubview(surfConditionLabel)
         self.backgroundColor = .gray
         self.clipsToBounds = true
+        self.layer.cornerRadius = 4
     }
     
     required init?(coder: NSCoder) {
@@ -107,17 +116,33 @@ class MainCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setUI() {
-        self.layer.cornerRadius = 4
-        imageView.image = UIImage(named: "surf2.png")
+    func setUI(_ model: WeatherForecastModel) {
+        let foregroundImageName: String
+        let backgroundImageName: String
+        switch model.SKY {
+        case "0" :
+            backgroundImageName = "cloudy.png"
+        case "1" :
+            backgroundImageName = "sunny.png"
+        default :
+            backgroundImageName = "rainy.png"
+        }
+        foregroundImageView.image = UIImage(named: "surf2.png")
+        backgroundImageView.image = UIImage(named: backgroundImageName)
     }
     
     func setConstraints() {
-        let imageViewConstraints = [
-            imageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
-            imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10),
-            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
-            imageView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
+        let backgroundImageViewConstraints = [
+            backgroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+        ]
+        let foregroundImageViewConstraints = [
+            foregroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
+            foregroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10),
+            foregroundImageView.widthAnchor.constraint(equalTo: foregroundImageView.heightAnchor),
+            foregroundImageView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
         ]
         let regionLabelConstraints = [
             regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
@@ -143,7 +168,8 @@ class MainCollectionViewCell: UICollectionViewCell {
             surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
             surfConditionLabel.centerYAnchor.constraint(equalTo: maxTemperatureLabel.centerYAnchor, constant: 0)
         ]
-        NSLayoutConstraint.activate(imageViewConstraints)
+        NSLayoutConstraint.activate(backgroundImageViewConstraints)
+        NSLayoutConstraint.activate(foregroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
         NSLayoutConstraint.activate(temperatureLabelConstraints)
         NSLayoutConstraint.activate(maxTemperatureLabelConstraints)

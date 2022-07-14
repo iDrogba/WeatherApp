@@ -32,6 +32,7 @@ class RegionalDataManager {
     var stringRegionalData:[[String]] = []
     var regionalDataArray: [RegionalDataModel] = []
     var searchedRegionalDataArray: [RegionalDataModel] = []
+    var addedRegionalDataArray: [RegionalDataModel] = []
 
     init() {
         self.fetchSavedRegionalDataFromCSV()
@@ -75,7 +76,7 @@ class RegionalDataManager {
         for savedRegionalCode in savedRegionalCodes {
             let index = regionalDataArray.firstIndex{ $0.regionalCode == savedRegionalCode }
             if let index = index {
-                self.searchedRegionalDataArray.append(regionalDataArray[index])
+                self.addedRegionalDataArray.append(regionalDataArray[index])
             }
         }
     }

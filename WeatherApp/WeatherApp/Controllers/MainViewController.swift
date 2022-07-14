@@ -8,7 +8,9 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    private var currentIndex: CGFloat = 0
+    private let mainCollectionViewModel = MainCollectionViewModel.shared
+    private var weatherForecastModel: [String:[WeatherForecastModel]] = [:]
+    
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
         searchTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
@@ -71,6 +73,14 @@ class MainViewController: UIViewController {
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
     }
     
+    private func bindMainCollectionViewModel() {
+        mainCollectionViewModel.weatherForecastModel.bind { (weatherForecastModel) in
+            self.weatherForecastModel = weatherForecastModel
+            self.mainCollectionView.reloadData()
+        }
+        mainCollectionViewModel.fetchWeatherForecastModel()
+    }
+    
     private func applyConstraints() {
         let titleLabelConstraints = [
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -104,12 +114,13 @@ class MainViewController: UIViewController {
 // MARK: Collectioinview
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return weatherForecastModel.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-        cell.setUI()
+        guard let model = Array(weatherForecastModel.values)[indexPath.item].first else { return UICollectionViewCell() }
+        cell.setUI(model)
         
         return cell
     }

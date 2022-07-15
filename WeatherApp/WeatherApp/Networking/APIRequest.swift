@@ -9,16 +9,20 @@ import Foundation
 import Alamofire
 
 class APIRequestManager {
-    static func fetchData() async {
+    static func fetchData(_ completion: @escaping () -> (Void)) {
         var urlSets: [(RegionalDataModel,String)] = []
         for addedRegionalData in RegionalDataManager.shared.addedRegionalDataArray {
             let url = RequestInfo.shared.fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
             urlSets.append((addedRegionalData, url))
         }
-        await AFRequest(urlSets)
+        AFRequest(urlSets){
+            completion()
+        }
     }
     
-    static func AFRequest(_ urlSets: [(RegionalDataModel,String)]) async {
+    static func AFRequest(_ urlSets: [(RegionalDataModel,String)], _ completion: @escaping () -> (Void)) {
+        var loopCount: Int = 1
+        
         for urlSet in urlSets {
             AF.request(urlSet.1,
                        method: .get,
@@ -35,7 +39,15 @@ class APIRequestManager {
                             let decoder = JSONDecoder()
                             let json = try decoder.decode(APIResponse.self, from: result)
                             WeatherForecastModelManager.shared.setWeatherForecastModels(items: json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
-                            print(WeatherForecastModelManager.shared.weatherForecastModels)
+                            print("atomicApiRequestDone")
+
+                            if loopCount == urlSets.count {
+                                print(loopCount)
+                                print(urlSets.count)
+                                completion()
+                            }
+                            loopCount += 1
+
                         } catch {
                             print("error!\(error)")
                         }

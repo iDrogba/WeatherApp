@@ -30,7 +30,10 @@ struct WeatherForecastModel {
     var WSD: String = ""
     
     init(_ regionalCode: String, _ item: Item) {
+        guard let regionalDataModel = RegionalDataManager.shared.retrieveRegionalDataModel(regionalCode) else { return }
+
         self.regionalCode = regionalCode
+        self.regionName = regionalDataModel.second
         self.forecastDate = item.fcstDate
         self.forecastTime = item.fcstTime
         setValueByCategory(item)

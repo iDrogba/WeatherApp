@@ -129,6 +129,8 @@ class MainCollectionViewCell: UICollectionViewCell {
         }
         foregroundImageView.image = UIImage(named: "surf2.png")
         backgroundImageView.image = UIImage(named: backgroundImageName)
+        regionLabel.text = model.regionName
+        currentTemperatuerLabel.text = model.TMP + "°"
     }
     
     func setConstraints() {

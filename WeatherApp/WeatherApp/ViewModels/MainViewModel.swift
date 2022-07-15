@@ -6,24 +6,17 @@
 //
 
 import Foundation
+import Combine
 
-class MainViewModel {
-    static let shared = MainViewModel()
-    var weatherForecastModels: Observable<[String:[WeatherForecastModel]]> = Observable([:])
-    var addedRegionalDataModels: Observable<[RegionalDataModel]> = Observable([])
-    init() {
-        fetchAddedRegionalDataModels()
-        fetchWeatherForecastModels()
-        Task {
-            await APIRequestManager.fetchData()
-        }
-    }
-    
-    func fetchAddedRegionalDataModels() {
-        addedRegionalDataModels.value = RegionalDataManager.shared.addedRegionalDataArray
-    }
+class MainViewModel: ObservableObject {
+    @Published var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
     func fetchWeatherForecastModels() {
-        weatherForecastModels.value = WeatherForecastModelManager.shared.weatherForecastModels
+        DispatchQueue.global(qos: .userInteractive).async {
+            APIRequestManager.fetchData({
+                self.weatherForecastModels = WeatherForecastModelManager.shared.weatherForecastModels
+                print("값 할당 done")
+            })
+        }
     }
 }

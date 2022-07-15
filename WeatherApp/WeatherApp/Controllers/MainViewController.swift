@@ -5,11 +5,13 @@
 //  Created by 김상현 on 2022/07/08.
 //
 
-import UIKit
+import Combine
+import SwiftUI
 
 class MainViewController: UIViewController {
-    private let mainCollectionViewModel = MainViewModel.shared
-    
+    @ObservedObject var mainCollectionViewModel = MainViewModel()
+    var cancelBag = Set<AnyCancellable>()
+
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
         searchTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
@@ -54,8 +56,6 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bindMainViewModel()
-        
         
         view.backgroundColor = .systemBackground
         view.addSubview(titleLabel)
@@ -73,19 +73,21 @@ class MainViewController: UIViewController {
 
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
+        
+        mainCollectionViewModel.fetchWeatherForecastModels()
+        bindMainViewModel()
     }
     
     private func bindMainViewModel() {
-        mainCollectionViewModel.addedRegionalDataModels.bind { (regionalDataModel) in
-            self.mainCollectionView.reloadData()
-        }
-        mainCollectionViewModel.weatherForecastModels.bind { (weatherForecastModel) in
-            self.mainCollectionView.reloadData()
-        }
-        mainCollectionViewModel.fetchAddedRegionalDataModels()
-        mainCollectionViewModel.fetchWeatherForecastModels()
+        self.mainCollectionViewModel.$weatherForecastModels
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.mainCollectionView.reloadData()
+                print("mainCollectionView.reloadData()")
+            })
+            .store(in: &self.cancelBag)
     }
-    
+
     private func applyConstraints() {
         let titleLabelConstraints = [
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -119,12 +121,12 @@ class MainViewController: UIViewController {
 // MARK: Collectioinview
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mainCollectionViewModel.weatherForecastModels.value.count
+        return mainCollectionViewModel.weatherForecastModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-        guard let model = Array(mainCollectionViewModel.weatherForecastModels.value.values)[indexPath.item].first else { return UICollectionViewCell() }
+        guard let model = Array(mainCollectionViewModel.weatherForecastModels.values)[indexPath.item].first else { return UICollectionViewCell() }
         cell.setUI(model)
         
         return cell

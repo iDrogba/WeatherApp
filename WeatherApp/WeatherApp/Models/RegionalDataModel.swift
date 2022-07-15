@@ -39,6 +39,13 @@ class RegionalDataManager {
         self.setAddedRegionalDataArray()
     }
 
+    func retrieveRegionalDataModel(_ regionalCode: String) -> RegionalDataModel? {
+        guard let resultRegionalDataModel = regionalDataArray.filter({$0.regionalCode == regionalCode}).first else {
+            return nil
+        }
+        return resultRegionalDataModel
+    }
+    
     func setSearchedRegionalDataModel(_ searchTerm: String) {
         var retrivedRegionalData: [RegionalDataModel] = []
         

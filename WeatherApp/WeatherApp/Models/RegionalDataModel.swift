@@ -36,7 +36,7 @@ class RegionalDataManager {
 
     init() {
         self.fetchSavedRegionalDataFromCSV()
-        self.setSelectedRegionalDataArray()
+        self.setAddedRegionalDataArray()
     }
 
     func setSearchedRegionalDataModel(_ searchTerm: String) {
@@ -60,7 +60,7 @@ class RegionalDataManager {
         searchedRegionalDataArray = retrivedRegionalData
     }
     
-    func addSelectedRegionalCodeAtUserDefaults(_ regionalCode: String) async {
+    func addAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
         var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         savedRegionalCodes.append(regionalCode)
@@ -69,7 +69,7 @@ class RegionalDataManager {
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
     
-    func setSelectedRegionalDataArray() {
+    func setAddedRegionalDataArray() {
         let userDefaults = UserDefaults.standard
         let savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         

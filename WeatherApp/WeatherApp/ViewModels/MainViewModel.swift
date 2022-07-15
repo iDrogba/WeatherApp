@@ -7,17 +7,23 @@
 
 import Foundation
 
-class MainCollectionViewModel {
-    static let shared = MainCollectionViewModel()
-    var weatherForecastModel: Observable<[String:[WeatherForecastModel]]> = Observable([:])
-    
+class MainViewModel {
+    static let shared = MainViewModel()
+    var weatherForecastModels: Observable<[String:[WeatherForecastModel]]> = Observable([:])
+    var addedRegionalDataModels: Observable<[RegionalDataModel]> = Observable([])
     init() {
+        fetchAddedRegionalDataModels()
+        fetchWeatherForecastModels()
         Task {
             await APIRequestManager.fetchData()
         }
     }
     
-    func fetchWeatherForecastModel() {
-        weatherForecastModel.value = WeatherForecastModelManager.shared.weatherForecastModels
+    func fetchAddedRegionalDataModels() {
+        addedRegionalDataModels.value = RegionalDataManager.shared.addedRegionalDataArray
+    }
+    
+    func fetchWeatherForecastModels() {
+        weatherForecastModels.value = WeatherForecastModelManager.shared.weatherForecastModels
     }
 }

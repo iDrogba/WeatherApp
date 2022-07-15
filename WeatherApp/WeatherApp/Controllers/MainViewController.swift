@@ -8,8 +8,7 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    private let mainCollectionViewModel = MainCollectionViewModel.shared
-    private var weatherForecastModel: [String:[WeatherForecastModel]] = [:]
+    private let mainCollectionViewModel = MainViewModel.shared
     
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
@@ -55,6 +54,9 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindMainViewModel()
+        
+        
         view.backgroundColor = .systemBackground
         view.addSubview(titleLabel)
         view.addSubview(searchBar)
@@ -68,17 +70,20 @@ class MainViewController: UIViewController {
         searchBar.delegate = self
         searchTableView.dataSource = self
         searchTableView.delegate = self
-        
+
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
     }
     
-    private func bindMainCollectionViewModel() {
-        mainCollectionViewModel.weatherForecastModel.bind { (weatherForecastModel) in
-            self.weatherForecastModel = weatherForecastModel
+    private func bindMainViewModel() {
+        mainCollectionViewModel.addedRegionalDataModels.bind { (regionalDataModel) in
             self.mainCollectionView.reloadData()
         }
-        mainCollectionViewModel.fetchWeatherForecastModel()
+        mainCollectionViewModel.weatherForecastModels.bind { (weatherForecastModel) in
+            self.mainCollectionView.reloadData()
+        }
+        mainCollectionViewModel.fetchAddedRegionalDataModels()
+        mainCollectionViewModel.fetchWeatherForecastModels()
     }
     
     private func applyConstraints() {
@@ -114,12 +119,12 @@ class MainViewController: UIViewController {
 // MARK: Collectioinview
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return weatherForecastModel.count
+        return mainCollectionViewModel.weatherForecastModels.value.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-        guard let model = Array(weatherForecastModel.values)[indexPath.item].first else { return UICollectionViewCell() }
+        guard let model = Array(mainCollectionViewModel.weatherForecastModels.value.values)[indexPath.item].first else { return UICollectionViewCell() }
         cell.setUI(model)
         
         return cell
@@ -189,5 +194,11 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
         cell.setUI(regionalDataModel)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
+        RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalDataModel.regionalCode)
+        RegionalDataManager.shared.setAddedRegionalDataArray()
     }
 }

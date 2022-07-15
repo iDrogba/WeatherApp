@@ -32,6 +32,12 @@ class RegionWeatherViewController: UIViewController {
         return tableView
     }()
     
+    private var dayWeatherCollectionView: UICollectionView = {
+        let collectionView = UICollectionView()
+        collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
+        return collectionView
+    }()
+    
     private var cityLabel: UILabel = {
         let label = UILabel()
         label.text = "포항시"
@@ -166,4 +172,19 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
+}
+
+extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return WeatherForecastModelManager.shared.weatherForecastModels.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier, for: indexPath)
+        return cell
+    }
+    
+    
+    
+    
 }

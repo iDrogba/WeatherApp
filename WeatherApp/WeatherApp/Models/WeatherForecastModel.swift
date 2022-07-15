@@ -32,8 +32,12 @@ struct WeatherForecastModel {
     init(_ regionalCode: String, _ item: Item) {
         guard let regionalDataModel = RegionalDataManager.shared.retrieveRegionalDataModel(regionalCode) else { return }
 
+        if regionalDataModel.second != "" {
+            self.regionName = regionalDataModel.second
+        } else {
+            self.regionName = regionalDataModel.first
+        }
         self.regionalCode = regionalCode
-        self.regionName = regionalDataModel.second
         self.forecastDate = item.fcstDate
         self.forecastTime = item.fcstTime
         setValueByCategory(item)

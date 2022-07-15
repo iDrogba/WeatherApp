@@ -42,12 +42,9 @@ class APIRequestManager {
                             print("atomicApiRequestDone")
 
                             if loopCount == urlSets.count {
-                                print(loopCount)
-                                print(urlSets.count)
                                 completion()
                             }
                             loopCount += 1
-
                         } catch {
                             print("error!\(error)")
                         }

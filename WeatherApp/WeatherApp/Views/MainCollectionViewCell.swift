@@ -8,13 +8,24 @@
 import UIKit
 
 class MainCollectionViewCell: UICollectionViewCell {
+    private let waveLabel: UILabel = {
+        let waveLabel = UILabel()
+        waveLabel.translatesAutoresizingMaskIntoConstraints = false
+        waveLabel.font = .systemFont(ofSize: 10, weight: .semibold)
+        waveLabel.textColor = .white
+        waveLabel.layer.opacity = 0.8
+        
+        return waveLabel
+    }()
+    
     private let surfConditionLabel: UILabel = {
-        let surfConditionLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        let surfConditionLabel = UILabel()
         surfConditionLabel.translatesAutoresizingMaskIntoConstraints = false
         surfConditionLabel.text = "서핑하기 좋아요."
         surfConditionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         surfConditionLabel.textColor = .white
-        
+        surfConditionLabel.layer.opacity = 0.8
+
         return surfConditionLabel
     }()
     
@@ -22,7 +33,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         let weatherLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         weatherLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherLabel.text = "흐림"
-        weatherLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        weatherLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         weatherLabel.textColor = .white
         
         return weatherLabel
@@ -32,7 +43,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         minTemperatureLabel.text = "최저:17°"
-        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         minTemperatureLabel.textColor = .white
         
         return minTemperatureLabel
@@ -42,7 +53,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTemperatureLabel.text = "최고:28°"
-        maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         maxTemperatureLabel.textColor = .white
         
         return maxTemperatureLabel
@@ -52,12 +63,12 @@ class MainCollectionViewCell: UICollectionViewCell {
         let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
         temperatuerLabel.text = "25°"
-        temperatuerLabel.font = .systemFont(ofSize: 48, weight: .medium)
+        temperatuerLabel.font = .systemFont(ofSize: 48, weight: .regular)
         temperatuerLabel.textColor = .white
-        temperatuerLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
-        temperatuerLabel.layer.shadowOpacity = 0.5
-        temperatuerLabel.layer.shadowRadius = 2
-        temperatuerLabel.layer.shadowColor = CGColor.init(srgbRed: 0, green: 0, blue: 0, alpha: 1)
+//        temperatuerLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
+//        temperatuerLabel.layer.shadowOpacity = 0.5
+//        temperatuerLabel.layer.shadowRadius = 2
+//        temperatuerLabel.layer.shadowColor = CGColor.init(srgbRed: 0, green: 0, blue: 0, alpha: 1)
         
         return temperatuerLabel
     }()
@@ -66,12 +77,12 @@ class MainCollectionViewCell: UICollectionViewCell {
         let regionLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         regionLabel.translatesAutoresizingMaskIntoConstraints = false
         regionLabel.text = "포항시"
-        regionLabel.font = .systemFont(ofSize: 24, weight: .semibold)
+        regionLabel.font = .systemFont(ofSize: 24, weight: .bold)
         regionLabel.textColor = .white
-        regionLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
-        regionLabel.layer.shadowOpacity = 0.5
-        regionLabel.layer.shadowRadius = 2
-        regionLabel.layer.shadowColor = CGColor.init(srgbRed: 0, green: 0, blue: 0, alpha: 1)
+//        regionLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
+//        regionLabel.layer.shadowOpacity = 0.5
+//        regionLabel.layer.shadowRadius = 2
+//        regionLabel.layer.shadowColor = CGColor.init(srgbRed: 0, green: 0, blue: 0, alpha: 1)
         
         return regionLabel
     }()
@@ -100,6 +111,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         self.contentView.addSubview(maxTemperatureLabel)
         self.contentView.addSubview(weatherLabel)
         self.contentView.addSubview(surfConditionLabel)
+        self.contentView.addSubview(waveLabel)
         self.backgroundColor = .gray
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
@@ -117,20 +129,47 @@ class MainCollectionViewCell: UICollectionViewCell {
     }
     
     func setUI(_ model: WeatherForecastModel) {
-        let foregroundImageName: String
-        let backgroundImageName: String
+        var foregroundImageName: String
+        var backgroundImageName: String
         switch model.SKY {
-        case "0" :
-            backgroundImageName = "cloudy.png"
         case "1" :
             backgroundImageName = "sunny.png"
         default :
-            backgroundImageName = "rainy.png"
+            backgroundImageName = "cloudy.png"
         }
-        foregroundImageView.image = UIImage(named: "surf2.png")
+    
+        switch model.PTY {
+        case "1" :
+            backgroundImageName = "rainy.png"
+        case "3" :
+            backgroundImageName = "snow.png"
+        default :
+            break
+        }
+        guard let modelWaveValue = Double(model.WAV) else {
+            return
+        }
+        
+        if modelWaveValue > 2 {
+            foregroundImageName = "surf4.png"
+        } else if modelWaveValue > 1 {
+            foregroundImageName = "surf3.png"
+        } else if modelWaveValue > 0.5 {
+            foregroundImageName = "surf2.png"
+        } else if modelWaveValue == 0 {
+            foregroundImageName = ""
+        } else {
+            foregroundImageName = "surf1.png"
+        }
+        foregroundImageView.image = UIImage(named: foregroundImageName)
         backgroundImageView.image = UIImage(named: backgroundImageName)
         regionLabel.text = model.regionName
         currentTemperatuerLabel.text = model.TMP + "°"
+        if model.WAV == "0" {
+            surfConditionLabel.text = "파도가 없는 지역입니다."
+        } else {
+            waveLabel.text = "파고: " + model.WAV + "m"
+        }
     }
     
     func setConstraints() {
@@ -170,6 +209,10 @@ class MainCollectionViewCell: UICollectionViewCell {
             surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
             surfConditionLabel.centerYAnchor.constraint(equalTo: maxTemperatureLabel.centerYAnchor, constant: 0)
         ]
+        let waveLabelConstraints = [
+            waveLabel.leadingAnchor.constraint(equalTo: surfConditionLabel.leadingAnchor),
+            waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
+        ]
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
         NSLayoutConstraint.activate(foregroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
@@ -178,5 +221,6 @@ class MainCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate(minTemperatureLabelConstraints)
         NSLayoutConstraint.activate(weatherLabelConstraints)
         NSLayoutConstraint.activate(surfConditionLabelConstraints)
+        NSLayoutConstraint.activate(waveLabelConstraints)
     }
 }

@@ -74,7 +74,7 @@ class MainViewController: UIViewController {
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
         
-        mainCollectionViewModel.fetchWeatherForecastModels()
+       // mainCollectionViewModel.fetchWeatherForecastModels()
         bindMainViewModel()
     }
     

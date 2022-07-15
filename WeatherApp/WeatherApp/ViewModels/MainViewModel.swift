@@ -11,6 +11,10 @@ import Combine
 class MainViewModel: ObservableObject {
     @Published var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
+    init() {
+        self.fetchWeatherForecastModels()
+    }
+    
     func fetchWeatherForecastModels() {
         DispatchQueue.global(qos: .userInteractive).async {
             APIRequestManager.fetchData({

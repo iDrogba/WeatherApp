@@ -26,12 +26,14 @@ class RegionWeatherViewController: UIViewController {
         super.viewDidLayoutSubviews()
     }
     
+    /// RegionWeatherView : 주간 날씨 테이블뷰
     private var weekWeatherTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
         return tableView
     }()
     
+    /// RegionWeatherView : 일간 시간별 날씨 컬렉션 뷰
     private var dayWeatherCollectionView: UICollectionView = {
         let collectionView = UICollectionView()
         collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
@@ -126,6 +128,7 @@ class RegionWeatherViewController: UIViewController {
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         waveHeightLabel.translatesAutoresizingMaskIntoConstraints = false
         weekWeatherTableView.translatesAutoresizingMaskIntoConstraints = false
+        dayWeatherCollectionView.translatesAutoresizingMaskIntoConstraints = false
         
         cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         cityLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height * 0.1).isActive = true
@@ -145,9 +148,13 @@ class RegionWeatherViewController: UIViewController {
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 5).isActive = true
         
+        dayWeatherCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: 10).isActive = true
+        
+        
         weekWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        weekWeatherTableView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: 10).isActive = true
         weekWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        weekWeatherTableView.topAnchor.constraint(equalTo: dayWeatherCollectionView.bottomAnchor, constant: 10).isActive = true
         weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     }
@@ -183,8 +190,4 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier, for: indexPath)
         return cell
     }
-    
-    
-    
-    
 }

@@ -18,5 +18,25 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-
+    private let timeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "오전 3시"
+        label.font = .systemFont(ofSize: 20, weight: .regular)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let weatherImage: UIImage = {
+        let imageView = UIImage()
+        return imageView
+    }()
+    
+    private let tempLabel: UILabel = {
+       let label = UILabel()
+        label.text = "29"
+        label.font = .systemFont(ofSize: 20, weight: .regular)
+        label.textAlignment = .center
+        return label
+    }()
+    
 }

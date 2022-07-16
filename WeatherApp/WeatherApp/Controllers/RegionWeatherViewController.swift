@@ -215,6 +215,4 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
         let itemSize = CGSize(width: view.frame.width / 7, height: collectionView.frame.height)
         return itemSize
     }
-    
-    
 }

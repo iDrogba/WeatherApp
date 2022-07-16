@@ -38,6 +38,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     
     private let weatherImage: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "sun.min")
         return imageView
     }()
     
@@ -53,7 +54,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     lazy var dayStackView: UIStackView = {
        let stackView = UIStackView(arrangedSubviews: [timeLabel, weatherImage, tempLabel])
         stackView.axis = .vertical
-        stackView.spacing = 5
+        stackView.spacing = 3
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
         
@@ -68,14 +69,8 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         timeLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherImage.translatesAutoresizingMaskIntoConstraints = false
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
+        
         dayStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-//        weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-//
-//
-//        tempLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-
+        dayStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
     }
-    
 }

@@ -10,6 +10,7 @@ import Combine
 
 class MainViewModel: ObservableObject {
     @Published var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
+    @Published var pastWeatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
     init() {
         self.fetchWeatherForecastModels()
@@ -17,9 +18,13 @@ class MainViewModel: ObservableObject {
     
     func fetchWeatherForecastModels() {
         DispatchQueue.global(qos: .userInteractive).async {
-            APIRequestManager.fetchData({
-                self.weatherForecastModels = WeatherForecastModelManager.shared.weatherForecastModels
-                print("값 할당 done")
+            APIRequestManager.fetchData(responseType: .past, {
+                self.pastWeatherForecastModels = WeatherForecastModelManager.shared.pastWeatherForecastModels
+                print("과거 값 할당 done")
+                APIRequestManager.fetchData(responseType: .current, {
+                    self.weatherForecastModels = WeatherForecastModelManager.shared.currentWeatherForecastModels
+                    print("값 할당 done")
+                })
             })
         }
     }

@@ -87,12 +87,12 @@ class MainCollectionViewCell: UICollectionViewCell {
         return regionLabel
     }()
     
-    private let foregroundImageView: UIImageView = {
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+//    private let foregroundImageView: UIImageView = {
+//        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.contentMode = .scaleAspectFit
+//        return imageView
+//    }()
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
@@ -104,7 +104,7 @@ class MainCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.contentView.addSubview(backgroundImageView)
-        self.contentView.addSubview(foregroundImageView)
+//        self.contentView.addSubview(foregroundImageView)
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(currentTemperatuerLabel)
         self.contentView.addSubview(minTemperatureLabel)
@@ -128,8 +128,8 @@ class MainCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setUI(_ model: WeatherForecastModel) {
-        var foregroundImageName: String
+    func setUI(_ model: WeatherForecastModel, _ pastTMNModel: WeatherForecastModel, _ pastTMXModel: WeatherForecastModel) {
+//        var foregroundImageName: String
         var backgroundImageName: String
         switch model.SKY {
         case "1" :
@@ -146,22 +146,23 @@ class MainCollectionViewCell: UICollectionViewCell {
         default :
             break
         }
-        guard let modelWaveValue = Double(model.WAV) else {
-            return
-        }
-        
-        if modelWaveValue > 2 {
-            foregroundImageName = "surf4.png"
-        } else if modelWaveValue > 1 {
-            foregroundImageName = "surf3.png"
-        } else if modelWaveValue > 0.5 {
-            foregroundImageName = "surf2.png"
-        } else if modelWaveValue == 0 {
-            foregroundImageName = ""
-        } else {
-            foregroundImageName = "surf1.png"
-        }
-        foregroundImageView.image = UIImage(named: foregroundImageName)
+        print(pastTMNModel)
+        minTemperatureLabel.text = "최저:" + pastTMNModel.TMN + "°"
+        maxTemperatureLabel.text = "최고:" + pastTMXModel.TMX + "°"
+
+//        guard let modelWaveValue = Double(model.WAV) else { return }
+//        if modelWaveValue > 2 {
+//            foregroundImageName = "surf4.png"
+//        } else if modelWaveValue > 1 {
+//            foregroundImageName = "surf3.png"
+//        } else if modelWaveValue > 0.5 {
+//            foregroundImageName = "surf2.png"
+//        } else if modelWaveValue == 0 {
+//            foregroundImageName = ""
+//        } else {
+//            foregroundImageName = "surf1.png"
+//        }
+//        foregroundImageView.image = UIImage(named: foregroundImageName)
         backgroundImageView.image = UIImage(named: backgroundImageName)
         regionLabel.text = model.regionName
         currentTemperatuerLabel.text = model.TMP + "°"
@@ -179,12 +180,12 @@ class MainCollectionViewCell: UICollectionViewCell {
             backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
         ]
-        let foregroundImageViewConstraints = [
-            foregroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
-            foregroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10),
-            foregroundImageView.widthAnchor.constraint(equalTo: foregroundImageView.heightAnchor),
-            foregroundImageView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
-        ]
+//        let foregroundImageViewConstraints = [
+//            foregroundImageView.topAnchor.constraint(equalTo: regionLabel.bottomAnchor, constant: 10),
+//            foregroundImageView.heightAnchor.constraint(equalToConstant: 20),
+//            foregroundImageView.widthAnchor.constraint(equalTo: foregroundImageView.heightAnchor),
+//            foregroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20)
+//        ]
         let regionLabelConstraints = [
             regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
             regionLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 15)
@@ -214,7 +215,7 @@ class MainCollectionViewCell: UICollectionViewCell {
             waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
         ]
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
-        NSLayoutConstraint.activate(foregroundImageViewConstraints)
+//        NSLayoutConstraint.activate(foregroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
         NSLayoutConstraint.activate(temperatureLabelConstraints)
         NSLayoutConstraint.activate(maxTemperatureLabelConstraints)

@@ -40,6 +40,7 @@ struct WeatherForecastModel {
         self.regionalCode = regionalCode
         self.forecastDate = item.fcstDate
         self.forecastTime = item.fcstTime
+
         setValueByCategory(item)
     }
     
@@ -88,17 +89,36 @@ class WeatherForecastModelManager {
      
      [행정구역 코드 : [날씨 예보 모델]]
      */
-    var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
+    var currentWeatherForecastModels: [String:[WeatherForecastModel]] = [:]
+    /**
+     행정구역을 키값으로 날씨 예보 모델을 구분한 딕셔너리.  최고온도, 최저온도를 가지고 있는 데이터.
+     
+     [행정구역 코드 : [날씨 예보 모델]]
+     */
+    var pastWeatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
-    func setWeatherForecastModels(items : [Item], regionalCode: String) {
-        guard weatherForecastModels[regionalCode] == nil else { return }
-        self.weatherForecastModels[regionalCode] = []
+    func setCurrentWeatherForecastModels(items : [Item], regionalCode: String) {
+        guard currentWeatherForecastModels[regionalCode] == nil else { return }
+        self.currentWeatherForecastModels[regionalCode] = []
         for item in items {
-            let modelIndex = weatherForecastModels[regionalCode]?.firstIndex{ $0.forecastDate == item.fcstDate && $0.forecastTime == item.fcstTime }
+            let modelIndex = currentWeatherForecastModels[regionalCode]?.firstIndex { $0.forecastDate == item.fcstDate && $0.forecastTime == item.fcstTime }
             if let modelIndex = modelIndex {
-                weatherForecastModels[regionalCode]?[modelIndex].setValueByCategory(item)
+                currentWeatherForecastModels[regionalCode]?[modelIndex].setValueByCategory(item)
             } else {
-                weatherForecastModels[regionalCode]?.append(WeatherForecastModel.init(regionalCode, item))
+                currentWeatherForecastModels[regionalCode]?.append(WeatherForecastModel.init(regionalCode, item))
+            }
+        }
+    }
+    
+    func setPastWeatherForecastModels(items : [Item], regionalCode: String) {
+        guard pastWeatherForecastModels[regionalCode] == nil else { return }
+        self.pastWeatherForecastModels[regionalCode] = []
+        for item in items {
+            let modelIndex = pastWeatherForecastModels[regionalCode]?.firstIndex { $0.forecastDate == item.fcstDate && $0.forecastTime == item.fcstTime }
+            if let modelIndex = modelIndex {
+                pastWeatherForecastModels[regionalCode]?[modelIndex].setValueByCategory(item)
+            } else {
+                pastWeatherForecastModels[regionalCode]?.append(WeatherForecastModel.init(regionalCode, item))
             }
         }
     }

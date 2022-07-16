@@ -86,6 +86,13 @@ class MainViewController: UIViewController {
                 print("mainCollectionView.reloadData()")
             })
             .store(in: &self.cancelBag)
+        self.mainCollectionViewModel.$pastWeatherForecastModels
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+//                self?.mainCollectionView.reloadData()
+//                print("mainCollectionView.reloadData()")
+            })
+            .store(in: &self.cancelBag)
     }
 
     private func applyConstraints() {
@@ -127,7 +134,12 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
         guard let model = Array(mainCollectionViewModel.weatherForecastModels.values)[indexPath.item].first else { return UICollectionViewCell() }
-        cell.setUI(model)
+
+        guard let pastTMNModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UICollectionViewCell()}
+        
+        guard let pastTMXModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UICollectionViewCell()}
+        
+        cell.setUI(model, pastTMNModel, pastTMXModel)
         
         return cell
     }

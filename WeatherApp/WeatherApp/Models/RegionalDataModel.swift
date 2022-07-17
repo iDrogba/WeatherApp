@@ -49,8 +49,18 @@ class RegionalDataManager {
     /// UserDefaults에 RegionalCode 추가.
     func addAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
-        var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
+        guard var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] else { return }
         savedRegionalCodes.append(regionalCode)
+        let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
+
+        userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
+    }
+    ///  UserDefaults에 RegionalCode 삭제.
+    func removeAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
+        let userDefaults = UserDefaults.standard
+        guard var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] else { return }
+        guard let indexForRemove = savedRegionalCodes.firstIndex(of: regionalCode) else { return }
+        savedRegionalCodes.remove(at: indexForRemove)
         let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
 
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)

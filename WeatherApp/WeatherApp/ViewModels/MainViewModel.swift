@@ -62,4 +62,9 @@ class MainViewModel: ObservableObject {
         RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
     }
+    
+    func removeAddedRegionalDataModels(_ regionalCode: String) {
+        RegionalDataManager.shared.removeAddedRegionalCodeAtUserDefaults(regionalCode)
+        RegionalDataManager.shared.setAddedRegionalDataArray()
+    }
 }

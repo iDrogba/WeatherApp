@@ -141,14 +141,14 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-        guard let model = Array(mainViewModel.weatherForecastModels.values)[indexPath.item].first else { return UICollectionViewCell() }
+        let cellRegionalCode = mainViewModel.addedRegionalDataModels[indexPath.item].regionalCode
+        guard let model = mainViewModel.weatherForecastModels[cellRegionalCode]?.first else { return UICollectionViewCell() }
 
-        guard let pastTMNModel = mainViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UICollectionViewCell()}
+        guard let pastTMNModel = mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UICollectionViewCell()}
         
-        guard let pastTMXModel = mainViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UICollectionViewCell()}
-        
+        guard let pastTMXModel = mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UICollectionViewCell()}
         cell.setUI(model, pastTMNModel, pastTMXModel)
-        
+
         return cell
     }
     

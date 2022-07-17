@@ -7,8 +7,9 @@
 
 import Foundation
 
-struct RegionalDataModel {
+struct RegionalDataModel: Equatable {
     let regionalCode: String
+    let regionName: String
     let first: String
     let second: String
     let third: String
@@ -22,6 +23,15 @@ struct RegionalDataModel {
         self.third = stringRegionalData[3]
         self.positionX = stringRegionalData[4]
         self.positionY = stringRegionalData[5]
+        if self.second != "" {
+            self.regionName = self.second
+        } else {
+            self.regionName = self.first
+        }
+    }
+    
+    public static func < (lhs: RegionalDataModel, rhs: RegionalDataModel) -> Bool{
+        return lhs.regionName < rhs.regionName
     }
 }
 

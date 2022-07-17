@@ -37,7 +37,7 @@ class MainViewModel: ObservableObject {
         var retrivedRegionalData: [RegionalDataModel] = []
         
         guard searchTerm != "" else {
-            searchedRegionalDataModels = retrivedRegionalData
+            self.searchedRegionalDataModels = retrivedRegionalData
             return
         }
         
@@ -51,20 +51,26 @@ class MainViewModel: ObservableObject {
         }
         retrivedRegionalData.append(regionalData)
     }
-        searchedRegionalDataModels = retrivedRegionalData
-    }
-    
-    func fetchAddedRegionalDataModels() {
-        self.addedRegionalDataModels = RegionalDataManager.shared.addedRegionalDataModels.sorted(by: <)
+        self.searchedRegionalDataModels = retrivedRegionalData
     }
     
     func addAddedRegionalDataModels(_ regionalCode: String) {
         RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
+        self.fetchAddedRegionalDataModels()
+        //TODO: 딱 한개의 요소만 네트워킹하는 로직 작성 필요
     }
     
-    func removeAddedRegionalDataModels(_ regionalCode: String) {
+    func removeAddedRegionalDataModels(_ regionalCode: String, _ indexAt: Int) {
         RegionalDataManager.shared.removeAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
+        self.fetchAddedRegionalDataModels()
+        weatherForecastModels.removeValue(forKey: regionalCode)
+        addedRegionalDataModels.remove(at: indexAt)
+    }
+    
+    /// RegionalDataManager 로 부터 오름차순으로 가져옴.
+    private func fetchAddedRegionalDataModels() {
+        self.addedRegionalDataModels = RegionalDataManager.shared.addedRegionalDataModels.sorted(by: <)
     }
 }

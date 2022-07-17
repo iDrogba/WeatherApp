@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainCollectionViewCell: UICollectionViewCell {
+class MainCollectionViewCell: UITableViewCell {
     private let subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
         subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -91,8 +91,8 @@ class MainCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.contentView.addSubview(backgroundImageView)
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(subRegionLabel)
@@ -106,6 +106,22 @@ class MainCollectionViewCell: UICollectionViewCell {
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
     }
+    
+//    override init(frame: CGRect) {
+//        super.init(frame: frame)
+//        self.contentView.addSubview(backgroundImageView)
+//        self.contentView.addSubview(regionLabel)
+//        self.contentView.addSubview(subRegionLabel)
+//        self.contentView.addSubview(currentTemperatuerLabel)
+//        self.contentView.addSubview(minTemperatureLabel)
+//        self.contentView.addSubview(maxTemperatureLabel)
+//        self.contentView.addSubview(skyConditionLabel)
+//        self.contentView.addSubview(surfConditionLabel)
+//        self.contentView.addSubview(waveLabel)
+//        self.backgroundColor = .gray
+//        self.clipsToBounds = true
+//        self.layer.cornerRadius = 4
+//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

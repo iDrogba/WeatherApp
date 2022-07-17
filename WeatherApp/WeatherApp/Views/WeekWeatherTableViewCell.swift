@@ -9,7 +9,7 @@ import UIKit
 
 class WeekWeatherTableViewCell: UITableViewCell {
     
-    static let reuseIdentifier = "WeekWeatherTableViewCell"
+    //static let reuseIdentifier = "WeekWeatherTableViewCell"
 
     private var dayLabel: UILabel = {
         let label = UILabel()

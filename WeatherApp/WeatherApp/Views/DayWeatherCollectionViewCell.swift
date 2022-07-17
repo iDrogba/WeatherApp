@@ -8,7 +8,7 @@
 import UIKit
 
 class DayWeatherCollectionViewCell: UICollectionViewCell {
-    static let reuseIdentifier = "DayWeatherCollectionViewCell"
+    //static let reuseIdentifier = "DayWeatherCollectionViewCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)

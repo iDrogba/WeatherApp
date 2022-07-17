@@ -151,6 +151,12 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         
         return itemSize
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let viewController = RegionWeatherViewController()
+        viewController.modalPresentationStyle = .fullScreen
+        present(viewController, animated: true)
+    }
 }
 
 extension MainViewController: UISearchBarDelegate {

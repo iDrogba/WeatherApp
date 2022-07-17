@@ -9,7 +9,7 @@ import Combine
 import SwiftUI
 
 class MainViewController: UIViewController {
-    @ObservedObject var mainCollectionViewModel = MainViewModel()
+    @ObservedObject var mainViewModel = MainViewModel()
     var cancelBag = Set<AnyCancellable>()
 
     private let searchTableView: UITableView = {
@@ -74,23 +74,31 @@ class MainViewController: UIViewController {
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
         
-       // mainCollectionViewModel.fetchWeatherForecastModels()
         bindMainViewModel()
     }
     
     private func bindMainViewModel() {
-        self.mainCollectionViewModel.$weatherForecastModels
+        self.mainViewModel.$weatherForecastModels
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
                 self?.mainCollectionView.reloadData()
                 print("mainCollectionView.reloadData()")
             })
             .store(in: &self.cancelBag)
-        self.mainCollectionViewModel.$pastWeatherForecastModels
+
+        self.mainViewModel.$searchedRegionalDataModels
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
-//                self?.mainCollectionView.reloadData()
-//                print("mainCollectionView.reloadData()")
+                self?.searchTableView.reloadData()
+                print("searchTableView.reloadData()")
+            })
+            .store(in: &self.cancelBag)
+        
+        self.mainViewModel.$addedRegionalDataModels
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.mainCollectionView.reloadData()
+                print("mainCollectionView.reloadData()")
             })
             .store(in: &self.cancelBag)
     }
@@ -128,16 +136,16 @@ class MainViewController: UIViewController {
 // MARK: Collectioinview
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mainCollectionViewModel.weatherForecastModels.count
+        return mainViewModel.weatherForecastModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-        guard let model = Array(mainCollectionViewModel.weatherForecastModels.values)[indexPath.item].first else { return UICollectionViewCell() }
+        guard let model = Array(mainViewModel.weatherForecastModels.values)[indexPath.item].first else { return UICollectionViewCell() }
 
-        guard let pastTMNModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UICollectionViewCell()}
+        guard let pastTMNModel = mainViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UICollectionViewCell()}
         
-        guard let pastTMXModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UICollectionViewCell()}
+        guard let pastTMXModel = mainViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UICollectionViewCell()}
         
         cell.setUI(model, pastTMNModel, pastTMXModel)
         
@@ -172,8 +180,8 @@ extension MainViewController: UISearchBarDelegate {
         searchTableView.isHidden = false
         searchBar.showsCancelButton = true
         guard let searchTerm = searchBar.text else { return }
-        RegionalDataManager.shared.setSearchedRegionalDataModel(searchTerm)
-        searchTableView.reloadData()
+        
+        mainViewModel.searchRegionalDataModel(searchTerm)
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
@@ -185,8 +193,7 @@ extension MainViewController: UISearchBarDelegate {
         if searchText == "" {
             searchBar.endEditing(true)
         }
-        RegionalDataManager.shared.setSearchedRegionalDataModel(searchText)
-        searchTableView.reloadData()
+        mainViewModel.searchRegionalDataModel(searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -197,7 +204,7 @@ extension MainViewController: UISearchBarDelegate {
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let itemCount = RegionalDataManager.shared.searchedRegionalDataArray.count
+        let itemCount = mainViewModel.searchedRegionalDataModels.count
         if itemCount == 0 {
             tableView.alpha = 0.4
         } else {
@@ -211,14 +218,16 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as? SearchTableViewCell else {
             return UITableViewCell()
         }
-        let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
+        let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.item]
         cell.setUI(regionalDataModel)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
-        RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalDataModel.regionalCode)
-        RegionalDataManager.shared.setAddedRegionalDataArray()
+        let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.item]
+        
+        mainViewModel.addAddedRegionalDataModels(regionalDataModel.regionalCode)
+        mainViewModel.fetchAddedRegionalDataModels()
+        mainViewModel.fetchWeatherForecastModels()
     }
 }

@@ -32,12 +32,20 @@ class RegionalDataManager {
     var stringRegionalData:[[String]] = []
     var regionalDataArray: [RegionalDataModel] = []
     var searchedRegionalDataArray: [RegionalDataModel] = []
+    var addedRegionalDataArray: [RegionalDataModel] = []
 
     init() {
         self.fetchSavedRegionalDataFromCSV()
-        self.setSelectedRegionalDataArray()
+        self.setAddedRegionalDataArray()
     }
 
+    func retrieveRegionalDataModel(_ regionalCode: String) -> RegionalDataModel? {
+        guard let resultRegionalDataModel = regionalDataArray.filter({$0.regionalCode == regionalCode}).first else {
+            return nil
+        }
+        return resultRegionalDataModel
+    }
+    
     func setSearchedRegionalDataModel(_ searchTerm: String) {
         var retrivedRegionalData: [RegionalDataModel] = []
         
@@ -59,7 +67,7 @@ class RegionalDataManager {
         searchedRegionalDataArray = retrivedRegionalData
     }
     
-    func addSelectedRegionalCodeAtUserDefaults(_ regionalCode: String) async {
+    func addAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
         var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         savedRegionalCodes.append(regionalCode)
@@ -68,14 +76,14 @@ class RegionalDataManager {
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
     
-    func setSelectedRegionalDataArray() {
+    func setAddedRegionalDataArray() {
         let userDefaults = UserDefaults.standard
         let savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         
         for savedRegionalCode in savedRegionalCodes {
             let index = regionalDataArray.firstIndex{ $0.regionalCode == savedRegionalCode }
             if let index = index {
-                self.searchedRegionalDataArray.append(regionalDataArray[index])
+                self.addedRegionalDataArray.append(regionalDataArray[index])
             }
         }
     }

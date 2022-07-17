@@ -9,16 +9,32 @@ import Foundation
 import Alamofire
 
 class APIRequestManager {
-    static func fetchData() async {
+    static func fetchData(responseType: RequestInfoType, _ completion: @escaping () -> (Void)) {
         var urlSets: [(RegionalDataModel,String)] = []
-        for addedRegionalData in RegionalDataManager.shared.searchedRegionalDataArray {
-            let url = RequestInfo.shared.fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
-            urlSets.append((addedRegionalData, url))
+        switch responseType {
+        case .current:
+            for addedRegionalData in RegionalDataManager.shared.addedRegionalDataArray {
+                let url = RequestInfo(responseType).fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
+                urlSets.append((addedRegionalData, url))
+            }
+            AFRequest(responseType: responseType, urlSets){
+                completion()
+            }
+        case .past:
+            for addedRegionalData in RegionalDataManager.shared.addedRegionalDataArray {
+                let url = RequestInfo(responseType).fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
+                urlSets.append((addedRegionalData, url))
+            }
+            AFRequest(responseType: responseType, urlSets){
+                completion()
+            }
         }
-        await AFRequest(urlSets)
+        
     }
     
-    static func AFRequest(_ urlSets: [(RegionalDataModel,String)]) async {
+    static func AFRequest(responseType: RequestInfoType, _ urlSets: [(RegionalDataModel,String)], _ completion: @escaping () -> (Void)) {
+        var loopCount: Int = 1
+        
         for urlSet in urlSets {
             AF.request(urlSet.1,
                        method: .get,
@@ -29,41 +45,58 @@ class APIRequestManager {
                 .responseData { jsonData in
                     switch jsonData.result {
                     case .success:
-                        guard let result = jsonData.data else {return}
+                        guard let result = jsonData.data else { return }
 
                         do {
                             let decoder = JSONDecoder()
                             let json = try decoder.decode(APIResponse.self, from: result)
-                            WeatherForecastModelManager.shared.setWeatherForecastModels(items: json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
+                            switch responseType {
+                            case .current:
+                                WeatherForecastModelManager.shared.setCurrentWeatherForecastModels(items: json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
+                            case .past:
+                                WeatherForecastModelManager.shared.setPastWeatherForecastModels(items: json.response.body.items.item, regionalCode: urlSet.0.regionalCode)
+                            }
+                            
+                            print("atomicApiRequestDone")
 
+                            if loopCount == urlSets.count {
+                                completion()
+                            }
+                            loopCount += 1
                         } catch {
                             print("error!\(error)")
                         }
-
                     default:
                         return
                     }
-                    print(WeatherForecastModelManager.shared.weatherForecastModels)
                 }
         }
     }
 }
 
-class RequestInfo {
-    static let shared = RequestInfo()
+enum RequestInfoType {
+    case current
+    case past
+}
 
+class RequestInfo {
     let baseURL: String = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"
     let serviceKey: String = "a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D"
     let pageNo: String = "1"
-    let numOfRows: String = "100"
+    var numOfRows: String = "500"
     let dataType: String = "JSON"
     var baseDate: String = ""
     var baseTime: String = ""
     var positionX: String = ""
     var positionY: String = ""
 
-    init() {
-        self.setBaseDateBaseTime()
+    init(_ requestInfoType: RequestInfoType) {
+        switch requestInfoType {
+        case .current:
+            self.setBaseDateBaseTime()
+        case .past:
+            self.setPastBaseDateBaseTime()
+        }
     }
 
     func fetchURL(_ nX: String, _ nY: String) -> String {
@@ -118,5 +151,29 @@ class RequestInfo {
 
         self.baseDate = currentDate
         self.baseTime = currentTime
+    }
+    
+    private func setPastBaseDateBaseTime() {
+        let dateFormatter: DateFormatter = DateFormatter()
+        let timeFormatter: DateFormatter = DateFormatter()
+
+        dateFormatter.dateFormat = "yyyyMMdd"
+        timeFormatter.dateFormat = "HHmm"
+
+        var currentDate: String = dateFormatter.string(from: Date())
+        var currentTime: String = timeFormatter.string(from: Date())
+        guard let IntCurrentTime = Int(currentTime) else { return }
+
+        if IntCurrentTime > 230 {
+            self.baseDate = currentDate
+            self.baseTime = "0200"
+        } else {
+            let yesterdayDate = Calendar.current.date(byAdding: .day, value: -1, to: Date())
+            currentDate = dateFormatter.string(from: yesterdayDate ?? Date())
+            currentTime = "2300"
+            self.baseDate = currentDate
+            self.baseTime = currentTime
+        }
+        self.numOfRows = "266"
     }
 }

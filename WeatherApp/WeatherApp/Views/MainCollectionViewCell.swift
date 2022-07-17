@@ -8,29 +8,202 @@
 import UIKit
 
 class MainCollectionViewCell: UICollectionViewCell {
-    static let reuseIdentifier = "MainCollectionViewCell"
+    private let waveLabel: UILabel = {
+        let waveLabel = UILabel()
+        waveLabel.translatesAutoresizingMaskIntoConstraints = false
+        waveLabel.font = .systemFont(ofSize: 10, weight: .semibold)
+        waveLabel.textColor = .white
+        waveLabel.layer.opacity = 0.8
+        
+        return waveLabel
+    }()
     
-    private let imageView: UIImageView = {
+    private let surfConditionLabel: UILabel = {
+        let surfConditionLabel = UILabel()
+        surfConditionLabel.translatesAutoresizingMaskIntoConstraints = false
+        surfConditionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        surfConditionLabel.textColor = .white
+        surfConditionLabel.layer.opacity = 0.8
+
+        return surfConditionLabel
+    }()
+    
+    private let skyConditionLabel: UILabel = {
+        let weatherLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        weatherLabel.translatesAutoresizingMaskIntoConstraints = false
+        weatherLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        weatherLabel.textColor = .white
+        
+        return weatherLabel
+    }()
+    
+    private let minTemperatureLabel: UILabel = {
+        let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        minTemperatureLabel.textColor = .white
+        
+        return minTemperatureLabel
+    }()
+    
+    private let maxTemperatureLabel: UILabel = {
+        let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        maxTemperatureLabel.textColor = .white
+        
+        return maxTemperatureLabel
+    }()
+    
+    private let currentTemperatuerLabel: UILabel = {
+        let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
+        temperatuerLabel.text = "25°"
+        temperatuerLabel.font = .systemFont(ofSize: 48, weight: .regular)
+        temperatuerLabel.textColor = .white
+
+        return temperatuerLabel
+    }()
+    
+    private let regionLabel: UILabel = {
+        let regionLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        regionLabel.translatesAutoresizingMaskIntoConstraints = false
+        regionLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        regionLabel.textColor = .white
+
+        return regionLabel
+    }()
+    
+    private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.addSubview(imageView)
-        self.imageView.frame = bounds
+        self.contentView.addSubview(backgroundImageView)
+//        self.contentView.addSubview(foregroundImageView)
+        self.contentView.addSubview(regionLabel)
+        self.contentView.addSubview(currentTemperatuerLabel)
+        self.contentView.addSubview(minTemperatureLabel)
+        self.contentView.addSubview(maxTemperatureLabel)
+        self.contentView.addSubview(skyConditionLabel)
+        self.contentView.addSubview(surfConditionLabel)
+        self.contentView.addSubview(waveLabel)
         self.backgroundColor = .gray
         self.clipsToBounds = true
+        self.layer.cornerRadius = 4
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setUI() {
-        self.layer.cornerRadius = 4
-        imageView.image = UIImage(named: "서핑2.png")
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        DispatchQueue.main.async {
+            self.setConstraints()
+        }
+    }
+    
+    func setUI(_ model: WeatherForecastModel, _ pastTMNModel: WeatherForecastModel, _ pastTMXModel: WeatherForecastModel) {
+        var surfConditionText: String
+        var backgroundImageName: String
+        var skyCondition: String
+        
+        switch model.SKY {
+        case "1" :
+            backgroundImageName = "sunny.png"
+            skyCondition = "맑음"
+        case "3" :
+            backgroundImageName = "cloudy.png"
+            skyCondition = "구름 많음"
+        case "4":
+            backgroundImageName = "cloudy.png"
+            skyCondition = "흐림"
+        default :
+            backgroundImageName = "cloudy.png"
+            skyCondition = "구름 많음"
+        }
+    
+        switch model.PTY {
+        case "1" :
+            backgroundImageName = "rainy.png"
+        case "3" :
+            backgroundImageName = "snow.png"
+        default :
+            break
+        }
+       
+        waveLabel.text = "파고: " + model.WAV + "m"
+        guard let modelWaveValue = Double(model.WAV) else { return }
+        if modelWaveValue > 2 {
+            surfConditionText = "파도가 높습니다."
+        } else if modelWaveValue > 1 {
+            surfConditionText = "서핑하기 좋습니다."
+        } else if modelWaveValue > 0.5 {
+            surfConditionText = "초심자가 놀기 좋습니다."
+        } else if modelWaveValue == 0 {
+            surfConditionText = "파도가 없는 지역입니다."
+            waveLabel.text = ""
+        } else {
+            surfConditionText = "파도가 약합니다."
+        }
+        
+        surfConditionLabel.text = surfConditionText
+        skyConditionLabel.text = skyCondition
+        backgroundImageView.image = UIImage(named: backgroundImageName)
+        regionLabel.text = model.regionName
+        currentTemperatuerLabel.text = model.TMP + "°"
+        minTemperatureLabel.text = "최저:" + pastTMNModel.TMN + "°"
+        maxTemperatureLabel.text = "최고:" + pastTMXModel.TMX + "°"
+    }
+    
+    func setConstraints() {
+        let backgroundImageViewConstraints = [
+            backgroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+        ]
+
+        let regionLabelConstraints = [
+            regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            regionLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 15)
+        ]
+        let temperatureLabelConstraints = [
+            currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            currentTemperatuerLabel.topAnchor.constraint(equalTo: regionLabel.topAnchor, constant: 0),
+        ]
+        let maxTemperatureLabelConstraints = [
+            maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+        ]
+        let minTemperatureLabelConstraints = [
+            minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
+            minTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+        ]
+        let weatherLabelConstraints = [
+            skyConditionLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: 0),
+            skyConditionLabel.bottomAnchor.constraint(equalTo: maxTemperatureLabel.topAnchor, constant: 0)
+        ]
+        let surfConditionLabelConstraints = [
+            surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            surfConditionLabel.centerYAnchor.constraint(equalTo: maxTemperatureLabel.centerYAnchor, constant: 0)
+        ]
+        let waveLabelConstraints = [
+            waveLabel.leadingAnchor.constraint(equalTo: surfConditionLabel.leadingAnchor),
+            waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
+        ]
+        NSLayoutConstraint.activate(backgroundImageViewConstraints)
+        NSLayoutConstraint.activate(regionLabelConstraints)
+        NSLayoutConstraint.activate(temperatureLabelConstraints)
+        NSLayoutConstraint.activate(maxTemperatureLabelConstraints)
+        NSLayoutConstraint.activate(minTemperatureLabelConstraints)
+        NSLayoutConstraint.activate(weatherLabelConstraints)
+        NSLayoutConstraint.activate(surfConditionLabelConstraints)
+        NSLayoutConstraint.activate(waveLabelConstraints)
     }
 }

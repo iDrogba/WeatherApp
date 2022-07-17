@@ -5,10 +5,13 @@
 //  Created by 김상현 on 2022/07/08.
 //
 
-import UIKit
+import Combine
+import SwiftUI
 
 class MainViewController: UIViewController {
-    private var currentIndex: CGFloat = 0
+    @ObservedObject var mainCollectionViewModel = MainViewModel()
+    var cancelBag = Set<AnyCancellable>()
+
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
         searchTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
@@ -53,6 +56,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .systemBackground
         view.addSubview(titleLabel)
         view.addSubview(searchBar)
@@ -66,11 +70,31 @@ class MainViewController: UIViewController {
         searchBar.delegate = self
         searchTableView.dataSource = self
         searchTableView.delegate = self
-        
+
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
+        
+       // mainCollectionViewModel.fetchWeatherForecastModels()
+        bindMainViewModel()
     }
     
+    private func bindMainViewModel() {
+        self.mainCollectionViewModel.$weatherForecastModels
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.mainCollectionView.reloadData()
+                print("mainCollectionView.reloadData()")
+            })
+            .store(in: &self.cancelBag)
+        self.mainCollectionViewModel.$pastWeatherForecastModels
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+//                self?.mainCollectionView.reloadData()
+//                print("mainCollectionView.reloadData()")
+            })
+            .store(in: &self.cancelBag)
+    }
+
     private func applyConstraints() {
         let titleLabelConstraints = [
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -104,12 +128,18 @@ class MainViewController: UIViewController {
 // MARK: Collectioinview
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return mainCollectionViewModel.weatherForecastModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-        cell.setUI()
+        guard let model = Array(mainCollectionViewModel.weatherForecastModels.values)[indexPath.item].first else { return UICollectionViewCell() }
+
+        guard let pastTMNModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UICollectionViewCell()}
+        
+        guard let pastTMXModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UICollectionViewCell()}
+        
+        cell.setUI(model, pastTMNModel, pastTMXModel)
         
         return cell
     }
@@ -178,5 +208,11 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
         cell.setUI(regionalDataModel)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
+        RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalDataModel.regionalCode)
+        RegionalDataManager.shared.setAddedRegionalDataArray()
     }
 }

@@ -8,6 +8,16 @@
 import UIKit
 
 class MainCollectionViewCell: UICollectionViewCell {
+    private let subRegionLabel: UILabel = {
+        let subRegionLabel = UILabel()
+        subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
+        subRegionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        subRegionLabel.textColor = .white
+        subRegionLabel.layer.opacity = 0.8
+        
+        return subRegionLabel
+    }()
+    
     private let waveLabel: UILabel = {
         let waveLabel = UILabel()
         waveLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -84,8 +94,8 @@ class MainCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.contentView.addSubview(backgroundImageView)
-//        self.contentView.addSubview(foregroundImageView)
         self.contentView.addSubview(regionLabel)
+        self.contentView.addSubview(subRegionLabel)
         self.contentView.addSubview(currentTemperatuerLabel)
         self.contentView.addSubview(minTemperatureLabel)
         self.contentView.addSubview(maxTemperatureLabel)
@@ -156,6 +166,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         skyConditionLabel.text = skyCondition
         backgroundImageView.image = UIImage(named: backgroundImageName)
         regionLabel.text = model.regionName
+        subRegionLabel.text = model.subRegionName
         currentTemperatuerLabel.text = model.TMP + "°"
         minTemperatureLabel.text = "최저:" + pastTMNModel.TMN + "°"
         maxTemperatureLabel.text = "최고:" + pastTMXModel.TMX + "°"
@@ -168,10 +179,13 @@ class MainCollectionViewCell: UICollectionViewCell {
             backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
         ]
-
         let regionLabelConstraints = [
             regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
             regionLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 15)
+        ]
+        let subRegionLabelConstraints = [
+            subRegionLabel.leadingAnchor.constraint(equalTo: self.regionLabel.trailingAnchor, constant: 5),
+            subRegionLabel.centerYAnchor.constraint(equalTo: self.regionLabel.centerYAnchor)
         ]
         let temperatureLabelConstraints = [
             currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
@@ -199,6 +213,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         ]
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
+        NSLayoutConstraint.activate(subRegionLabelConstraints)
         NSLayoutConstraint.activate(temperatureLabelConstraints)
         NSLayoutConstraint.activate(maxTemperatureLabelConstraints)
         NSLayoutConstraint.activate(minTemperatureLabelConstraints)

@@ -8,6 +8,12 @@
 import UIKit
 
 class MainCollectionViewCell: UITableViewCell {
+    private let spacer: UIView = {
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        return spacer
+    }()
+    
     private let subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
         subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -88,11 +94,14 @@ class MainCollectionViewCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
         return imageView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.contentView.addSubview(spacer)
         self.contentView.addSubview(backgroundImageView)
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(subRegionLabel)
@@ -105,23 +114,8 @@ class MainCollectionViewCell: UITableViewCell {
         self.backgroundColor = .gray
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
+
     }
-    
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//        self.contentView.addSubview(backgroundImageView)
-//        self.contentView.addSubview(regionLabel)
-//        self.contentView.addSubview(subRegionLabel)
-//        self.contentView.addSubview(currentTemperatuerLabel)
-//        self.contentView.addSubview(minTemperatureLabel)
-//        self.contentView.addSubview(maxTemperatureLabel)
-//        self.contentView.addSubview(skyConditionLabel)
-//        self.contentView.addSubview(surfConditionLabel)
-//        self.contentView.addSubview(waveLabel)
-//        self.backgroundColor = .gray
-//        self.clipsToBounds = true
-//        self.layer.cornerRadius = 4
-//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -129,8 +123,13 @@ class MainCollectionViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        DispatchQueue.main.async {
+        
+//        self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
+        
+        DispatchQueue.main.async { [self] in
             self.setConstraints()
+            self.backgroundColor = .systemBackground
+            self.contentView.backgroundColor = .systemBackground
         }
     }
     
@@ -189,11 +188,17 @@ class MainCollectionViewCell: UITableViewCell {
     }
     
     func setConstraints() {
+        let spacerConstraints = [
+            spacer.heightAnchor.constraint(equalToConstant: 10),
+            spacer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+            spacer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            spacer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
+        ]
         let backgroundImageViewConstraints = [
             backgroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
             backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: spacer.topAnchor),
         ]
         let regionLabelConstraints = [
             regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
@@ -209,11 +214,11 @@ class MainCollectionViewCell: UITableViewCell {
         ]
         let maxTemperatureLabelConstraints = [
             maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
-            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
         ]
         let minTemperatureLabelConstraints = [
             minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
-            minTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+            minTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
         ]
         let weatherLabelConstraints = [
             skyConditionLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: 0),
@@ -221,12 +226,13 @@ class MainCollectionViewCell: UITableViewCell {
         ]
         let surfConditionLabelConstraints = [
             surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
-            surfConditionLabel.centerYAnchor.constraint(equalTo: maxTemperatureLabel.centerYAnchor, constant: 0)
+            surfConditionLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
         ]
         let waveLabelConstraints = [
             waveLabel.leadingAnchor.constraint(equalTo: surfConditionLabel.leadingAnchor),
             waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
         ]
+        NSLayoutConstraint.activate(spacerConstraints)
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
         NSLayoutConstraint.activate(subRegionLabelConstraints)

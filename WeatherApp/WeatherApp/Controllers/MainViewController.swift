@@ -42,12 +42,13 @@ class MainViewController: UIViewController {
     }()
     
     private let mainCollectionView: UITableView = {
-        let mainCollectionView = UITableView(frame: .zero, style: .grouped)
+        let mainCollectionView = UITableView(frame: .zero, style: .plain)
         mainCollectionView.register(MainCollectionViewCell.self, forCellReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
         mainCollectionView.translatesAutoresizingMaskIntoConstraints = false
         mainCollectionView.showsVerticalScrollIndicator = false
         mainCollectionView.backgroundColor = .systemBackground
-        
+        mainCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+
         return mainCollectionView
     }()
     
@@ -72,6 +73,9 @@ class MainViewController: UIViewController {
         searchTableView.dataSource = self
         searchTableView.delegate = self
 
+        mainCollectionView.contentInset = .zero
+        mainCollectionView.contentInsetAdjustmentBehavior = .never
+        
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
         
@@ -204,6 +208,14 @@ extension MainViewController: UISearchBarDelegate {
 }
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        UIView()
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        .leastNormalMagnitude
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard tableView.isEqual(searchTableView) else {
             return mainViewModel.weatherForecastModels.count
@@ -262,17 +274,32 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         return tableView.bounds.height * 0.065
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        guard tableView.isEqual(mainCollectionView) else { return }
-        if editingStyle == .delete {
-            let regionalDataModel = mainViewModel.addedRegionalDataModels[indexPath.row]
-            self.mainViewModel.removeAddedRegionalDataModels(regionalDataModel.regionalCode, indexPath.row)
-        } else if editingStyle == .insert {
-        }
-    }
+//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        guard tableView.isEqual(mainCollectionView) else { return }
+//        if editingStyle == .delete {
+//            let regionalDataModel = mainViewModel.addedRegionalDataModels[indexPath.row]
+//            self.mainViewModel.removeAddedRegionalDataModels(regionalDataModel.regionalCode, indexPath.row)
+//        } else if editingStyle == .insert {
+//        }
+//    }
     
-    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "삭제"
+//    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+//        return "삭제"
+//    }
+//
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard tableView.isEqual(mainCollectionView) else { return UISwipeActionsConfiguration()}
+        let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
+            // Perform your action here
+            let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
+            self.mainViewModel.removeAddedRegionalDataModels(regionalDataModel.regionalCode, indexPath.row)
+              completion(true)
+          }
+
+        let image = UIImage(systemName: "trash.circle")
+        deleteAction.image = image
+        deleteAction.backgroundColor = .systemBackground
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 
 }

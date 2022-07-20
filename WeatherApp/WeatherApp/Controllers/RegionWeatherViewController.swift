@@ -13,8 +13,6 @@ class RegionWeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        view.backgroundColor = .black
 
         [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, waveHeightLabel, weekWeatherTableView, dayWeatherCollectionView].forEach {
             view.addSubview($0)
@@ -26,6 +24,8 @@ class RegionWeatherViewController: UIViewController {
         dayWeatherCollectionView.delegate = self
         dayWeatherCollectionView.dataSource = self
 
+        applyData()
+        applyBackground()
         configureConstraints()
     }
     
@@ -59,6 +59,7 @@ class RegionWeatherViewController: UIViewController {
     private var cityLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 37, weight: .regular)
+        
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -131,6 +132,84 @@ class RegionWeatherViewController: UIViewController {
         label.shadowColor = customShadow
         return label
     }()
+    
+    private func applyBackground() {
+        var backgroundImageName: String
+        guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
+        
+        switch model.SKY {
+        case "1" :
+            backgroundImageName = "sunny.png"
+        case "3" :
+            backgroundImageName = "cloudy.png"
+        case "4":
+            backgroundImageName = "cloudy.png"
+        default :
+            backgroundImageName = "cloudy.png"
+        }
+    
+        switch model.PTY {
+        case "1" :
+            backgroundImageName = "rainy.png"
+        case "3" :
+            backgroundImageName = "snow.png"
+        default :
+            break
+        }
+        
+        let background = UIImage(named: backgroundImageName)
+        
+        var imageView: UIImageView!
+        imageView = UIImageView(frame: view.bounds)
+        imageView.contentMode = UIView.ContentMode.scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.image = background
+        imageView.center = view.center
+        view.addSubview(imageView)
+        self.view.sendSubviewToBack(imageView)
+    }
+    
+    func applyData() {
+        guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
+        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return }
+        guard let pastTMMModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return }
+        
+        
+        var descriptionLabelText: String
+        var surfConditionText: String
+        
+        switch model.SKY {
+        case "1" :
+            descriptionLabelText = "맑음"
+        case "3" :
+            descriptionLabelText = "구름 많음"
+        case "4":
+            descriptionLabelText = "흐림"
+        default :
+            descriptionLabelText = "구름 많음"
+        }
+       
+        guard let modelWaveValue = Double(model.WAV) else { return }
+        if modelWaveValue > 2 {
+            surfConditionText = "파도가 높습니다."
+        } else if modelWaveValue > 1 {
+            surfConditionText = "서핑하기 좋습니다."
+        } else if modelWaveValue > 0.5 {
+            surfConditionText = "초심자가 놀기 좋습니다."
+        } else if modelWaveValue == 0 {
+            surfConditionText = "파도가 없는 지역입니다."
+            waveHeightLabel.text = ""
+        } else {
+            surfConditionText = "파도가 약합니다."
+        }
+        
+        cityLabel.text = model.regionName
+        temperatureLabel.text = model.TMP + "°"
+        minTemperatureLabel.text = pastTMMModel.TMP + "°"
+        maxTemperatureLabel.text = pastTMXModel.TMP + "°"
+        descriptionLabel.text = descriptionLabelText
+        waveHeightLabel.text = model.WAV + "m"
+    }
     
     private func configureConstraints() {
         cityLabel.translatesAutoresizingMaskIntoConstraints = false

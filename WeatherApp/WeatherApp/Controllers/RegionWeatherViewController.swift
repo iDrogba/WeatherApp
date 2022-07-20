@@ -168,7 +168,7 @@ class RegionWeatherViewController: UIViewController {
         dayWeatherCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         dayWeatherCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         dayWeatherCollectionView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
-        dayWeatherCollectionView.heightAnchor.constraint(equalToConstant: view.frame.height / 10).isActive = true
+        dayWeatherCollectionView.heightAnchor.constraint(equalToConstant: view.frame.height / 9).isActive = true
         
         weekWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         weekWeatherTableView.topAnchor.constraint(equalTo: dayWeatherCollectionView.bottomAnchor, constant: 10).isActive = true
@@ -212,7 +212,7 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
 
 extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 7
+        return 10
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -220,6 +220,16 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
             return UICollectionViewCell()
         }
         cell.backgroundColor = .black
+        
+        guard let todayModel =
+                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return UICollectionViewCell() }
+        
+        cell.backgroundColor = .black
+        
+        cell.applyData(todayModel[indexPath.row])
+        
+        print("today model: \(todayModel)")
+        
         return cell
     }
     

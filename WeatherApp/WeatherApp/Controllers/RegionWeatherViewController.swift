@@ -14,7 +14,7 @@ class RegionWeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, waveHeightLabel, weekWeatherTableView, dayWeatherCollectionView].forEach {
+        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveHeightLabel, weekWeatherTableView, dayWeatherCollectionView].forEach {
             view.addSubview($0)
         }
         
@@ -26,6 +26,7 @@ class RegionWeatherViewController: UIViewController {
 
         applyData()
         applyBackground()
+        applySurfImage()
         configureConstraints()
     }
     
@@ -114,6 +115,11 @@ class RegionWeatherViewController: UIViewController {
         return label
     }()
     
+    private var surfImageView: UIImageView = {
+        let imageView = UIImageView(frame: .zero)
+        return imageView
+    }()
+    
     private var descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "서핑하기 좋아요"
@@ -134,26 +140,46 @@ class RegionWeatherViewController: UIViewController {
         return label
     }()
     
+    private func applySurfImage() {
+        var surfImageName: String
+        guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
+        
+        guard let modelWaveValue = Double(model.WAV) else { return }
+        if modelWaveValue > 2 { // 높은 파도
+            surfImageName = "surf4"
+        } else if modelWaveValue > 1 { // 서핑하기 좋음
+            surfImageName = "surf3"
+        } else if modelWaveValue > 0.5 { // 초심자에게 좋음
+            surfImageName = "surf2"
+        } else if modelWaveValue == 0 { // 파도 없음
+            surfImageName = "surf1"
+        } else {
+            surfImageName = "surf1"
+        }
+        
+        surfImageView.image = UIImage(named: surfImageName)
+    }
+    
     private func applyBackground() {
         var backgroundImageName: String
         guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
         
         switch model.SKY {
         case "1" :
-            backgroundImageName = "sunny.png"
+            backgroundImageName = "sunnyFull.png"
         case "3" :
-            backgroundImageName = "cloudy.png"
+            backgroundImageName = "cloudyFull.png"
         case "4":
-            backgroundImageName = "cloudy.png"
+            backgroundImageName = "cloudyFull.png"
         default :
-            backgroundImageName = "cloudy.png"
+            backgroundImageName = "cloudyFull.png"
         }
     
         switch model.PTY {
         case "1" :
-            backgroundImageName = "rainy.png"
+            backgroundImageName = "rainyFull.png"
         case "3" :
-            backgroundImageName = "snow.png"
+            backgroundImageName = "snowFull.png"
         default :
             break
         }
@@ -207,6 +233,7 @@ class RegionWeatherViewController: UIViewController {
         minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         tempStackView.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        surfImageView.translatesAutoresizingMaskIntoConstraints = false
         waveHeightLabel.translatesAutoresizingMaskIntoConstraints = false
         dayWeatherCollectionView.translatesAutoresizingMaskIntoConstraints = false
         weekWeatherTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -224,8 +251,14 @@ class RegionWeatherViewController: UIViewController {
         tempStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         tempStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 5).isActive = true
         
+        surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: 10).isActive = true
+        surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.2).isActive = true
+        surfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
+        surfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10).isActive = true
+        surfImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
         descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: view.bounds.height * 0.15).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: surfImageView.bottomAnchor, constant: 10).isActive = true
         
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 5).isActive = true

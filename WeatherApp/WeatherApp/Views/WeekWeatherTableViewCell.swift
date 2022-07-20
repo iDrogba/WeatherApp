@@ -48,7 +48,7 @@ class WeekWeatherTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .black
+        contentView.backgroundColor = UIColor(white: 0, alpha: 0)
         [dayLabel, weatherImage, tempStackView].forEach {
             contentView.addSubview($0)
         }
@@ -124,8 +124,8 @@ class WeekWeatherTableViewCell: UITableViewCell {
 
         dayLabel.text = dayLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
-        maxTemperatureLabel.text = maxTemp
-        minTemperatureLabel.text = minTemp
+        maxTemperatureLabel.text = maxTemp + "°"
+        minTemperatureLabel.text = minTemp + "°"
     }
     
 }

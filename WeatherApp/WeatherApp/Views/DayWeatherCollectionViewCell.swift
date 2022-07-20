@@ -12,8 +12,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(dayStackView)
-        
-        contentView.backgroundColor = .clear
+        contentView.backgroundColor = transparentBackground
         contentView.clipsToBounds = true
     }
     
@@ -23,6 +22,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        contentView.backgroundColor = transparentBackground
         configureCellConstraints()
     }
     
@@ -116,6 +116,6 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         
         timeLabel.text = timeLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
-        tempLabel.text = tempLabelText
+        tempLabel.text = tempLabelText + "°"
     }
 }

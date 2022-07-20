@@ -37,6 +37,7 @@ class RegionWeatherViewController: UIViewController {
     private var weekWeatherTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
+        tableView.backgroundColor = transparentBackground
         return tableView
     }()
     
@@ -51,7 +52,7 @@ class RegionWeatherViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
         
-        collectionView.backgroundColor = UIColor(white: 0, alpha: 1)
+        collectionView.backgroundColor = UIColor(white: 0, alpha: 0)
         
         return collectionView
     }()
@@ -174,37 +175,24 @@ class RegionWeatherViewController: UIViewController {
         guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return }
         guard let pastTMMModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return }
         
-        
         var descriptionLabelText: String
-        var surfConditionText: String
         
-        switch model.SKY {
-        case "1" :
-            descriptionLabelText = "맑음"
-        case "3" :
-            descriptionLabelText = "구름 많음"
-        case "4":
-            descriptionLabelText = "흐림"
-        default :
-            descriptionLabelText = "구름 많음"
-        }
-       
         guard let modelWaveValue = Double(model.WAV) else { return }
         if modelWaveValue > 2 {
-            surfConditionText = "파도가 높습니다."
+            descriptionLabelText = "파도가 높습니다."
         } else if modelWaveValue > 1 {
-            surfConditionText = "서핑하기 좋습니다."
+            descriptionLabelText = "서핑하기 좋습니다."
         } else if modelWaveValue > 0.5 {
-            surfConditionText = "초심자가 놀기 좋습니다."
+            descriptionLabelText = "초심자가 놀기 좋습니다."
         } else if modelWaveValue == 0 {
-            surfConditionText = "파도가 없는 지역입니다."
+            descriptionLabelText = "파도가 없는 지역입니다."
             waveHeightLabel.text = ""
         } else {
-            surfConditionText = "파도가 약합니다."
+            descriptionLabelText = "파도가 약합니다."
         }
         
         cityLabel.text = model.regionName
-        temperatureLabel.text = model.TMP + "°"
+        temperatureLabel.text = model.TMP
         minTemperatureLabel.text = pastTMMModel.TMP + "°"
         maxTemperatureLabel.text = pastTMXModel.TMP + "°"
         descriptionLabel.text = descriptionLabelText
@@ -270,7 +258,7 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
         guard let futureModel =
                 WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0000"}) else { return UITableViewCell() }
         
-        cell.backgroundColor = .black
+        cell.backgroundColor = .clear
         
         if indexPath.row == 0 {
             cell.applyData(todayModel)
@@ -298,12 +286,10 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier, for: indexPath) as? DayWeatherCollectionViewCell else {
             return UICollectionViewCell()
         }
-        cell.backgroundColor = .black
+        cell.backgroundColor = .clear
         
         guard let todayModel =
                 WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return UICollectionViewCell() }
-        
-        cell.backgroundColor = .black
         
         cell.applyData(todayModel[indexPath.row])
         

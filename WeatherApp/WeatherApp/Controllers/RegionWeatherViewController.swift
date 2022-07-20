@@ -39,6 +39,7 @@ class RegionWeatherViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
         tableView.backgroundColor = transparentBackground
+        tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
     
@@ -52,8 +53,8 @@ class RegionWeatherViewController: UIViewController {
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
-        
-        collectionView.backgroundColor = UIColor(white: 0, alpha: 0)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = transparentBackground
         
         return collectionView
     }()
@@ -253,6 +254,7 @@ class RegionWeatherViewController: UIViewController {
         
         surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: 10).isActive = true
         surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.2).isActive = true
+        surfImageView.widthAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.width * 0.6).isActive = true
         surfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
         surfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10).isActive = true
         surfImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -332,7 +334,7 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let itemSize = CGSize(width: view.frame.width / 7, height: collectionView.frame.height)
+        let itemSize = CGSize(width: view.frame.width / 6, height: collectionView.frame.height)
         return itemSize
     }
 }

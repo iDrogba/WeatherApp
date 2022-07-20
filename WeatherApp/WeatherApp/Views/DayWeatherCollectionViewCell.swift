@@ -29,7 +29,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.text = "오전 3시"
-        label.font = .systemFont(ofSize: 10, weight: .regular)
+        label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -45,7 +45,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     private let tempLabel: UILabel = {
        let label = UILabel()
         label.text = "29"
-        label.font = .systemFont(ofSize: 10, weight: .regular)
+        label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textAlignment = .center
         label.textColor = .white
         return label

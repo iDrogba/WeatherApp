@@ -154,6 +154,10 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let viewController = RegionWeatherViewController()
+        
+        if let model = Array(mainCollectionViewModel.weatherForecastModels.values)[indexPath.item].first {
+            viewController.regionalCode = model.regionalCode
+        }
         viewController.modalPresentationStyle = .fullScreen
         present(viewController, animated: true)
     }

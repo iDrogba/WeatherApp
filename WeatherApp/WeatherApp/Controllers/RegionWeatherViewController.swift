@@ -9,6 +9,8 @@ import UIKit
 
 class RegionWeatherViewController: UIViewController {
     
+    public var regionalCode: String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
                 
@@ -17,12 +19,13 @@ class RegionWeatherViewController: UIViewController {
         [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, waveHeightLabel, weekWeatherTableView, dayWeatherCollectionView].forEach {
             view.addSubview($0)
         }
+        
         weekWeatherTableView.delegate = self
         weekWeatherTableView.dataSource = self
         
         dayWeatherCollectionView.delegate = self
         dayWeatherCollectionView.dataSource = self
-        
+
         configureConstraints()
     }
     
@@ -55,7 +58,6 @@ class RegionWeatherViewController: UIViewController {
     
     private var cityLabel: UILabel = {
         let label = UILabel()
-        label.text = "포항시"
         label.font = .systemFont(ofSize: 37, weight: .regular)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
@@ -89,7 +91,6 @@ class RegionWeatherViewController: UIViewController {
         stackView.spacing = 10
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
-        
         return stackView
     }()
     
@@ -179,17 +180,28 @@ class RegionWeatherViewController: UIViewController {
 
 extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return weekWeather.count
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = weekWeatherTableView.dequeueReusableCell(withIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UITableViewCell() }
         
+        guard let todayModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.first else { return UITableViewCell() }
+        
+        guard let futureModel =
+                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0000"}) else { return UITableViewCell() }
+        
         cell.backgroundColor = .black
-        cell.configure(day: weekWeather[indexPath.row].day,
-                       imageName: weekWeather[indexPath.row].weatherImageName,
-                       min: weekWeather[indexPath.row].minTemperature,
-                       max: weekWeather[indexPath.row].maxTemperature)
+        
+        if indexPath.row == 0 {
+            cell.applyData(todayModel)
+        } else {
+            cell.applyData(futureModel[indexPath.row - 1])
+        }
+        
+        print("todayModel: \(todayModel)")
+        print("futuremodel: \(futureModel)")
+        
         return cell
     }
     

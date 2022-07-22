@@ -15,7 +15,7 @@ class MainViewModel: ObservableObject {
     var pastWeatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
     init() {
-        self.fetchAddedRegionalDataModels()
+        self.fetchAddedRegionalDataModels{}
         self.fetchWeatherForecastModels()
     }
     
@@ -54,26 +54,29 @@ class MainViewModel: ObservableObject {
         self.searchedRegionalDataModels = retrivedRegionalData
     }
     
-    func addAddedRegionalDataModels(_ regionalCode: String) {
-        print(regionalCode)
-        print(RegionalDataManager.shared.addedRegionalDataModels)
+    func addAddedRegionalDataModels(_ regionalCode: String, _ completion: @escaping () -> Void) {
+//        print(regionalCode)
+//        print(RegionalDataManager.shared.addedRegionalDataModels)
         RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
-        self.fetchAddedRegionalDataModels()
+        self.fetchAddedRegionalDataModels{
+            completion()
+        }
         //TODO: 딱 한개의 요소만 네트워킹하는 로직 작성 필요
     }
     
     func removeAddedRegionalDataModels(_ regionalCode: String, _ indexAt: Int) {
         RegionalDataManager.shared.removeAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
-        self.fetchAddedRegionalDataModels()
+        self.fetchAddedRegionalDataModels {}
         self.weatherForecastModels.removeValue(forKey: regionalCode)
         self.pastWeatherForecastModels.removeValue(forKey: regionalCode)
-        self.addedRegionalDataModels.remove(at: indexAt)
+//        self.addedRegionalDataModels.remove(at: indexAt)
     }
     
     /// RegionalDataManager 로 부터 오름차순으로 가져옴.
-    private func fetchAddedRegionalDataModels() {
+    private func fetchAddedRegionalDataModels(_ completion: @escaping () -> Void) {
         self.addedRegionalDataModels = RegionalDataManager.shared.addedRegionalDataModels.sorted(by: <)
+        completion()
     }
 }

@@ -57,13 +57,26 @@ class RegionalDataManager {
         return resultRegionalDataModel
     }
     
+    /// UserDefaults에 추가된 모델들을 addedRegionalDataModels 프로퍼티에 세팅.
+    func setAddedRegionalDataArray() {
+        let userDefaults = UserDefaults.standard
+        let savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
+        var resultAddedRegionalDataModels: [RegionalDataModel] = []
+        for savedRegionalCode in savedRegionalCodes {
+            let index = regionalDataModels.firstIndex{ $0.regionalCode == savedRegionalCode }
+            if let index = index {
+                resultAddedRegionalDataModels.append(regionalDataModels[index])
+            }
+        }
+        self.addedRegionalDataModels = resultAddedRegionalDataModels
+    }
+    
     /// UserDefaults에 RegionalCode 추가.
     func addAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
         var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         savedRegionalCodes.append(regionalCode)
         let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
-
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
     
@@ -76,19 +89,6 @@ class RegionalDataManager {
         let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
 
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
-    }
-    
-    /// UserDefaults에 추가된 모델들을 addedRegionalDataModels 프로퍼티에 세팅.
-    func setAddedRegionalDataArray() {
-        let userDefaults = UserDefaults.standard
-        let savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
-        
-        for savedRegionalCode in savedRegionalCodes {
-            let index = regionalDataModels.firstIndex{ $0.regionalCode == savedRegionalCode }
-            if let index = index {
-                self.addedRegionalDataModels.append(regionalDataModels[index])
-            }
-        }
     }
 
     private func fetchSavedRegionalDataFromCSV() {

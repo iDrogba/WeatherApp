@@ -8,12 +8,6 @@
 import UIKit
 
 class MainCollectionViewCell: UITableViewCell {
-//    private let spacer: UIView = {
-//        let spacer = UIView()
-//        spacer.translatesAutoresizingMaskIntoConstraints = false
-//        return spacer
-//    }()
-    
     private let subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
         subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -106,7 +100,6 @@ class MainCollectionViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        self.contentView.addSubview(spacer)
         self.contentView.addSubview(backgroundImageView)
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(subRegionLabel)
@@ -192,12 +185,6 @@ class MainCollectionViewCell: UITableViewCell {
     }
     
     func setConstraints() {
-//        let spacerConstraints = [
-//            spacer.heightAnchor.constraint(equalToConstant: 10),
-//            spacer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
-//            spacer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
-//            spacer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
-//        ]
         let backgroundImageViewConstraints = [
             backgroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
@@ -236,7 +223,180 @@ class MainCollectionViewCell: UITableViewCell {
             waveLabel.leadingAnchor.constraint(equalTo: surfConditionLabel.leadingAnchor),
             waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
         ]
-//        NSLayoutConstraint.activate(spacerConstraints)
+        NSLayoutConstraint.activate(backgroundImageViewConstraints)
+        NSLayoutConstraint.activate(regionLabelConstraints)
+        NSLayoutConstraint.activate(subRegionLabelConstraints)
+        NSLayoutConstraint.activate(temperatureLabelConstraints)
+        NSLayoutConstraint.activate(maxTemperatureLabelConstraints)
+        NSLayoutConstraint.activate(minTemperatureLabelConstraints)
+        NSLayoutConstraint.activate(weatherLabelConstraints)
+        NSLayoutConstraint.activate(surfConditionLabelConstraints)
+        NSLayoutConstraint.activate(waveLabelConstraints)
+    }
+}
+
+class PlaceHolderCollectionViewCell: UITableViewCell {
+    private let subRegionLabel: UILabel = {
+        let subRegionLabel = UILabel()
+        subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
+        subRegionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        subRegionLabel.textColor = .white
+        subRegionLabel.layer.opacity = 0.8
+
+        return subRegionLabel
+    }()
+    
+    private let waveLabel: UILabel = {
+        let waveLabel = UILabel()
+        waveLabel.translatesAutoresizingMaskIntoConstraints = false
+        waveLabel.font = .systemFont(ofSize: 10, weight: .semibold)
+        waveLabel.textColor = .white
+        waveLabel.layer.opacity = 0.8
+        
+        return waveLabel
+    }()
+    
+    private let surfConditionLabel: UILabel = {
+        let surfConditionLabel = UILabel()
+        surfConditionLabel.translatesAutoresizingMaskIntoConstraints = false
+        surfConditionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        surfConditionLabel.textColor = .white
+        surfConditionLabel.layer.opacity = 0.8
+        
+        return surfConditionLabel
+    }()
+    
+    private let skyConditionLabel: UILabel = {
+        let weatherLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        weatherLabel.translatesAutoresizingMaskIntoConstraints = false
+        weatherLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        weatherLabel.textColor = .white
+        weatherLabel.text = "_"
+        
+        return weatherLabel
+    }()
+    
+    private let minTemperatureLabel: UILabel = {
+        let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        minTemperatureLabel.textColor = .white
+        minTemperatureLabel.text = "최저: _"
+
+        return minTemperatureLabel
+    }()
+    
+    private let maxTemperatureLabel: UILabel = {
+        let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        maxTemperatureLabel.textColor = .white
+        maxTemperatureLabel.text = "최고: _"
+        
+        return maxTemperatureLabel
+    }()
+    
+    private let currentTemperatuerLabel: UILabel = {
+        let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
+        temperatuerLabel.text = "_"
+        temperatuerLabel.font = .systemFont(ofSize: 48, weight: .regular)
+        temperatuerLabel.textColor = .white
+
+        return temperatuerLabel
+    }()
+    
+    private let regionLabel: UILabel = {
+        let regionLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        regionLabel.translatesAutoresizingMaskIntoConstraints = false
+        regionLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        regionLabel.textColor = .white
+        regionLabel.text = "_"
+        
+        return regionLabel
+    }()
+    
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
+        imageView.image = UIImage(named: "sunny")
+        return imageView
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.contentView.addSubview(backgroundImageView)
+        self.contentView.addSubview(regionLabel)
+        self.contentView.addSubview(subRegionLabel)
+        self.contentView.addSubview(currentTemperatuerLabel)
+        self.contentView.addSubview(minTemperatureLabel)
+        self.contentView.addSubview(maxTemperatureLabel)
+        self.contentView.addSubview(skyConditionLabel)
+        self.contentView.addSubview(surfConditionLabel)
+        self.contentView.addSubview(waveLabel)
+        self.backgroundColor = .gray
+        self.clipsToBounds = true
+        self.layer.cornerRadius = 4
+
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
+        
+        DispatchQueue.main.async { [self] in
+            self.setConstraints()
+            self.backgroundColor = .systemBackground
+            self.contentView.backgroundColor = .systemBackground
+        }
+    }
+    
+    func setConstraints() {
+        let backgroundImageViewConstraints = [
+            backgroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+        ]
+        let regionLabelConstraints = [
+            regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            regionLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 15)
+        ]
+        let subRegionLabelConstraints = [
+            subRegionLabel.leadingAnchor.constraint(equalTo: self.regionLabel.trailingAnchor, constant: 5),
+            subRegionLabel.centerYAnchor.constraint(equalTo: self.regionLabel.centerYAnchor)
+        ]
+        let temperatureLabelConstraints = [
+            currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            currentTemperatuerLabel.topAnchor.constraint(equalTo: regionLabel.topAnchor, constant: 0),
+        ]
+        let maxTemperatureLabelConstraints = [
+            maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
+        ]
+        let minTemperatureLabelConstraints = [
+            minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
+            minTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
+        ]
+        let weatherLabelConstraints = [
+            skyConditionLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: 0),
+            skyConditionLabel.bottomAnchor.constraint(equalTo: maxTemperatureLabel.topAnchor, constant: 0)
+        ]
+        let surfConditionLabelConstraints = [
+            surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            surfConditionLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
+        ]
+        let waveLabelConstraints = [
+            waveLabel.leadingAnchor.constraint(equalTo: surfConditionLabel.leadingAnchor),
+            waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
+        ]
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
         NSLayoutConstraint.activate(subRegionLabelConstraints)

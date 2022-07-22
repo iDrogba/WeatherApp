@@ -26,10 +26,12 @@ class RegionWeatherViewController: UIViewController {
         dayWeatherCollectionView.delegate = self
         dayWeatherCollectionView.dataSource = self
 
-        applyData()
-        applyBackground()
-        applySurfImage()
-        configureConstraints()
+        DispatchQueue.main.async {
+            self.applyData()
+            self.applyBackground()
+            self.applySurfImage()
+            self.configureConstraints()
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -120,6 +122,7 @@ class RegionWeatherViewController: UIViewController {
     
     private var surfImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     

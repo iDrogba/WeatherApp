@@ -56,15 +56,17 @@ class RegionalDataManager {
         }
         return resultRegionalDataModel
     }
+    
     /// UserDefaults에 RegionalCode 추가.
     func addAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
-        guard var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] else { return }
+        var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         savedRegionalCodes.append(regionalCode)
         let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
 
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
+    
     ///  UserDefaults에 RegionalCode 삭제.
     func removeAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
@@ -75,6 +77,7 @@ class RegionalDataManager {
 
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
+    
     /// UserDefaults에 추가된 모델들을 addedRegionalDataModels 프로퍼티에 세팅.
     func setAddedRegionalDataArray() {
         let userDefaults = UserDefaults.standard

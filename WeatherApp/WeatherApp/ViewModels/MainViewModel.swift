@@ -55,6 +55,8 @@ class MainViewModel: ObservableObject {
     }
     
     func addAddedRegionalDataModels(_ regionalCode: String) {
+        print(regionalCode)
+        print(RegionalDataManager.shared.addedRegionalDataModels)
         RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
         self.fetchAddedRegionalDataModels()

@@ -78,7 +78,6 @@ class MainViewController: UIViewController {
         
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
-        
         bindMainViewModel()
     }
     
@@ -290,13 +289,12 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard tableView.isEqual(mainCollectionView) else { return UISwipeActionsConfiguration()}
         let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
-            // Perform your action here
             let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
             self.mainViewModel.removeAddedRegionalDataModels(regionalDataModel.regionalCode, indexPath.row)
               completion(true)
           }
 
-        let image = UIImage(systemName: "trash.circle")
+        let image = UIImage(systemName: "trash.circle")?.withTintColor(.red)
         deleteAction.image = image
         deleteAction.backgroundColor = .systemBackground
         return UISwipeActionsConfiguration(actions: [deleteAction])

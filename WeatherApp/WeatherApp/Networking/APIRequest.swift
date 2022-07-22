@@ -83,7 +83,7 @@ class RequestInfo {
     let baseURL: String = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"
     let serviceKey: String = "a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D"
     let pageNo: String = "1"
-    var numOfRows: String = "500"
+    var numOfRows: String = "1000"
     let dataType: String = "JSON"
     var baseDate: String = ""
     var baseTime: String = ""

@@ -151,14 +151,14 @@ class RegionWeatherViewController: UIViewController {
         guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
         
         guard let modelWaveValue = Double(model.WAV) else { return }
-        if modelWaveValue > 2 { // 높은 파도
+        if modelWaveValue >= 2 { // 높은 파도
             surfImageName = "surf4"
-        } else if modelWaveValue > 1 { // 서핑하기 좋음
+        } else if modelWaveValue >= 1 { // 서핑하기 좋음
             surfImageName = "surf3"
-        } else if modelWaveValue > 0.5 { // 초심자에게 좋음
+        } else if modelWaveValue >= 0.5 { // 초심자에게 좋음
             surfImageName = "surf2"
         } else if modelWaveValue == 0 { // 파도 없음
-            surfImageName = "surf1"
+            surfImageName = ""
         } else {
             surfImageName = "surf1"
         }
@@ -210,12 +210,12 @@ class RegionWeatherViewController: UIViewController {
         var descriptionLabelText: String
         
         guard let modelWaveValue = Double(model.WAV) else { return }
-        if modelWaveValue > 2 {
+        if modelWaveValue >= 2 {
             descriptionLabelText = "파도가 높습니다."
-        } else if modelWaveValue > 1 {
-            descriptionLabelText = "서핑하기 좋습니다."
-        } else if modelWaveValue > 0.5 {
-            descriptionLabelText = "초심자가 놀기 좋습니다."
+        } else if modelWaveValue >= 1 {
+            descriptionLabelText = "서핑을 즐기기 좋습니다."
+        } else if modelWaveValue >= 0.5 {
+            descriptionLabelText = "초심자가 즐기기 좋습니다."
         } else if modelWaveValue == 0 {
             descriptionLabelText = "파도가 없는 지역입니다."
             waveHeightLabel.text = ""

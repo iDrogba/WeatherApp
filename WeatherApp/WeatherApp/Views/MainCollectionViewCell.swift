@@ -161,12 +161,12 @@ class MainCollectionViewCell: UITableViewCell {
        
         waveLabel.text = "파고: " + model.WAV + "m"
         guard let modelWaveValue = Double(model.WAV) else { return }
-        if modelWaveValue > 2 {
+        if modelWaveValue >= 2 {
             surfConditionText = "파도가 높습니다."
-        } else if modelWaveValue > 1 {
-            surfConditionText = "서핑하기 좋습니다."
-        } else if modelWaveValue > 0.5 {
-            surfConditionText = "초심자가 놀기 좋습니다."
+        } else if modelWaveValue >= 1 {
+            surfConditionText = "서핑을 즐기기 좋습니다."
+        } else if modelWaveValue >= 0.5 {
+            surfConditionText = "초심자가 즐기기 좋습니다."
         } else if modelWaveValue == 0 {
             surfConditionText = "파도가 없는 지역입니다."
             waveLabel.text = ""

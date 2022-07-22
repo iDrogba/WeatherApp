@@ -7,6 +7,7 @@
 
 import Combine
 import SwiftUI
+import Alamofire
 
 class MainViewController: UIViewController {
     @ObservedObject var mainViewModel = MainViewModel()
@@ -217,6 +218,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard tableView.isEqual(searchTableView) else {
+            guard mainViewModel.weatherForecastModels.count != 0 else {
+                return 1
+            }
             return mainViewModel.weatherForecastModels.count
         }
         let itemCount = mainViewModel.searchedRegionalDataModels.count
@@ -230,17 +234,21 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard tableView.isEqual(searchTableView) else {
-            print(mainViewModel.addedRegionalDataModels[indexPath.row].regionName)
-            print(mainViewModel.addedRegionalDataModels.count)
-            print(indexPath.row)
+//            print(mainViewModel.addedRegionalDataModels[indexPath.row].regionName)
+//            print(mainViewModel.addedRegionalDataModels.count)
+//            print(indexPath.row)
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UITableViewCell() }
+            guard  mainViewModel.weatherForecastModels.count != 0 else { return cell }
+            
             let cellRegionalCode = mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
             guard let model = mainViewModel.weatherForecastModels[cellRegionalCode]?.first else { return UITableViewCell() }
-            
             guard let pastTMNModel = mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UITableViewCell()}
             
             guard let pastTMXModel = mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UITableViewCell()}
-            cell.setUI(model, pastTMNModel, pastTMXModel)
+            
+            DispatchQueue.main.async {
+                cell.setUI(model, pastTMNModel, pastTMXModel)
+            }
             
             return cell
         }
@@ -294,9 +302,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
               completion(true)
           }
 
-        let image = UIImage(systemName: "trash.circle")?.withTintColor(.red)
+        let image = UIImage(systemName: "trash.circle")
         deleteAction.image = image
-        deleteAction.backgroundColor = .systemBackground
+        deleteAction.backgroundColor = .red
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 

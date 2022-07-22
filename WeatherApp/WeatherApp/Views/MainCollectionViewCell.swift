@@ -8,11 +8,11 @@
 import UIKit
 
 class MainCollectionViewCell: UITableViewCell {
-    private let spacer: UIView = {
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        return spacer
-    }()
+//    private let spacer: UIView = {
+//        let spacer = UIView()
+//        spacer.translatesAutoresizingMaskIntoConstraints = false
+//        return spacer
+//    }()
     
     private let subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
@@ -20,7 +20,7 @@ class MainCollectionViewCell: UITableViewCell {
         subRegionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         subRegionLabel.textColor = .white
         subRegionLabel.layer.opacity = 0.8
-        
+
         return subRegionLabel
     }()
     
@@ -40,7 +40,7 @@ class MainCollectionViewCell: UITableViewCell {
         surfConditionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         surfConditionLabel.textColor = .white
         surfConditionLabel.layer.opacity = 0.8
-
+        
         return surfConditionLabel
     }()
     
@@ -49,6 +49,7 @@ class MainCollectionViewCell: UITableViewCell {
         weatherLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         weatherLabel.textColor = .white
+        weatherLabel.text = "_"
         
         return weatherLabel
     }()
@@ -58,7 +59,8 @@ class MainCollectionViewCell: UITableViewCell {
         minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         minTemperatureLabel.textColor = .white
-        
+        minTemperatureLabel.text = "최저: _"
+
         return minTemperatureLabel
     }()
     
@@ -67,6 +69,7 @@ class MainCollectionViewCell: UITableViewCell {
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         maxTemperatureLabel.textColor = .white
+        maxTemperatureLabel.text = "최고: _"
         
         return maxTemperatureLabel
     }()
@@ -74,7 +77,7 @@ class MainCollectionViewCell: UITableViewCell {
     private let currentTemperatuerLabel: UILabel = {
         let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
-        temperatuerLabel.text = "25°"
+        temperatuerLabel.text = "_"
         temperatuerLabel.font = .systemFont(ofSize: 48, weight: .regular)
         temperatuerLabel.textColor = .white
 
@@ -86,7 +89,8 @@ class MainCollectionViewCell: UITableViewCell {
         regionLabel.translatesAutoresizingMaskIntoConstraints = false
         regionLabel.font = .systemFont(ofSize: 24, weight: .bold)
         regionLabel.textColor = .white
-
+        regionLabel.text = "_"
+        
         return regionLabel
     }()
     
@@ -96,12 +100,13 @@ class MainCollectionViewCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
+        imageView.image = UIImage(named: "sunny")
         return imageView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.contentView.addSubview(spacer)
+//        self.contentView.addSubview(spacer)
         self.contentView.addSubview(backgroundImageView)
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(subRegionLabel)
@@ -123,8 +128,7 @@ class MainCollectionViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-//        self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
+        self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
         
         DispatchQueue.main.async { [self] in
             self.setConstraints()
@@ -188,17 +192,17 @@ class MainCollectionViewCell: UITableViewCell {
     }
     
     func setConstraints() {
-        let spacerConstraints = [
-            spacer.heightAnchor.constraint(equalToConstant: 10),
-            spacer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
-            spacer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
-            spacer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
-        ]
+//        let spacerConstraints = [
+//            spacer.heightAnchor.constraint(equalToConstant: 10),
+//            spacer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+//            spacer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+//            spacer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
+//        ]
         let backgroundImageViewConstraints = [
             backgroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
             backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            backgroundImageView.bottomAnchor.constraint(equalTo: spacer.topAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
         ]
         let regionLabelConstraints = [
             regionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
@@ -232,7 +236,7 @@ class MainCollectionViewCell: UITableViewCell {
             waveLabel.leadingAnchor.constraint(equalTo: surfConditionLabel.leadingAnchor),
             waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
         ]
-        NSLayoutConstraint.activate(spacerConstraints)
+//        NSLayoutConstraint.activate(spacerConstraints)
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
         NSLayoutConstraint.activate(subRegionLabelConstraints)

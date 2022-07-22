@@ -67,8 +67,9 @@ class MainViewModel: ObservableObject {
         RegionalDataManager.shared.removeAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
         self.fetchAddedRegionalDataModels()
-        weatherForecastModels.removeValue(forKey: regionalCode)
-        addedRegionalDataModels.remove(at: indexAt)
+        self.weatherForecastModels.removeValue(forKey: regionalCode)
+        self.pastWeatherForecastModels.removeValue(forKey: regionalCode)
+        self.addedRegionalDataModels.remove(at: indexAt)
     }
     
     /// RegionalDataManager 로 부터 오름차순으로 가져옴.

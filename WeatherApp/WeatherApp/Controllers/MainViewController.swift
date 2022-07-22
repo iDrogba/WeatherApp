@@ -226,7 +226,12 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard tableView.isEqual(searchTableView) else {
+            guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
+            
             let viewController = RegionWeatherViewController()
+            let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
+            guard WeatherForecastModelManager.shared.currentWeatherForecastModels[cellRegionalCode] != nil else { return }
+            viewController.regionalCode = cellRegionalCode
             viewController.modalPresentationStyle = .fullScreen
             present(viewController, animated: true)
             return
@@ -247,12 +252,13 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard tableView.isEqual(mainCollectionView) else { return UISwipeActionsConfiguration()}
+        guard self.mainViewModel.addedRegionalDataModels.count != 0 else {return UISwipeActionsConfiguration()}
         let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
             guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
             let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
             self.mainViewModel.removeAddedRegionalDataModels(regionalDataModel.regionalCode, indexPath.row)
               completion(true)
-          }
+        }
 
         let image = UIImage(systemName: "trash.circle")
         deleteAction.image = image

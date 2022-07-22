@@ -112,7 +112,7 @@ class MainCollectionViewCell: UITableViewCell {
         self.backgroundColor = .gray
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
-
+        self.selectedBackgroundView = UIView()
     }
     
     required init?(coder: NSCoder) {
@@ -340,7 +340,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         self.backgroundColor = .gray
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
-
+        self.selectedBackgroundView = UIView()
     }
     
     required init?(coder: NSCoder) {
@@ -355,6 +355,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
             self.setConstraints()
             self.backgroundColor = .systemBackground
             self.contentView.backgroundColor = .systemBackground
+            
         }
     }
     

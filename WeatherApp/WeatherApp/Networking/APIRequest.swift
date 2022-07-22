@@ -13,7 +13,7 @@ class APIRequestManager {
         var urlSets: [(RegionalDataModel,String)] = []
         switch responseType {
         case .current:
-            for addedRegionalData in RegionalDataManager.shared.addedRegionalDataArray {
+            for addedRegionalData in RegionalDataManager.shared.addedRegionalDataModels {
                 let url = RequestInfo(responseType).fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
                 urlSets.append((addedRegionalData, url))
             }
@@ -21,7 +21,7 @@ class APIRequestManager {
                 completion()
             }
         case .past:
-            for addedRegionalData in RegionalDataManager.shared.addedRegionalDataArray {
+            for addedRegionalData in RegionalDataManager.shared.addedRegionalDataModels {
                 let url = RequestInfo(responseType).fetchURL(addedRegionalData.positionX, addedRegionalData.positionY)
                 urlSets.append((addedRegionalData, url))
             }

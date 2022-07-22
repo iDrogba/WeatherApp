@@ -7,9 +7,10 @@
 
 import Combine
 import SwiftUI
+import Alamofire
 
 class MainViewController: UIViewController {
-    @ObservedObject var mainCollectionViewModel = MainViewModel()
+    @ObservedObject private var mainViewModel = MainViewModel()
     var cancelBag = Set<AnyCancellable>()
 
     private let searchTableView: UITableView = {
@@ -41,12 +42,15 @@ class MainViewController: UIViewController {
         return searchBar
     }()
     
-    private let mainCollectionView: UICollectionView = {
-        let mainCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.init())
-        mainCollectionView.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
+    private let mainCollectionView: UITableView = {
+        let mainCollectionView = UITableView(frame: .zero, style: .plain)
+        mainCollectionView.register(MainCollectionViewCell.self, forCellReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
+        mainCollectionView.register(PlaceHolderCollectionViewCell.self, forCellReuseIdentifier: PlaceHolderCollectionViewCell.reuseIdentifier)
         mainCollectionView.translatesAutoresizingMaskIntoConstraints = false
         mainCollectionView.showsVerticalScrollIndicator = false
-        
+        mainCollectionView.backgroundColor = .systemBackground
+        mainCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+
         return mainCollectionView
     }()
     
@@ -71,26 +75,36 @@ class MainViewController: UIViewController {
         searchTableView.dataSource = self
         searchTableView.delegate = self
 
+        mainCollectionView.contentInset = .zero
+        mainCollectionView.contentInsetAdjustmentBehavior = .never
+        
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
-        
-       // mainCollectionViewModel.fetchWeatherForecastModels()
         bindMainViewModel()
     }
     
     private func bindMainViewModel() {
-        self.mainCollectionViewModel.$weatherForecastModels
+        self.mainViewModel.$weatherForecastModels
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
                 self?.mainCollectionView.reloadData()
                 print("mainCollectionView.reloadData()")
             })
             .store(in: &self.cancelBag)
-        self.mainCollectionViewModel.$pastWeatherForecastModels
+
+        self.mainViewModel.$searchedRegionalDataModels
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
-//                self?.mainCollectionView.reloadData()
-//                print("mainCollectionView.reloadData()")
+                self?.searchTableView.reloadData()
+                print("searchTableView.reloadData()")
+            })
+            .store(in: &self.cancelBag)
+        
+        self.mainViewModel.$addedRegionalDataModels
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.mainCollectionView.reloadData()
+                print("mainCollectionView.reloadData()")
             })
             .store(in: &self.cancelBag)
     }
@@ -106,10 +120,10 @@ class MainViewController: UIViewController {
             searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0),
         ]
         let mainCollectionViewConstraints = [
-            mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             mainCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
-            mainCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10)
+            mainCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 0)
         ]
         let searchTableViewConstraints = [
             searchTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
@@ -122,44 +136,6 @@ class MainViewController: UIViewController {
         NSLayoutConstraint.activate(searchBarConstraints)
         NSLayoutConstraint.activate(mainCollectionViewConstraints)
         NSLayoutConstraint.activate(searchTableViewConstraints)
-    }
-}
-
-// MARK: Collectioinview
-extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mainCollectionViewModel.weatherForecastModels.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-        guard let model = Array(mainCollectionViewModel.weatherForecastModels.values)[indexPath.item].first else { return UICollectionViewCell() }
-
-        guard let pastTMNModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return UICollectionViewCell()}
-        
-        guard let pastTMXModel = mainCollectionViewModel.pastWeatherForecastModels[model.regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return UICollectionViewCell()}
-        
-        cell.setUI(model, pastTMNModel, pastTMXModel)
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let cellWidth = collectionView.bounds.width - 40
-        let cellHeight = collectionView.bounds.height * 0.2
-        let itemSize = CGSize(width: cellWidth, height: cellHeight)
-        
-        return itemSize
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let viewController = RegionWeatherViewController()
-        
-        if let model = Array(mainCollectionViewModel.weatherForecastModels.values)[indexPath.item].first {
-            viewController.regionalCode = model.regionalCode
-        }
-        viewController.modalPresentationStyle = .fullScreen
-        present(viewController, animated: true)
     }
 }
 
@@ -176,8 +152,8 @@ extension MainViewController: UISearchBarDelegate {
         searchTableView.isHidden = false
         searchBar.showsCancelButton = true
         guard let searchTerm = searchBar.text else { return }
-        RegionalDataManager.shared.setSearchedRegionalDataModel(searchTerm)
-        searchTableView.reloadData()
+        
+        mainViewModel.searchRegionalDataModel(searchTerm)
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
@@ -189,8 +165,7 @@ extension MainViewController: UISearchBarDelegate {
         if searchText == "" {
             searchBar.endEditing(true)
         }
-        RegionalDataManager.shared.setSearchedRegionalDataModel(searchText)
-        searchTableView.reloadData()
+        mainViewModel.searchRegionalDataModel(searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -200,29 +175,89 @@ extension MainViewController: UISearchBarDelegate {
 }
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        UIView()
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        .leastNormalMagnitude
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let itemCount = RegionalDataManager.shared.searchedRegionalDataArray.count
+        guard tableView.isEqual(searchTableView) else {
+            guard mainViewModel.addedRegionalDataModels.count != 0 else { return 1 }
+            return mainViewModel.addedRegionalDataModels.count
+        }
+        let itemCount = mainViewModel.searchedRegionalDataModels.count
         if itemCount == 0 {
             tableView.alpha = 0.4
         } else {
             tableView.alpha = 1
         }
-        
         return itemCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard tableView.isEqual(searchTableView) else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: MainCollectionViewCell.reuseIdentifier) as? MainCollectionViewCell else { return UITableViewCell() }
+            guard let placeHolderCell = tableView.dequeueReusableCell(withIdentifier: PlaceHolderCollectionViewCell.reuseIdentifier) as? PlaceHolderCollectionViewCell else { return UITableViewCell() }
+            
+            guard  mainViewModel.weatherForecastModels.count != 0 else { return placeHolderCell }
+            
+            let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
+            guard let model = self.mainViewModel.weatherForecastModels[cellRegionalCode]?.first else { return placeHolderCell }
+            guard let pastTMNModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return placeHolderCell }
+            
+            guard let pastTMXModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return placeHolderCell }
+            
+            DispatchQueue.main.async {
+                cell.setUI(model, pastTMNModel, pastTMXModel)
+            }
+            
+            return cell
+        }
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as? SearchTableViewCell else {
             return UITableViewCell()
         }
-        let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
+        let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.row]
         cell.setUI(regionalDataModel)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let regionalDataModel = RegionalDataManager.shared.searchedRegionalDataArray[indexPath.item]
-        RegionalDataManager.shared.addAddedRegionalCodeAtUserDefaults(regionalDataModel.regionalCode)
-        RegionalDataManager.shared.setAddedRegionalDataArray()
+        guard tableView.isEqual(searchTableView) else {
+            let viewController = RegionWeatherViewController()
+            viewController.modalPresentationStyle = .fullScreen
+            present(viewController, animated: true)
+            return
+        }
+        let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.row]
+        self.mainViewModel.addAddedRegionalDataModels(regionalDataModel.regionalCode){
+            self.mainViewModel.fetchWeatherForecastModels()
+        }
+        searchBar.endEditing(true)
     }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tableView.isEqual(mainCollectionView) {
+            return tableView.bounds.height * 0.2
+        }
+        return tableView.bounds.height * 0.065
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard tableView.isEqual(mainCollectionView) else { return UISwipeActionsConfiguration()}
+        let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
+            guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
+            let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
+            self.mainViewModel.removeAddedRegionalDataModels(regionalDataModel.regionalCode, indexPath.row)
+              completion(true)
+          }
+
+        let image = UIImage(systemName: "trash.circle")
+        deleteAction.image = image
+        deleteAction.backgroundColor = .red
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+
 }

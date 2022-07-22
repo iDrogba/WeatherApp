@@ -10,6 +10,7 @@ import Foundation
 struct WeatherForecastModel {
     var regionalCode: String = ""
     var regionName: String = ""
+    var subRegionName: String = ""
     var nX: Int = 0
     var nY: Int = 0
     var forecastDate: String = "" //날씨 데이터의 날짜을 나타냅니다. 예보가 발표된 날짜를 나타내는 baseDate과는 다릅니다.
@@ -32,12 +33,9 @@ struct WeatherForecastModel {
     init(_ regionalCode: String, _ item: Item) {
         guard let regionalDataModel = RegionalDataManager.shared.retrieveRegionalDataModel(regionalCode) else { return }
 
-        if regionalDataModel.second != "" {
-            self.regionName = regionalDataModel.second
-        } else {
-            self.regionName = regionalDataModel.first
-        }
         self.regionalCode = regionalCode
+        self.regionName = regionalDataModel.regionName
+        self.subRegionName = regionalDataModel.third
         self.forecastDate = item.fcstDate
         self.forecastTime = item.fcstTime
 

@@ -7,8 +7,9 @@
 
 import Foundation
 
-struct RegionalDataModel {
+struct RegionalDataModel: Equatable {
     let regionalCode: String
+    let regionName: String
     let first: String
     let second: String
     let third: String
@@ -22,6 +23,15 @@ struct RegionalDataModel {
         self.third = stringRegionalData[3]
         self.positionX = stringRegionalData[4]
         self.positionY = stringRegionalData[5]
+        if self.second != "" {
+            self.regionName = self.second
+        } else {
+            self.regionName = self.first
+        }
+    }
+    
+    public static func < (lhs: RegionalDataModel, rhs: RegionalDataModel) -> Bool{
+        return lhs.regionName < rhs.regionName
     }
 }
 
@@ -30,9 +40,10 @@ class RegionalDataManager {
     let userDefaultsKey = "RegionalCode"
     let fileName = "RegionalData"
     var stringRegionalData:[[String]] = []
-    var regionalDataArray: [RegionalDataModel] = []
-    var searchedRegionalDataArray: [RegionalDataModel] = []
-    var addedRegionalDataArray: [RegionalDataModel] = []
+    /// 모든 지역모델들의 배열
+    var regionalDataModels: [RegionalDataModel] = []
+    /// 메인에 추가된 지역모델들의 배열
+    var addedRegionalDataModels: [RegionalDataModel] = []
 
     init() {
         self.fetchSavedRegionalDataFromCSV()
@@ -40,52 +51,44 @@ class RegionalDataManager {
     }
 
     func retrieveRegionalDataModel(_ regionalCode: String) -> RegionalDataModel? {
-        guard let resultRegionalDataModel = regionalDataArray.filter({$0.regionalCode == regionalCode}).first else {
+        guard let resultRegionalDataModel = regionalDataModels.filter({$0.regionalCode == regionalCode}).first else {
             return nil
         }
         return resultRegionalDataModel
     }
     
-    func setSearchedRegionalDataModel(_ searchTerm: String) {
-        var retrivedRegionalData: [RegionalDataModel] = []
-        
-        guard searchTerm != "" else {
-            searchedRegionalDataArray = retrivedRegionalData
-            return
-        }
-        
-    outer:for regionalData in regionalDataArray {
-        let regionalTerm = regionalData.first + regionalData.second + regionalData.third
-        inner:for searchChar in searchTerm {
-            if searchChar == " " { continue inner}
-            if regionalTerm.contains(searchChar) == false {
-                continue outer
+    /// UserDefaults에 추가된 모델들을 addedRegionalDataModels 프로퍼티에 세팅.
+    func setAddedRegionalDataArray() {
+        let userDefaults = UserDefaults.standard
+        let savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
+        var resultAddedRegionalDataModels: [RegionalDataModel] = []
+        for savedRegionalCode in savedRegionalCodes {
+            let index = regionalDataModels.firstIndex{ $0.regionalCode == savedRegionalCode }
+            if let index = index {
+                resultAddedRegionalDataModels.append(regionalDataModels[index])
             }
         }
-        retrivedRegionalData.append(regionalData)
-    }
-        searchedRegionalDataArray = retrivedRegionalData
+        self.addedRegionalDataModels = resultAddedRegionalDataModels
     }
     
+    /// UserDefaults에 RegionalCode 추가.
     func addAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
         var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         savedRegionalCodes.append(regionalCode)
         let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
-
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
     
-    func setAddedRegionalDataArray() {
+    ///  UserDefaults에 RegionalCode 삭제.
+    func removeAddedRegionalCodeAtUserDefaults(_ regionalCode: String) {
         let userDefaults = UserDefaults.standard
-        let savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
-        
-        for savedRegionalCode in savedRegionalCodes {
-            let index = regionalDataArray.firstIndex{ $0.regionalCode == savedRegionalCode }
-            if let index = index {
-                self.addedRegionalDataArray.append(regionalDataArray[index])
-            }
-        }
+        guard var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] else { return }
+        guard let indexForRemove = savedRegionalCodes.firstIndex(of: regionalCode) else { return }
+        savedRegionalCodes.remove(at: indexForRemove)
+        let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
+
+        userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
 
     private func fetchSavedRegionalDataFromCSV() {
@@ -96,7 +99,7 @@ class RegionalDataManager {
             guard stringRegionalData[index].count > 5 else { return }
             
             let regionalDataModel = RegionalDataModel.init(stringRegionalData[index])
-            self.regionalDataArray.append(regionalDataModel)
+            self.regionalDataModels.append(regionalDataModel)
         }
     }
 

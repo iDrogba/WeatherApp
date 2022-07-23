@@ -11,8 +11,12 @@ import Alamofire
 
 class MainViewController: UIViewController {
     @ObservedObject private var mainViewModel = MainViewModel()
-    var cancelBag = Set<AnyCancellable>()
-
+    private var cancelBag = Set<AnyCancellable>()
+    private var transition = AnimationTransition()
+//    private var cellOriginPoint: CGPoint?
+//    private var cellOriginFrame: CGRect?
+//    private var trasition: { () -> Void }?
+    
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
         searchTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
@@ -251,12 +255,24 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard tableView.isEqual(searchTableView) else {
             guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
             
+            
+            guard let cell = tableView.cellForRow(at: indexPath) else { return }
+            // 좌표계 전환 nil일시 윈도우좌표계
+            let cellOriginPoint =  cell.superview?.convert(cell.center, to: nil)
+            let cellOriginFrame =  cell.superview?.convert(cell.frame, to: nil)
+            
+            self.transition.setPoint(point: cellOriginPoint)
+            self.transition.setFrame(frame: cellOriginFrame)
+            
             let viewController = RegionWeatherViewController()
             let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
             guard WeatherForecastModelManager.shared.currentWeatherForecastModels[cellRegionalCode] != nil else { return }
             viewController.regionalCode = cellRegionalCode
-            viewController.modalPresentationStyle = .fullScreen
-            present(viewController, animated: true)
+            viewController.transitioningDelegate = self
+            viewController.modalPresentationStyle = .custom
+            DispatchQueue.main.async {
+                self.present(viewController, animated: true)
+            }
             return
         }
         let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.row]
@@ -303,5 +319,15 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
                 cell.alpha = 1
         })
     }
+}
 
+extension MainViewController: UIViewControllerTransitioningDelegate, UINavigationControllerDelegate {
+    // present될때 실행애니메이션
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return self.transition
+    }
+    // dismiss될때 실행애니메이션
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return DisMissAnim()
+    }
 }

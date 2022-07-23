@@ -8,7 +8,7 @@
 import UIKit
 
 class MainCollectionViewCell: UITableViewCell {
-    private let subRegionLabel: UILabel = {
+    private lazy var subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
         subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
         subRegionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -18,7 +18,7 @@ class MainCollectionViewCell: UITableViewCell {
         return subRegionLabel
     }()
     
-    private let waveLabel: UILabel = {
+    private lazy var waveLabel: UILabel = {
         let waveLabel = UILabel()
         waveLabel.translatesAutoresizingMaskIntoConstraints = false
         waveLabel.font = .systemFont(ofSize: 10, weight: .semibold)
@@ -28,7 +28,7 @@ class MainCollectionViewCell: UITableViewCell {
         return waveLabel
     }()
     
-    private let surfConditionLabel: UILabel = {
+    private lazy var surfConditionLabel: UILabel = {
         let surfConditionLabel = UILabel()
         surfConditionLabel.translatesAutoresizingMaskIntoConstraints = false
         surfConditionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -38,7 +38,7 @@ class MainCollectionViewCell: UITableViewCell {
         return surfConditionLabel
     }()
     
-    private let skyConditionLabel: UILabel = {
+    private lazy var skyConditionLabel: UILabel = {
         let weatherLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         weatherLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -48,7 +48,7 @@ class MainCollectionViewCell: UITableViewCell {
         return weatherLabel
     }()
     
-    private let minTemperatureLabel: UILabel = {
+    private lazy var minTemperatureLabel: UILabel = {
         let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -58,7 +58,7 @@ class MainCollectionViewCell: UITableViewCell {
         return minTemperatureLabel
     }()
     
-    private let maxTemperatureLabel: UILabel = {
+    private lazy var maxTemperatureLabel: UILabel = {
         let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -68,7 +68,7 @@ class MainCollectionViewCell: UITableViewCell {
         return maxTemperatureLabel
     }()
     
-    private let currentTemperatuerLabel: UILabel = {
+    private lazy var currentTemperatuerLabel: UILabel = {
         let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
         temperatuerLabel.text = "_"
@@ -78,7 +78,7 @@ class MainCollectionViewCell: UITableViewCell {
         return temperatuerLabel
     }()
     
-    private let regionLabel: UILabel = {
+    private lazy var regionLabel: UILabel = {
         let regionLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         regionLabel.translatesAutoresizingMaskIntoConstraints = false
         regionLabel.font = .systemFont(ofSize: 24, weight: .bold)
@@ -88,7 +88,7 @@ class MainCollectionViewCell: UITableViewCell {
         return regionLabel
     }()
     
-    private let backgroundImageView: UIImageView = {
+    private lazy var backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
@@ -121,13 +121,13 @@ class MainCollectionViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
-        
+
         DispatchQueue.main.async { [self] in
             self.setConstraints()
             self.backgroundColor = .systemBackground
             self.contentView.backgroundColor = .systemBackground
         }
+        self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
     }
     
     func setUI(_ model: WeatherForecastModel, _ pastTMNModel: WeatherForecastModel, _ pastTMXModel: WeatherForecastModel) {
@@ -201,15 +201,15 @@ class MainCollectionViewCell: UITableViewCell {
         ]
         let temperatureLabelConstraints = [
             currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
-            currentTemperatuerLabel.topAnchor.constraint(equalTo: regionLabel.topAnchor, constant: 0),
+            currentTemperatuerLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20),
         ]
         let maxTemperatureLabelConstraints = [
             maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
-            maxTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
         ]
         let minTemperatureLabelConstraints = [
             minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
-            minTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
+            minTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
         ]
         let weatherLabelConstraints = [
             skyConditionLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: 0),
@@ -236,7 +236,7 @@ class MainCollectionViewCell: UITableViewCell {
 }
 
 class PlaceHolderCollectionViewCell: UITableViewCell {
-    private let subRegionLabel: UILabel = {
+    private lazy var subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
         subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
         subRegionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -246,7 +246,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         return subRegionLabel
     }()
     
-    private let waveLabel: UILabel = {
+    private lazy var waveLabel: UILabel = {
         let waveLabel = UILabel()
         waveLabel.translatesAutoresizingMaskIntoConstraints = false
         waveLabel.font = .systemFont(ofSize: 10, weight: .semibold)
@@ -256,7 +256,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         return waveLabel
     }()
     
-    private let surfConditionLabel: UILabel = {
+    private lazy var surfConditionLabel: UILabel = {
         let surfConditionLabel = UILabel()
         surfConditionLabel.translatesAutoresizingMaskIntoConstraints = false
         surfConditionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -266,47 +266,47 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         return surfConditionLabel
     }()
     
-    private let skyConditionLabel: UILabel = {
+    private lazy var skyConditionLabel: UILabel = {
         let weatherLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         weatherLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         weatherLabel.textColor = .white
-        weatherLabel.text = "_"
+        weatherLabel.text = ""
         
         return weatherLabel
     }()
     
-    private let minTemperatureLabel: UILabel = {
+    private lazy var minTemperatureLabel: UILabel = {
         let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         minTemperatureLabel.textColor = .white
-        minTemperatureLabel.text = "최저: _"
+        minTemperatureLabel.text = "최저: _°"
 
         return minTemperatureLabel
     }()
     
-    private let maxTemperatureLabel: UILabel = {
+    private lazy var maxTemperatureLabel: UILabel = {
         let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         maxTemperatureLabel.textColor = .white
-        maxTemperatureLabel.text = "최고: _"
+        maxTemperatureLabel.text = "최고: _°"
         
         return maxTemperatureLabel
     }()
     
-    private let currentTemperatuerLabel: UILabel = {
+    private lazy var currentTemperatuerLabel: UILabel = {
         let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
-        temperatuerLabel.text = "_"
+        temperatuerLabel.text = "_°"
         temperatuerLabel.font = .systemFont(ofSize: 48, weight: .regular)
         temperatuerLabel.textColor = .white
 
         return temperatuerLabel
     }()
     
-    private let regionLabel: UILabel = {
+    private lazy var regionLabel: UILabel = {
         let regionLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         regionLabel.translatesAutoresizingMaskIntoConstraints = false
         regionLabel.font = .systemFont(ofSize: 24, weight: .bold)
@@ -316,7 +316,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         return regionLabel
     }()
     
-    private let backgroundImageView: UIImageView = {
+    private lazy var backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
@@ -355,8 +355,13 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
             self.setConstraints()
             self.backgroundColor = .systemBackground
             self.contentView.backgroundColor = .systemBackground
-            
         }
+    }
+    
+    func setUI(_ regionalCode: String) {
+        let regionalModel = RegionalDataManager.shared.retrieveRegionalDataModel(regionalCode)
+        regionLabel.text = regionalModel?.regionName
+        subRegionLabel.text = regionalModel?.third
     }
     
     func setConstraints() {

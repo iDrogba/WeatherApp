@@ -13,9 +13,6 @@ class MainViewController: UIViewController {
     @ObservedObject private var mainViewModel = MainViewModel()
     private var cancelBag = Set<AnyCancellable>()
     private var transition = AnimationTransition()
-//    private var cellOriginPoint: CGPoint?
-//    private var cellOriginFrame: CGRect?
-//    private var trasition: { () -> Void }?
     
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
@@ -254,10 +251,8 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard tableView.isEqual(searchTableView) else {
             guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
-            
-            
+
             guard let cell = tableView.cellForRow(at: indexPath) else { return }
-            // 좌표계 전환 nil일시 윈도우좌표계
             let cellOriginPoint =  cell.superview?.convert(cell.center, to: nil)
             let cellOriginFrame =  cell.superview?.convert(cell.frame, to: nil)
             

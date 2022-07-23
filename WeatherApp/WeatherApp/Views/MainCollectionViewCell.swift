@@ -122,7 +122,7 @@ class MainCollectionViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async {
             self.setConstraints()
             self.backgroundColor = .systemBackground
             self.contentView.backgroundColor = .systemBackground
@@ -200,7 +200,7 @@ class MainCollectionViewCell: UITableViewCell {
             subRegionLabel.centerYAnchor.constraint(equalTo: self.regionLabel.centerYAnchor)
         ]
         let temperatureLabelConstraints = [
-            currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
             currentTemperatuerLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20),
         ]
         let maxTemperatureLabelConstraints = [
@@ -244,36 +244,6 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         subRegionLabel.layer.opacity = 0.8
 
         return subRegionLabel
-    }()
-    
-    private lazy var waveLabel: UILabel = {
-        let waveLabel = UILabel()
-        waveLabel.translatesAutoresizingMaskIntoConstraints = false
-        waveLabel.font = .systemFont(ofSize: 10, weight: .semibold)
-        waveLabel.textColor = .white
-        waveLabel.layer.opacity = 0.8
-        
-        return waveLabel
-    }()
-    
-    private lazy var surfConditionLabel: UILabel = {
-        let surfConditionLabel = UILabel()
-        surfConditionLabel.translatesAutoresizingMaskIntoConstraints = false
-        surfConditionLabel.font = .systemFont(ofSize: 12, weight: .semibold)
-        surfConditionLabel.textColor = .white
-        surfConditionLabel.layer.opacity = 0.8
-        
-        return surfConditionLabel
-    }()
-    
-    private lazy var skyConditionLabel: UILabel = {
-        let weatherLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
-        weatherLabel.translatesAutoresizingMaskIntoConstraints = false
-        weatherLabel.font = .systemFont(ofSize: 12, weight: .semibold)
-        weatherLabel.textColor = .white
-        weatherLabel.text = ""
-        
-        return weatherLabel
     }()
     
     private lazy var minTemperatureLabel: UILabel = {
@@ -334,9 +304,6 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         self.contentView.addSubview(currentTemperatuerLabel)
         self.contentView.addSubview(minTemperatureLabel)
         self.contentView.addSubview(maxTemperatureLabel)
-        self.contentView.addSubview(skyConditionLabel)
-        self.contentView.addSubview(surfConditionLabel)
-        self.contentView.addSubview(waveLabel)
         self.backgroundColor = .gray
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
@@ -380,7 +347,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
             subRegionLabel.centerYAnchor.constraint(equalTo: self.regionLabel.centerYAnchor)
         ]
         let temperatureLabelConstraints = [
-            currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            currentTemperatuerLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
             currentTemperatuerLabel.topAnchor.constraint(equalTo: regionLabel.topAnchor, constant: 0),
         ]
         let maxTemperatureLabelConstraints = [
@@ -391,26 +358,11 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
             minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
             minTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
         ]
-        let weatherLabelConstraints = [
-            skyConditionLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: 0),
-            skyConditionLabel.bottomAnchor.constraint(equalTo: maxTemperatureLabel.topAnchor, constant: 0)
-        ]
-        let surfConditionLabelConstraints = [
-            surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
-            surfConditionLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
-        ]
-        let waveLabelConstraints = [
-            waveLabel.leadingAnchor.constraint(equalTo: surfConditionLabel.leadingAnchor),
-            waveLabel.bottomAnchor.constraint(equalTo: surfConditionLabel.topAnchor)
-        ]
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)
         NSLayoutConstraint.activate(subRegionLabelConstraints)
         NSLayoutConstraint.activate(temperatureLabelConstraints)
         NSLayoutConstraint.activate(maxTemperatureLabelConstraints)
         NSLayoutConstraint.activate(minTemperatureLabelConstraints)
-        NSLayoutConstraint.activate(weatherLabelConstraints)
-        NSLayoutConstraint.activate(surfConditionLabelConstraints)
-        NSLayoutConstraint.activate(waveLabelConstraints)
     }
 }

@@ -158,7 +158,7 @@ class RegionWeatherViewController: UIViewController {
         } else if modelWaveValue >= 0.5 { // 초심자에게 좋음
             surfImageName = "surf2"
         } else if modelWaveValue == 0 { // 파도 없음
-            surfImageName = ""
+            surfImageName = "surf1"
         } else {
             surfImageName = "surf1"
         }
@@ -223,7 +223,9 @@ class RegionWeatherViewController: UIViewController {
             descriptionLabelText = "파도가 약합니다."
         }
         
-        cityLabel.text = model.regionName
+        if model.subRegionName.isEmpty {
+            cityLabel.text = model.regionName
+        } else { cityLabel.text = model.subRegionName}
         temperatureLabel.text = model.TMP
         minTemperatureLabel.text = pastTMMModel.TMP + "°"
         maxTemperatureLabel.text = pastTMXModel.TMP + "°"
@@ -314,21 +316,28 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = weekWeatherTableView.dequeueReusableCell(withIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UITableViewCell() }
         
-        guard let todayModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.first else { return UITableViewCell() }
+        guard let pastTMNModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}).first else { return UITableViewCell() }
         
-        guard let futureModel =
-                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0000"}) else { return UITableViewCell() }
+        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}).first else { return UITableViewCell() }
         
+        guard let dayModel = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0000"}) else { return UITableViewCell() }
+        
+        guard let currentTMNModel =
+                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}) else { return UITableViewCell() }
+        
+        guard let currentTMXModel =
+                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}) else { return UITableViewCell() }
         cell.backgroundColor = .clear
         
         if indexPath.row == 0 {
-            cell.applyData(todayModel)
+            cell.applyData(dayModel[indexPath.row], pastTMNModel, pastTMXModel)
         } else {
-            cell.applyData(futureModel[indexPath.row - 1])
+            cell.applyData(dayModel[indexPath.row], currentTMNModel[indexPath.row - 1], currentTMXModel[indexPath.row - 1])
         }
         
-        print("todayModel: \(todayModel)")
-        print("futuremodel: \(futureModel)")
+        print("model: \(dayModel)")
+        print("currentTMNModel: \(currentTMNModel)")
+        print("currentTMXModel: \(currentTMXModel)")
         
         return cell
     }

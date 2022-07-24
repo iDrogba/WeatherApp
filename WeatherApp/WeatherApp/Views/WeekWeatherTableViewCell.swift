@@ -88,15 +88,19 @@ class WeekWeatherTableViewCell: UITableViewCell {
         tempStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
     }
     
-    func applyData(_ model: WeatherForecastModel) {
+    func applyData(_ model: WeatherForecastModel, _ currentTMNModel: WeatherForecastModel, _ currentTMXModel: WeatherForecastModel) {
         var dayLabelText: String
         var weatherImageName: String
         var maxTemp: String
         var minTemp: String
-    
-        dayLabelText = model.forecastDate
-        maxTemp = model.TMP
-        minTemp = model.TMP
+        
+        
+        var dayLabelTextDate: Date
+        dayLabelTextDate = currentTMNModel.forecastDate.transferStringToDate() ?? Date()
+        dayLabelText = dayLabelTextDate.transferDateToString()
+        
+        minTemp = currentTMNModel.TMP
+        maxTemp = currentTMXModel.TMP
         
         switch model.SKY {
         case "1": // 맑음
@@ -127,5 +131,24 @@ class WeekWeatherTableViewCell: UITableViewCell {
         maxTemperatureLabel.text = maxTemp + "°"
         minTemperatureLabel.text = minTemp + "°"
     }
-    
+}
+
+extension String {
+    func transferStringToDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        if let date = dateFormatter.date(from: self) {
+            return date
+        } else {
+            return nil
+        }
+    }
+}
+
+extension Date {
+    func transferDateToString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "M월 d일 E요일"
+        return dateFormatter.string(from: self)
+    }
 }

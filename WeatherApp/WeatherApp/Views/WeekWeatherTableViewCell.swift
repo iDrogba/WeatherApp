@@ -135,31 +135,3 @@ class WeekWeatherTableViewCell: UITableViewCell {
         minTemperatureLabel.text = minTemp + "°"
     }
 }
-
-extension String {
-    func transferStringToDate() -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd"
-        if let date = dateFormatter.date(from: self) {
-            return date
-        } else {
-            return nil
-        }
-    }
-}
-
-extension Date {
-    func transferDateToString() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M월 d일 E요일"
-        return dateFormatter.string(from: self)
-    }
-}
-
-extension Date {
-    func transferDateToStringDay() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M/d"
-        return dateFormatter.string(from: self)
-    }
-}

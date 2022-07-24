@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A3A77B3288D5F8E004F9A3C /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A77B2288D5F8E004F9A3C /* StringExtension.swift */; };
+		0A3A77B5288D5FA2004F9A3C /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A77B4288D5FA2004F9A3C /* DateExtension.swift */; };
 		0A5AFE012867381700DA18BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5AFE002867381700DA18BE /* AppDelegate.swift */; };
 		0A5AFE032867381700DA18BE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5AFE022867381700DA18BE /* SceneDelegate.swift */; };
 		0A5AFE0A2867381800DA18BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A5AFE092867381800DA18BE /* Assets.xcassets */; };
@@ -26,7 +28,6 @@
 		0A7EAE852883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE842883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift */; };
 		0A7EAE872883C5B20087C4F5 /* WeekWeatherTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE862883C5B20087C4F5 /* WeekWeatherTableViewCell.swift */; };
 		0A7EAE892883C6140087C4F5 /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE882883C6140087C4F5 /* CustomColors.swift */; };
-		0A7EAE8B2883C6640087C4F5 /* WeekWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE8A2883C6640087C4F5 /* WeekWeather.swift */; };
 		0ABD5A0D288C0F0700B70589 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABD5A0C288C0F0700B70589 /* Animation.swift */; };
 		0ADC5006287D360700B89518 /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADC5005287D360700B89518 /* SearchTableViewCell.swift */; };
 		0ADC500E28800D9200B89518 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADC500D28800D9200B89518 /* MainViewModel.swift */; };
@@ -54,6 +55,8 @@
 
 /* Begin PBXFileReference section */
 		070777F7F821FBA0011EB242 /* Pods-WeatherAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeatherAppTests.release.xcconfig"; path = "Target Support Files/Pods-WeatherAppTests/Pods-WeatherAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		0A3A77B2288D5F8E004F9A3C /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
+		0A3A77B4288D5FA2004F9A3C /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		0A5AFDFD2867381700DA18BE /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A5AFE002867381700DA18BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A5AFE022867381700DA18BE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,7 +80,6 @@
 		0A7EAE842883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayWeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 		0A7EAE862883C5B20087C4F5 /* WeekWeatherTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeekWeatherTableViewCell.swift; sourceTree = "<group>"; };
 		0A7EAE882883C6140087C4F5 /* CustomColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
-		0A7EAE8A2883C6640087C4F5 /* WeekWeather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeekWeather.swift; sourceTree = "<group>"; };
 		0ABD5A0C288C0F0700B70589 /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
 		0ADC5005287D360700B89518 /* SearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		0ADC500D28800D9200B89518 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -220,6 +222,8 @@
 				0A6A1E7828792160003BB4A0 /* RegionalData.csv */,
 				0A6A1E6D28791FDC003BB4A0 /* Extensions.swift */,
 				0ABD5A0C288C0F0700B70589 /* Animation.swift */,
+				0A3A77B2288D5F8E004F9A3C /* StringExtension.swift */,
+				0A3A77B4288D5FA2004F9A3C /* DateExtension.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -503,10 +507,12 @@
 				0A5AFE012867381700DA18BE /* AppDelegate.swift in Sources */,
 				0A5AFE032867381700DA18BE /* SceneDelegate.swift in Sources */,
 				0A6A1E65287823BD003BB4A0 /* MainViewController.swift in Sources */,
+				0A3A77B3288D5F8E004F9A3C /* StringExtension.swift in Sources */,
 				0A6A1E77287920A5003BB4A0 /* WeatherForecastModel.swift in Sources */,
 				0A6A1E7128792025003BB4A0 /* APIRequest.swift in Sources */,
 				0A7EAE852883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift in Sources */,
 				0ADC500E28800D9200B89518 /* MainViewModel.swift in Sources */,
+				0A3A77B5288D5FA2004F9A3C /* DateExtension.swift in Sources */,
 				0A6A1E7528792069003BB4A0 /* RegionalDataModel.swift in Sources */,
 				0A7EAE832883C5920087C4F5 /* RegionWeatherViewController.swift in Sources */,
 				0A6A1E6B28782930003BB4A0 /* MainCollectionViewCell.swift in Sources */,
@@ -680,7 +686,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = D9CAJN27UH;
+				DEVELOPMENT_TEAM = ZNH7978JJQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

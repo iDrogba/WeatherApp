@@ -122,23 +122,3 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         tempLabel.text = tempLabelText + "°"
     }
 }
-
-extension String {
-    func transferStringToTime() -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HHmm"
-        if let date = dateFormatter.date(from: self) {
-            return date
-        } else {
-            return nil
-        }
-    }
-}
-
-extension Date {
-    func transferTimeToString() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "H시"
-        return dateFormatter.string(from: self)
-    }
-}

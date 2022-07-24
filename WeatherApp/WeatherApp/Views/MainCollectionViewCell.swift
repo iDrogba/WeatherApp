@@ -168,7 +168,7 @@ class MainCollectionViewCell: UITableViewCell {
         } else if modelWaveValue >= 0.5 {
             surfConditionText = "초심자가 즐기기 좋습니다."
         } else if modelWaveValue == 0 {
-            surfConditionText = "파도가 없는 지역입니다."
+            surfConditionText = "파도가 없거나 약한 지역입니다."
             waveLabel.text = ""
         } else {
             surfConditionText = "파도가 약합니다."

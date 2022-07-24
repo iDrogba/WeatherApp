@@ -68,10 +68,16 @@ class MainViewModel: ObservableObject {
     func removeAddedRegionalDataModels(_ regionalCode: String, _ indexAt: Int) {
         RegionalDataManager.shared.removeAddedRegionalCodeAtUserDefaults(regionalCode)
         RegionalDataManager.shared.setAddedRegionalDataArray()
-        self.fetchAddedRegionalDataModels {}
+        self.fetchAddedRegionalDataModels{}
+//        self.addedRegionalDataModels.remove(at: indexAt)
+    }
+    
+    func removeWeatherForecastModels(_ regionalCode: String) {
         self.weatherForecastModels.removeValue(forKey: regionalCode)
         self.pastWeatherForecastModels.removeValue(forKey: regionalCode)
-//        self.addedRegionalDataModels.remove(at: indexAt)
+        WeatherForecastModelManager.shared.removeWeatherForecastModels(regionalCode)
+        print(weatherForecastModels.count)
+        print(addedRegionalDataModels.count)
     }
     
     /// RegionalDataManager 로 부터 오름차순으로 가져옴.

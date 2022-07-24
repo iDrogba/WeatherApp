@@ -120,4 +120,9 @@ class WeatherForecastModelManager {
             }
         }
     }
+    
+    func removeWeatherForecastModels(_ regionalCode: String) {
+        self.currentWeatherForecastModels.removeValue(forKey: regionalCode)
+        self.pastWeatherForecastModels.removeValue(forKey: regionalCode)
+    }
 }

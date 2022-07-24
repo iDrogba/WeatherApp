@@ -20,6 +20,7 @@ class RegionWeatherViewController: UIViewController {
         
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
         
+        weekWeatherTableView.separatorStyle = .none
         weekWeatherTableView.delegate = self
         weekWeatherTableView.dataSource = self
         

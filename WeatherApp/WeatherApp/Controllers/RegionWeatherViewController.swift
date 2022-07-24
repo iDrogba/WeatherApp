@@ -287,8 +287,6 @@ class RegionWeatherViewController: UIViewController {
         surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
         surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.2).isActive = true
         surfImageView.widthAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.width * 0.6).isActive = true
-//        surfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-//        surfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10).isActive = true
         surfImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -296,13 +294,6 @@ class RegionWeatherViewController: UIViewController {
         
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: view.bounds.height * 0.002).isActive = true
-//
-//        dayWeatherCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
-//        dayWeatherCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-//        dayWeatherCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-//        dayWeatherCollectionView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
-//        dayWeatherCollectionView.heightAnchor.constraint(equalToConstant: view.frame.height / 9).isActive = true
         
         weekWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         weekWeatherTableView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
@@ -314,35 +305,37 @@ class RegionWeatherViewController: UIViewController {
 
 extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        guard let dataCount = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.count else {
+            self.dismiss(animated: true)
+            return 0
+        }
+        
+        return dataCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = weekWeatherTableView.dequeueReusableCell(withIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UITableViewCell() }
         
-        guard let pastTMNModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}).first else { return UITableViewCell() }
+//        guard let pastTMNModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}).first else { return UITableViewCell() }
+//
+//        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}).first else { return UITableViewCell() }
         
-        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}).first else { return UITableViewCell() }
+        guard let dayModel = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return cell }
         
-        guard let dayModel = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0000"}) else { return UITableViewCell() }
-        
-        guard let currentTMNModel =
-                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}) else { return UITableViewCell() }
-        
-        guard let currentTMXModel =
-                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}) else { return UITableViewCell() }
+        let model = dayModel[indexPath.row]
+//        guard let currentTMNModel =
+//                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}) else { return UITableViewCell() }
+//
+//        guard let currentTMXModel =
+//                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}) else { return UITableViewCell() }
         cell.backgroundColor = .clear
         
-        if indexPath.row == 0 {
-            cell.applyData(dayModel[indexPath.row], pastTMNModel, pastTMXModel)
-        } else {
-            cell.applyData(dayModel[indexPath.row], currentTMNModel[indexPath.row - 1], currentTMXModel[indexPath.row - 1])
-        }
-        
-//        print("model: \(dayModel)")
-//        print("currentTMNModel: \(currentTMNModel)")
-//        print("currentTMXModel: \(currentTMXModel)")
-        
+//        if indexPath.row == 0 {
+//            cell.applyData(dayModel[indexPath.row], pastTMNModel, pastTMXModel)
+//        } else {
+//            cell.applyData(dayModel[indexPath.row], currentTMNModel[indexPath.row - 1], currentTMXModel[indexPath.row - 1])
+//        }
+        cell.applyData(model)
         return cell
     }
     
@@ -350,30 +343,3 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
         return view.bounds.height * 0.06
     }
 }
-
-//extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 6
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier, for: indexPath) as? DayWeatherCollectionViewCell else {
-//            return UICollectionViewCell()
-//        }
-//        cell.backgroundColor = .clear
-//
-//        guard let todayModel =
-//                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return UICollectionViewCell() }
-//
-//        cell.applyData(todayModel[indexPath.row])
-//
-//        print("today model: \(todayModel)")
-//
-//        return cell
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let itemSize = CGSize(width: view.frame.width / 7, height: collectionView.frame.height)
-//        return itemSize
-//    }
-//}

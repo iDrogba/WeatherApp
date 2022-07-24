@@ -23,36 +23,19 @@ class WeekWeatherTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    private var minTemperatureLabel: UILabel = {
+    private var temperatureLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         return label
-    }()
-    
-    private var maxTemperatureLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = .systemFont(ofSize: 20, weight: .regular)
-        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
-        return label
-    }()
-    
-    lazy var tempStackView: UIStackView = {
-       let stackView = UIStackView(arrangedSubviews: [minTemperatureLabel, maxTemperatureLabel])
-        stackView.axis = .horizontal
-        stackView.spacing = 10
-        stackView.alignment = .center
-        stackView.distribution = .equalSpacing
-        
-        return stackView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         contentView.backgroundColor = UIColor(white: 0, alpha: 0)
-        [dayLabel, weatherImage, tempStackView].forEach {
+        [dayLabel, weatherImage, temperatureLabel].forEach {
             contentView.addSubview($0)
         }
     }
@@ -70,16 +53,13 @@ class WeekWeatherTableViewCell: UITableViewCell {
         super.prepareForReuse()
         dayLabel.text = nil
         weatherImage.image = nil
-        minTemperatureLabel.text = nil
-        maxTemperatureLabel.text = nil
+        temperatureLabel.text = nil
     }
     
     private func configureCellConstraints() {
         dayLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherImage.translatesAutoresizingMaskIntoConstraints = false
-        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        tempStackView.translatesAutoresizingMaskIntoConstraints = false
+        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         
         dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: contentView.bounds.width * 0.05).isActive = true
         dayLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
@@ -87,23 +67,20 @@ class WeekWeatherTableViewCell: UITableViewCell {
         weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         weatherImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         
-        tempStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: contentView.bounds.width * -0.05).isActive = true
-        tempStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: contentView.bounds.width * -0.05).isActive = true
+        temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
     }
     
-    func applyData(_ model: WeatherForecastModel, _ currentTMNModel: WeatherForecastModel, _ currentTMXModel: WeatherForecastModel) {
+    func applyData(_ model: WeatherForecastModel) {
         var dayLabelText: String
         var weatherImageName: String
-        var maxTemp: String
-        var minTemp: String
+
+//        var dayLabelTextDate: Date
+//        dayLabelTextDate = currentTMNModel.forecastDate.transferStringToDate() ?? Date()
+//        dayLabelText = dayLabelTextDate.transferDateToString()
         
         
-        var dayLabelTextDate: Date
-        dayLabelTextDate = currentTMNModel.forecastDate.transferStringToDate() ?? Date()
-        dayLabelText = dayLabelTextDate.transferDateToString()
-        
-        minTemp = currentTMNModel.TMP
-        maxTemp = currentTMXModel.TMP
+        dayLabelText = model.forecastDate + model.forecastTime
         
         switch model.SKY {
         case "1": // 맑음
@@ -131,7 +108,6 @@ class WeekWeatherTableViewCell: UITableViewCell {
 
         dayLabel.text = dayLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
-        maxTemperatureLabel.text = maxTemp + "°"
-        minTemperatureLabel.text = minTemp + "°"
+        temperatureLabel.text = model.TMP
     }
 }

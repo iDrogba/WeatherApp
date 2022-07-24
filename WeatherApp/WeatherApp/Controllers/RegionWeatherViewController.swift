@@ -51,9 +51,9 @@ class RegionWeatherViewController: UIViewController {
     private let dayWeatherCollectionView: UICollectionView = {
         
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.scrollDirection = .horizontal
-        flowLayout.minimumLineSpacing = 5
-        flowLayout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        flowLayout.minimumLineSpacing = 0
+        flowLayout.minimumInteritemSpacing = 0
+        flowLayout.sectionInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
@@ -75,7 +75,6 @@ class RegionWeatherViewController: UIViewController {
     
     private var temperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "34"
         label.font = .systemFont(ofSize: 96, weight: .semibold)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
@@ -104,7 +103,6 @@ class RegionWeatherViewController: UIViewController {
     
     private var maxTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "34°"
         label.font = .systemFont(ofSize: 35, weight: .regular)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
@@ -114,7 +112,6 @@ class RegionWeatherViewController: UIViewController {
     
     private var minTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "23°"
         label.font = .systemFont(ofSize: 35, weight: .regular)
         label.textColor = .white
         return label
@@ -138,7 +135,6 @@ class RegionWeatherViewController: UIViewController {
     
     private var waveHeightLabel: UILabel = {
         let label = UILabel()
-        label.text = "0.4m"
         label.font = .systemFont(ofSize: 20, weight: .light)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
@@ -294,7 +290,7 @@ class RegionWeatherViewController: UIViewController {
         waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 5).isActive = true
         
         dayWeatherCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: 10).isActive = true
+        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: 5).isActive = true
         dayWeatherCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         dayWeatherCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         dayWeatherCollectionView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
@@ -349,7 +345,7 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
 
 extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -369,7 +365,7 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let itemSize = CGSize(width: view.frame.width / 6, height: collectionView.frame.height)
+        let itemSize = CGSize(width: view.frame.width / 7, height: collectionView.frame.height)
         return itemSize
     }
 }

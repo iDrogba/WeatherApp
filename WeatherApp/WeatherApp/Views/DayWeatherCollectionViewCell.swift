@@ -28,7 +28,6 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     
     private let timeLabel: UILabel = {
         let label = UILabel()
-        label.text = "오전 3시"
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textAlignment = .center
         label.textColor = .white
@@ -44,7 +43,6 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     
     private let tempLabel: UILabel = {
        let label = UILabel()
-        label.text = "29"
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textAlignment = .center
         label.textColor = .white
@@ -72,6 +70,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         
         dayStackView.translatesAutoresizingMaskIntoConstraints = false
         dayStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        dayStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
     }
     
     func applyData(_ model: WeatherForecastModel) {
@@ -80,13 +79,8 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         var weatherImageName: String
         var tempLabelText: String
         
-        let dateString = model.forecastTime
-        let dateRange = dateString.index(dateString.startIndex, offsetBy: 0) ... dateString.index(dateString.startIndex, offsetBy: 1)
-        
-        print(dateString[dateRange])
-        
-        timeLabelText = "\(dateString[dateRange])시"
-        
+        let dateString = model.forecastTime.transferStringToTime() ?? Date()
+        timeLabelText = dateString.transferTimeToString()
         
         switch model.SKY {
         case "1": // 맑음
@@ -117,5 +111,25 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         timeLabel.text = timeLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
         tempLabel.text = tempLabelText + "°"
+    }
+}
+
+extension String {
+    func transferStringToTime() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HHmm"
+        if let date = dateFormatter.date(from: self) {
+            return date
+        } else {
+            return nil
+        }
+    }
+}
+
+extension Date {
+    func transferTimeToString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "H시"
+        return dateFormatter.string(from: self)
     }
 }

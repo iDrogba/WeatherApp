@@ -6,14 +6,29 @@
 //
 
 import UIKit
+import Charts
 
 class RegionWeatherViewController: UIViewController {
     public var regionalCode: String = ""
+    private var dateArray: [String] = []
+    private var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveHeightLabel, weekWeatherTableView].forEach {
+        
+        let forecastDateArray = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]
+        forecastDateArray?.forEach{
+            if weatherForecastModels[$0.forecastDate] == nil {
+                weatherForecastModels.updateValue([$0], forKey: $0.forecastDate)
+            } else {
+                weatherForecastModels[$0.forecastDate]?.append($0)
+            }
+            
+        }
+        dateArray = weatherForecastModels.keys.sorted(by: <)
+        
+        
+        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveHeightLabel, weekWeatherTableView, chart].forEach {
             view.addSubview($0)
         }
         
@@ -22,48 +37,79 @@ class RegionWeatherViewController: UIViewController {
         weekWeatherTableView.separatorStyle = .none
         weekWeatherTableView.delegate = self
         weekWeatherTableView.dataSource = self
-        
-//        dayWeatherCollectionView.delegate = self
-//        dayWeatherCollectionView.dataSource = self
 
         DispatchQueue.main.async {
+            self.configureConstraints()
             self.applyData()
             self.applyBackground()
             self.applySurfImage()
-            self.configureConstraints()
+            self.setChart()
         }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        DispatchQueue.main.async {
+            
+        }
+    }
+    
+    private func setChart() {
+        guard let regionWeatherForecastModelArray = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return }
+        guard let baseDate = Double(regionWeatherForecastModelArray.first?.forecastDate ?? "0") else { return }
+        var lineChartEntry = [ChartDataEntry]() // graph 에 보여줄 data array
+        var waveHeightArray: [Double] = []
+        var timeArray: [Double] = []
+        var xAxisArray: [String] = []
+        regionWeatherForecastModelArray.forEach{
+            guard let wave = Double($0.WAV) else { return }
+            guard var dateTime = Double($0.forecastTime.prefix(2)) else { return }
+            guard let modelDate = Double($0.forecastDate) else { return }
+            dateTime = dateTime + (modelDate - baseDate) * 24
+            waveHeightArray.append(wave)
+            timeArray.append(dateTime)
+            if $0.forecastTime == "0000" {
+                let date = String($0.forecastDate.suffix(4))
+                xAxisArray.append(date)
+            } else {
+                let time = String($0.forecastTime.prefix(2)) + "시"
+                xAxisArray.append(time)
+            }
+        }
+        
+        // chart data array 에 데이터 추가
+        for i in 0 ..< timeArray.count {
+            let value = ChartDataEntry(x: timeArray[i], y: waveHeightArray[i])
+            
+            lineChartEntry.append(value)
+        }
+        
+        let line1 = LineChartDataSet(entries: lineChartEntry, label: "파고")
+        line1.colors = [NSUIColor.white]
+        line1.drawCirclesEnabled = false
+        let data = LineChartData(dataSet: line1)
+        chart.data = data
+        
+        chart.xAxis.labelPosition = .bottom
+//        chart.xAxis.valueFormatter = IndexAxisValueFormatter(values: xAxisArray)
+        
+//        chart.xAxis.setLabelCount(timeArray.count, force: false)
+       
+//        let formatter = NumberFormatter()
+//        formatter.minimumFractionDigits = 0
+//        chart.data?.setValueFormatter(DefaultValueFormatter(formatter:formatter))
     }
     
     /// RegionWeatherView : 주간 날씨 테이블뷰
     private var weekWeatherTableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: CGRect(), style: .grouped)
         tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
         tableView.backgroundColor = transparentBackground
-        
         tableView.showsVerticalScrollIndicator = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
         return tableView
     }()
-    
-    /// RegionWeatherView : 일간 시간별 날씨 컬렉션 뷰
-//    private let dayWeatherCollectionView: UICollectionView = {
-//
-//        let flowLayout = UICollectionViewFlowLayout()
-//        flowLayout.minimumLineSpacing = 0
-//        flowLayout.minimumInteritemSpacing = 0
-//        flowLayout.sectionInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-//
-//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-//        collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
-//        collectionView.showsHorizontalScrollIndicator = false
-//        collectionView.showsVerticalScrollIndicator = false
-//        collectionView.backgroundColor = transparentBackground
-//
-//        return collectionView
-//    }()
     
     private var cityLabel: UILabel = {
         let label = UILabel()
@@ -72,27 +118,33 @@ class RegionWeatherViewController: UIViewController {
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
     private var temperatureLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 96, weight: .semibold)
+        label.font = .systemFont(ofSize: 48, weight: .semibold)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
     private let degreeLabel: UILabel = {
         let label = UILabel()
         label.text = "℃"
-        label.font = .systemFont(ofSize: 40, weight: .light)
+        label.font = .systemFont(ofSize: 20, weight: .light)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
@@ -102,51 +154,90 @@ class RegionWeatherViewController: UIViewController {
         stackView.spacing = view.bounds.width * 0.03
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
         return stackView
     }()
     
     private var maxTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
     private var minTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
     private var surfImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
         return imageView
     }()
     
     private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 25, weight: .regular)
-        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
+        label.font = .systemFont(ofSize: 20, weight: .regular)
+        label.frame = CGRect()
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
     private var waveHeightLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .light)
-        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
+        label.frame = CGRect()
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
+    }()
+    
+    private lazy var chart: LineChartView = {
+        let chart  = LineChartView()
+        let xScale = 7.0
+        let yScale = 1.0
+        chart.zoom(scaleX: xScale, scaleY: yScale, x: 0, y: 0)
+        chart.rightAxis.enabled = false
+        chart.animate(xAxisDuration: 0, yAxisDuration: 1.5)
+        chart.leftAxis.axisMaximum = 2.5
+        chart.leftAxis.axisMinimum = -0.5
+        chart.borderColor = .white
+        chart.rightAxis.labelTextColor = .white
+        chart.leftAxis.labelTextColor = .white
+        chart.xAxis.labelTextColor = .white
+        chart.xAxis.gridColor = .white
+        chart.rightAxis.gridColor = .white
+        chart.doubleTapToZoomEnabled = false
+        chart.scaleXEnabled = false
+        chart.scaleYEnabled = false
+        chart.drawBordersEnabled = false
+        chart.borderColor = .white
+        chart.leftAxis.forceLabelsEnabled = true
+
+        chart.translatesAutoresizingMaskIntoConstraints = false
+        
+        return chart
     }()
     
     private func applySurfImage() {
@@ -261,19 +352,8 @@ class RegionWeatherViewController: UIViewController {
     }
     
     private func configureConstraints() {
-        cityLabel.translatesAutoresizingMaskIntoConstraints = false
-        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        degreeLabel.translatesAutoresizingMaskIntoConstraints = false
-        maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        tempStackView.translatesAutoresizingMaskIntoConstraints = false
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        surfImageView.translatesAutoresizingMaskIntoConstraints = false
-        waveHeightLabel.translatesAutoresizingMaskIntoConstraints = false
-        weekWeatherTableView.translatesAutoresizingMaskIntoConstraints = false
-
         cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        cityLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height * 0.1).isActive = true
+        cityLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20).isActive = true
         
         temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
@@ -295,17 +375,37 @@ class RegionWeatherViewController: UIViewController {
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: view.bounds.height * 0.002).isActive = true
         
-        weekWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        weekWeatherTableView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
-        weekWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        chart.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
+        chart.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
+        chart.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor).isActive = true
+        chart.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.2).isActive = true
+        
+        weekWeatherTableView.topAnchor.constraint(equalTo: chart.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
+        weekWeatherTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+        
     }
 }
 
 extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        
+        return dateArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = UILabel()
+        label.text = dateArray[section]
+        label.font = .systemFont(ofSize: 19, weight: .regular)
+        label.textColor = .white
+        
+        return label
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let dataCount = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.count else {
+        let sectionDate = dateArray[section]
+        guard let dataCount = weatherForecastModels[sectionDate]?.count else {
             self.dismiss(animated: true)
             return 0
         }
@@ -316,30 +416,19 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = weekWeatherTableView.dequeueReusableCell(withIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UITableViewCell() }
         
-//        guard let pastTMNModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}).first else { return UITableViewCell() }
-//
-//        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}).first else { return UITableViewCell() }
-        
-        guard let dayModel = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return cell }
-        
-        let model = dayModel[indexPath.row]
-//        guard let currentTMNModel =
-//                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}) else { return UITableViewCell() }
-//
-//        guard let currentTMXModel =
-//                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}) else { return UITableViewCell() }
+        let sectionDate = dateArray[indexPath.section]
+        guard let dayModel = weatherForecastModels[sectionDate]?[indexPath.row] else { return cell }
+        cell.applyData(dayModel)
         cell.backgroundColor = .clear
         
-//        if indexPath.row == 0 {
-//            cell.applyData(dayModel[indexPath.row], pastTMNModel, pastTMXModel)
-//        } else {
-//            cell.applyData(dayModel[indexPath.row], currentTMNModel[indexPath.row - 1], currentTMXModel[indexPath.row - 1])
-//        }
-        cell.applyData(model)
         return cell
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return view.bounds.height * 0.06
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return view.bounds.height * 0.06
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return view.bounds.height * 0.06
+//    }
 }

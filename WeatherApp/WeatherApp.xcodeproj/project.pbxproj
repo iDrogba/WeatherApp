@@ -28,6 +28,7 @@
 		0A7EAE852883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE842883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift */; };
 		0A7EAE872883C5B20087C4F5 /* WeekWeatherTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE862883C5B20087C4F5 /* WeekWeatherTableViewCell.swift */; };
 		0A7EAE892883C6140087C4F5 /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE882883C6140087C4F5 /* CustomColors.swift */; };
+		0AA2376B288D758600EB6BCE /* WeekWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA2376A288D758600EB6BCE /* WeekWeather.swift */; };
 		0ABD5A0D288C0F0700B70589 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABD5A0C288C0F0700B70589 /* Animation.swift */; };
 		0ADC5006287D360700B89518 /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADC5005287D360700B89518 /* SearchTableViewCell.swift */; };
 		0ADC500E28800D9200B89518 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADC500D28800D9200B89518 /* MainViewModel.swift */; };
@@ -80,6 +81,7 @@
 		0A7EAE842883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayWeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 		0A7EAE862883C5B20087C4F5 /* WeekWeatherTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeekWeatherTableViewCell.swift; sourceTree = "<group>"; };
 		0A7EAE882883C6140087C4F5 /* CustomColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
+		0AA2376A288D758600EB6BCE /* WeekWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekWeather.swift; sourceTree = "<group>"; };
 		0ABD5A0C288C0F0700B70589 /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
 		0ADC5005287D360700B89518 /* SearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		0ADC500D28800D9200B89518 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				0A7EAE842883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift */,
 				0A6A1E6A28782930003BB4A0 /* MainCollectionViewCell.swift */,
 				0ADC5005287D360700B89518 /* SearchTableViewCell.swift */,
+				0AA2376A288D758600EB6BCE /* WeekWeather.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 				0A7EAE852883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift in Sources */,
 				0ADC500E28800D9200B89518 /* MainViewModel.swift in Sources */,
 				0A3A77B5288D5FA2004F9A3C /* DateExtension.swift in Sources */,
+				0AA2376B288D758600EB6BCE /* WeekWeather.swift in Sources */,
 				0A6A1E7528792069003BB4A0 /* RegionalDataModel.swift in Sources */,
 				0A7EAE832883C5920087C4F5 /* RegionWeatherViewController.swift in Sources */,
 				0A6A1E6B28782930003BB4A0 /* MainCollectionViewCell.swift in Sources */,
@@ -614,7 +618,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -668,7 +672,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

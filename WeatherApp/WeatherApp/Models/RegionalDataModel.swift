@@ -5,7 +5,7 @@
 //  Created by 김상현 on 2022/07/09.
 //
 
-import Foundation
+import UIKit
 
 struct RegionalDataModel: Equatable {
     let regionalCode: String
@@ -76,7 +76,7 @@ class RegionalDataManager {
         let userDefaults = UserDefaults.standard
         var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] ?? [String]()
         savedRegionalCodes.append(regionalCode)
-        let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
+        let uniquedSavedRegionalCodes: [String] = savedRegionalCodes.uniqued()
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }
     
@@ -86,7 +86,7 @@ class RegionalDataManager {
         guard var savedRegionalCodes = userDefaults.array(forKey: self.userDefaultsKey) as? [String] else { return }
         guard let indexForRemove = savedRegionalCodes.firstIndex(of: regionalCode) else { return }
         savedRegionalCodes.remove(at: indexForRemove)
-        let uniquedSavedRegionalCodes = savedRegionalCodes.uniqued()
+        let uniquedSavedRegionalCodes: [String] = savedRegionalCodes.uniqued()
 
         userDefaults.set(uniquedSavedRegionalCodes, forKey: self.userDefaultsKey)
     }

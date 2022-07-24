@@ -43,6 +43,7 @@ class RegionWeatherViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
         tableView.backgroundColor = transparentBackground
+        
         tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
@@ -58,6 +59,7 @@ class RegionWeatherViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = transparentBackground
         
         return collectionView
@@ -66,7 +68,7 @@ class RegionWeatherViewController: UIViewController {
     private var cityLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 37, weight: .regular)
-        
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -76,6 +78,7 @@ class RegionWeatherViewController: UIViewController {
     private var temperatureLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 96, weight: .semibold)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -86,6 +89,7 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "℃"
         label.font = .systemFont(ofSize: 40, weight: .light)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -95,7 +99,7 @@ class RegionWeatherViewController: UIViewController {
     lazy var tempStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [maxTemperatureLabel, minTemperatureLabel])
         stackView.axis = .horizontal
-        stackView.spacing = 10
+        stackView.spacing = view.bounds.width * 0.03
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
         return stackView
@@ -104,6 +108,7 @@ class RegionWeatherViewController: UIViewController {
     private var maxTemperatureLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -113,6 +118,7 @@ class RegionWeatherViewController: UIViewController {
     private var minTemperatureLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         return label
     }()
@@ -125,8 +131,8 @@ class RegionWeatherViewController: UIViewController {
     
     private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "서핑하기 좋아요"
         label.font = .systemFont(ofSize: 25, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -136,6 +142,7 @@ class RegionWeatherViewController: UIViewController {
     private var waveHeightLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .light)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -268,36 +275,36 @@ class RegionWeatherViewController: UIViewController {
         cityLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height * 0.1).isActive = true
         
         temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 10).isActive = true
+        temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         
         degreeLabel.leftAnchor.constraint(equalTo: temperatureLabel.rightAnchor).isActive = true
-        degreeLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 20).isActive = true
+        degreeLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
         
         tempStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        tempStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 5).isActive = true
+        tempStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         
-        surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: 10).isActive = true
+        surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
         surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.2).isActive = true
         surfImageView.widthAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.width * 0.6).isActive = true
-        surfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        surfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10).isActive = true
+//        surfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
+//        surfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10).isActive = true
         surfImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: surfImageView.bottomAnchor, constant: 10).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: surfImageView.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
         
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 5).isActive = true
+        waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: view.bounds.height * 0.002).isActive = true
         
         dayWeatherCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: 5).isActive = true
+        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         dayWeatherCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         dayWeatherCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         dayWeatherCollectionView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
         dayWeatherCollectionView.heightAnchor.constraint(equalToConstant: view.frame.height / 9).isActive = true
         
         weekWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        weekWeatherTableView.topAnchor.constraint(equalTo: dayWeatherCollectionView.bottomAnchor, constant: 10).isActive = true
+        weekWeatherTableView.topAnchor.constraint(equalTo: dayWeatherCollectionView.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         weekWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
@@ -339,7 +346,7 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return view.bounds.height * 0.06
     }
 }
 

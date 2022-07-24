@@ -78,10 +78,8 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         var timeLabelText: String
         var weatherImageName: String
         var tempLabelText: String
-        
-        let dateString = model.forecastTime.transferStringToTime() ?? Date()
-        timeLabelText = dateString.transferTimeToString()
-        
+        var dayLabelText: String
+
         switch model.SKY {
         case "1": // 맑음
             weatherImageName = "sun.max"
@@ -106,9 +104,20 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
             break
         }
 
+        let forecastDateMid = model.forecastDate.transferStringToDate() ?? Date()
+        dayLabelText = forecastDateMid.transferDateToStringDay()
+        
+        let dateString = model.forecastTime.transferStringToTime() ?? Date()
+        timeLabelText = dateString.transferTimeToString()
+        
+        if model.forecastTime == "0000" {
+            timeLabel.text = "\(dayLabelText) \(timeLabelText)"
+        } else {
+            timeLabel.text = timeLabelText
+        }
+        
         tempLabelText = model.TMP
         
-        timeLabel.text = timeLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
         tempLabel.text = tempLabelText + "°"
     }

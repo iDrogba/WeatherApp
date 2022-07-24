@@ -20,6 +20,7 @@ class RegionWeatherViewController: UIViewController {
         
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
         
+        weekWeatherTableView.separatorStyle = .none
         weekWeatherTableView.delegate = self
         weekWeatherTableView.dataSource = self
         
@@ -43,6 +44,7 @@ class RegionWeatherViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
         tableView.backgroundColor = transparentBackground
+        
         tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
@@ -51,13 +53,14 @@ class RegionWeatherViewController: UIViewController {
     private let dayWeatherCollectionView: UICollectionView = {
         
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.scrollDirection = .horizontal
-        flowLayout.minimumLineSpacing = 5
-        flowLayout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        flowLayout.minimumLineSpacing = 0
+        flowLayout.minimumInteritemSpacing = 0
+        flowLayout.sectionInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(DayWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DayWeatherCollectionViewCell.reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = transparentBackground
         
         return collectionView
@@ -66,7 +69,7 @@ class RegionWeatherViewController: UIViewController {
     private var cityLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 37, weight: .regular)
-        
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -75,8 +78,8 @@ class RegionWeatherViewController: UIViewController {
     
     private var temperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "34"
         label.font = .systemFont(ofSize: 96, weight: .semibold)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -87,6 +90,7 @@ class RegionWeatherViewController: UIViewController {
         let label = UILabel()
         label.text = "℃"
         label.font = .systemFont(ofSize: 40, weight: .light)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -96,7 +100,7 @@ class RegionWeatherViewController: UIViewController {
     lazy var tempStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [maxTemperatureLabel, minTemperatureLabel])
         stackView.axis = .horizontal
-        stackView.spacing = 10
+        stackView.spacing = view.bounds.width * 0.03
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
         return stackView
@@ -104,8 +108,8 @@ class RegionWeatherViewController: UIViewController {
     
     private var maxTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "34°"
         label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -114,8 +118,8 @@ class RegionWeatherViewController: UIViewController {
     
     private var minTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "23°"
         label.font = .systemFont(ofSize: 35, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         return label
     }()
@@ -128,8 +132,8 @@ class RegionWeatherViewController: UIViewController {
     
     private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "서핑하기 좋아요"
         label.font = .systemFont(ofSize: 25, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -138,8 +142,8 @@ class RegionWeatherViewController: UIViewController {
     
     private var waveHeightLabel: UILabel = {
         let label = UILabel()
-        label.text = "0.4m"
         label.font = .systemFont(ofSize: 20, weight: .light)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         label.shadowOffset = CGSize(width: 2, height: 2)
         label.shadowColor = customShadow
@@ -158,7 +162,7 @@ class RegionWeatherViewController: UIViewController {
         } else if modelWaveValue >= 0.5 { // 초심자에게 좋음
             surfImageName = "surf2"
         } else if modelWaveValue == 0 { // 파도 없음
-            surfImageName = ""
+            surfImageName = "surf1"
         } else {
             surfImageName = "surf1"
         }
@@ -223,7 +227,9 @@ class RegionWeatherViewController: UIViewController {
             descriptionLabelText = "파도가 약합니다."
         }
         
-        cityLabel.text = model.regionName
+        if model.subRegionName.isEmpty {
+            cityLabel.text = model.regionName
+        } else { cityLabel.text = model.subRegionName}
         temperatureLabel.text = model.TMP
         minTemperatureLabel.text = pastTMMModel.TMP + "°"
         maxTemperatureLabel.text = pastTMXModel.TMP + "°"
@@ -270,36 +276,36 @@ class RegionWeatherViewController: UIViewController {
         cityLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: view.bounds.height * 0.1).isActive = true
         
         temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 10).isActive = true
+        temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         
         degreeLabel.leftAnchor.constraint(equalTo: temperatureLabel.rightAnchor).isActive = true
-        degreeLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 20).isActive = true
+        degreeLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
         
         tempStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        tempStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 5).isActive = true
+        tempStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         
-        surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: 10).isActive = true
+        surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
         surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.2).isActive = true
         surfImageView.widthAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.width * 0.6).isActive = true
-        surfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        surfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10).isActive = true
+//        surfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
+//        surfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10).isActive = true
         surfImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: surfImageView.bottomAnchor, constant: 10).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: surfImageView.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
         
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 5).isActive = true
+        waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: view.bounds.height * 0.002).isActive = true
         
         dayWeatherCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: 10).isActive = true
+        dayWeatherCollectionView.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         dayWeatherCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         dayWeatherCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         dayWeatherCollectionView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
         dayWeatherCollectionView.heightAnchor.constraint(equalToConstant: view.frame.height / 9).isActive = true
         
         weekWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        weekWeatherTableView.topAnchor.constraint(equalTo: dayWeatherCollectionView.bottomAnchor, constant: 10).isActive = true
+        weekWeatherTableView.topAnchor.constraint(equalTo: dayWeatherCollectionView.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         weekWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
@@ -314,33 +320,40 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = weekWeatherTableView.dequeueReusableCell(withIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UITableViewCell() }
         
-        guard let todayModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.first else { return UITableViewCell() }
+        guard let pastTMNModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}).first else { return UITableViewCell() }
         
-        guard let futureModel =
-                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0000"}) else { return UITableViewCell() }
+        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}).first else { return UITableViewCell() }
         
+        guard let dayModel = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0000"}) else { return UITableViewCell() }
+        
+        guard let currentTMNModel =
+                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "0600"}) else { return UITableViewCell() }
+        
+        guard let currentTMXModel =
+                WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.filter({$0.forecastTime == "1300"}) else { return UITableViewCell() }
         cell.backgroundColor = .clear
         
         if indexPath.row == 0 {
-            cell.applyData(todayModel)
+            cell.applyData(dayModel[indexPath.row], pastTMNModel, pastTMXModel)
         } else {
-            cell.applyData(futureModel[indexPath.row - 1])
+            cell.applyData(dayModel[indexPath.row], currentTMNModel[indexPath.row - 1], currentTMXModel[indexPath.row - 1])
         }
         
-        print("todayModel: \(todayModel)")
-        print("futuremodel: \(futureModel)")
+        print("model: \(dayModel)")
+        print("currentTMNModel: \(currentTMNModel)")
+        print("currentTMXModel: \(currentTMXModel)")
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return view.bounds.height * 0.06
     }
 }
 
 extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -360,7 +373,7 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let itemSize = CGSize(width: view.frame.width / 6, height: collectionView.frame.height)
+        let itemSize = CGSize(width: view.frame.width / 7, height: collectionView.frame.height)
         return itemSize
     }
 }

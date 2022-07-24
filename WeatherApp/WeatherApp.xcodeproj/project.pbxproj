@@ -190,7 +190,6 @@
 		0A6A1E67287827B8003BB4A0 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				0A7EAE8A2883C6640087C4F5 /* WeekWeather.swift */,
 				0A6A1E7428792069003BB4A0 /* RegionalDataModel.swift */,
 				0A6A1E76287920A5003BB4A0 /* WeatherForecastModel.swift */,
 			);
@@ -505,7 +504,6 @@
 				0A5AFE032867381700DA18BE /* SceneDelegate.swift in Sources */,
 				0A6A1E65287823BD003BB4A0 /* MainViewController.swift in Sources */,
 				0A6A1E77287920A5003BB4A0 /* WeatherForecastModel.swift in Sources */,
-				0A7EAE8B2883C6640087C4F5 /* WeekWeather.swift in Sources */,
 				0A6A1E7128792025003BB4A0 /* APIRequest.swift in Sources */,
 				0A7EAE852883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift in Sources */,
 				0ADC500E28800D9200B89518 /* MainViewModel.swift in Sources */,
@@ -682,7 +680,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZNH7978JJQ;
+				DEVELOPMENT_TEAM = D9CAJN27UH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

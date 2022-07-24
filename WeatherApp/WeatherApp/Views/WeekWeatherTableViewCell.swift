@@ -12,6 +12,7 @@ class WeekWeatherTableViewCell: UITableViewCell {
     private var dayLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
         return label
     }()
@@ -26,6 +27,7 @@ class WeekWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         return label
     }()
     
@@ -33,6 +35,7 @@ class WeekWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .regular)
+        label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         return label
     }()
     
@@ -78,25 +81,29 @@ class WeekWeatherTableViewCell: UITableViewCell {
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         tempStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: contentView.bounds.width * 0.05).isActive = true
         dayLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         
         weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         weatherImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         
-        tempStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+        tempStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: contentView.bounds.width * -0.05).isActive = true
         tempStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
     }
     
-    func applyData(_ model: WeatherForecastModel) {
+    func applyData(_ model: WeatherForecastModel, _ currentTMNModel: WeatherForecastModel, _ currentTMXModel: WeatherForecastModel) {
         var dayLabelText: String
         var weatherImageName: String
         var maxTemp: String
         var minTemp: String
-    
-        dayLabelText = model.forecastDate
-        maxTemp = model.TMP
-        minTemp = model.TMP
+        
+        
+        var dayLabelTextDate: Date
+        dayLabelTextDate = currentTMNModel.forecastDate.transferStringToDate() ?? Date()
+        dayLabelText = dayLabelTextDate.transferDateToString()
+        
+        minTemp = currentTMNModel.TMP
+        maxTemp = currentTMXModel.TMP
         
         switch model.SKY {
         case "1": // 맑음
@@ -127,5 +134,32 @@ class WeekWeatherTableViewCell: UITableViewCell {
         maxTemperatureLabel.text = maxTemp + "°"
         minTemperatureLabel.text = minTemp + "°"
     }
-    
+}
+
+extension String {
+    func transferStringToDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        if let date = dateFormatter.date(from: self) {
+            return date
+        } else {
+            return nil
+        }
+    }
+}
+
+extension Date {
+    func transferDateToString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "M월 d일 E요일"
+        return dateFormatter.string(from: self)
+    }
+}
+
+extension Date {
+    func transferDateToStringDay() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "M/d"
+        return dateFormatter.string(from: self)
+    }
 }

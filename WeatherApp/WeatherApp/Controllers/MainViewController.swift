@@ -78,6 +78,7 @@ class MainViewController: UIViewController {
 
         mainCollectionView.contentInset = .zero
         mainCollectionView.contentInsetAdjustmentBehavior = .never
+        mainCollectionView.separatorStyle = .none
         
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label

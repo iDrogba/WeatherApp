@@ -174,14 +174,19 @@ class MainCollectionViewCell: UITableViewCell {
             surfConditionText = "파도가 약합니다."
         }
         
+        let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
+        let TMN = Int(round(Double(pastTMNModel.TMN) ?? 0))
+        
+        minTemperatureLabel.text = "최저:" + String(describing: TMN) + "°"
+        maxTemperatureLabel.text = "최고:" + String(describing: TMX) + "°"
+        currentTemperatuerLabel.text = model.TMP + "°"
         surfConditionLabel.text = surfConditionText
         skyConditionLabel.text = skyCondition
         backgroundImageView.image = UIImage(named: backgroundImageName)
         regionLabel.text = model.regionName
         subRegionLabel.text = model.subRegionName
-        currentTemperatuerLabel.text = model.TMP + "°"
-        minTemperatureLabel.text = "최저:" + pastTMNModel.TMN + "°"
-        maxTemperatureLabel.text = "최고:" + pastTMXModel.TMX + "°"
+//        minTemperatureLabel.text = "최저:" + pastTMNModel.TMN + "°"
+//        maxTemperatureLabel.text = "최고:" + pastTMXModel.TMX + "°"
     }
     
     func setConstraints() {

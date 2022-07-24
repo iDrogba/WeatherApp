@@ -207,8 +207,8 @@ class RegionWeatherViewController: UIViewController {
     
     func applyData() {
         guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
-        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return }
-        guard let pastTMMModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return }
+        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return }
+        guard let pastTMMModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return }
         
         var descriptionLabelText: String
         
@@ -229,9 +229,12 @@ class RegionWeatherViewController: UIViewController {
         if model.subRegionName.isEmpty {
             cityLabel.text = model.regionName
         } else { cityLabel.text = model.subRegionName}
+        let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
+        let TMN = Int(round(Double(pastTMMModel.TMN) ?? 0))
+        
+        minTemperatureLabel.text = String(describing: TMN) + "°"
+        maxTemperatureLabel.text = String(describing: TMX) + "°"
         temperatureLabel.text = model.TMP
-        minTemperatureLabel.text = pastTMMModel.TMP + "°"
-        maxTemperatureLabel.text = pastTMXModel.TMP + "°"
         descriptionLabel.text = descriptionLabelText
         waveHeightLabel.text = model.WAV + "m"
     }

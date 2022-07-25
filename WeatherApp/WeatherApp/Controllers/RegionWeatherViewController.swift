@@ -84,7 +84,7 @@ class RegionWeatherViewController: UIViewController {
             lineChartEntry.append(value)
         }
         
-        let line1 = LineChartDataSet(entries: lineChartEntry, label: "파고")
+        let line1 = LineChartDataSet(entries: lineChartEntry, label: "파고(m)")
         line1.colors = [NSUIColor.white]
         line1.circleRadius = 3
         let data = LineChartData(dataSet: line1)
@@ -300,16 +300,16 @@ class RegionWeatherViewController: UIViewController {
         
         guard let modelWaveValue = Double(model.WAV) else { return }
         if modelWaveValue >= 2 {
-            descriptionLabelText = "파도가 높습니다."
+            descriptionLabelText = "파도가 높습니다"
         } else if modelWaveValue >= 1 {
-            descriptionLabelText = "서핑을 즐기기 좋습니다."
+            descriptionLabelText = "서핑을 즐기기 좋습니다"
         } else if modelWaveValue >= 0.5 {
-            descriptionLabelText = "초심자가 즐기기 좋습니다."
+            descriptionLabelText = "초심자가 즐기기 좋습니다"
         } else if modelWaveValue == 0 {
-            descriptionLabelText = "파도가 없거나 약한 지역입니다."
+            descriptionLabelText = "파도가 없거나 약한 지역입니다"
             waveHeightLabel.text = ""
         } else {
-            descriptionLabelText = "파도가 약합니다."
+            descriptionLabelText = "파도가 약합니다"
         }
         
         if model.subRegionName.isEmpty {
@@ -318,8 +318,8 @@ class RegionWeatherViewController: UIViewController {
         let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
         let TMN = Int(round(Double(pastTMMModel.TMN) ?? 0))
         
-        minTemperatureLabel.text = String(describing: TMN) + "°"
-        maxTemperatureLabel.text = String(describing: TMX) + "°"
+        minTemperatureLabel.text = "최저: " + String(describing: TMN) + "°"
+        maxTemperatureLabel.text = "최고: " + String(describing: TMX) + "°"
         temperatureLabel.text = model.TMP
         descriptionLabel.text = descriptionLabelText
         waveHeightLabel.text = model.WAV + "m"
@@ -348,7 +348,7 @@ class RegionWeatherViewController: UIViewController {
     
     private func configureConstraints() {
         cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        cityLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20).isActive = true
+        cityLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
         
         temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
@@ -375,7 +375,7 @@ class RegionWeatherViewController: UIViewController {
         chart.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor).isActive = true
         chart.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.15).isActive = true
         
-        weekWeatherTableView.topAnchor.constraint(equalTo: chart.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
+        weekWeatherTableView.topAnchor.constraint(equalTo: chart.bottomAnchor, constant: view.bounds.height * 0.02).isActive = true
         weekWeatherTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25).isActive = true
         weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25).isActive = true

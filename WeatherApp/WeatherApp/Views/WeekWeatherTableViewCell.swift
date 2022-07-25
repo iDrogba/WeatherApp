@@ -66,7 +66,7 @@ class WeekWeatherTableViewCell: UITableViewCell {
         
         dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         dayLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        weatherImage.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: 10).isActive = true
+        weatherImage.trailingAnchor.constraint(equalTo: temperatureLabel.leadingAnchor, constant: -10).isActive = true
         weatherImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true

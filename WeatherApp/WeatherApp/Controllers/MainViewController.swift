@@ -179,6 +179,7 @@ extension MainViewController: UISearchBarDelegate {
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard tableView.isEqual(mainCollectionView) else {return nil}
         let label = UILabel()
         label.textAlignment = .center
         label.textColor = .gray

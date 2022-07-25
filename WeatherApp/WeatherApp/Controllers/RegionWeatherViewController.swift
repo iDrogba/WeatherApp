@@ -86,18 +86,13 @@ class RegionWeatherViewController: UIViewController {
         
         let line1 = LineChartDataSet(entries: lineChartEntry, label: "파고")
         line1.colors = [NSUIColor.white]
-        line1.drawCirclesEnabled = false
+        line1.circleRadius = 3
         let data = LineChartData(dataSet: line1)
+        data.setValueTextColor(.clear)
         chart.data = data
         
         chart.xAxis.labelPosition = .bottom
-//        chart.xAxis.valueFormatter = IndexAxisValueFormatter(values: xAxisArray)
-        
-//        chart.xAxis.setLabelCount(timeArray.count, force: false)
-       
-//        let formatter = NumberFormatter()
-//        formatter.minimumFractionDigits = 0
-//        chart.data?.setValueFormatter(DefaultValueFormatter(formatter:formatter))
+        chart.xAxis.valueFormatter = IndexAxisValueFormatter(values: xAxisArray)
     }
     
     /// RegionWeatherView : 주간 날씨 테이블뷰
@@ -215,26 +210,26 @@ class RegionWeatherViewController: UIViewController {
     
     private lazy var chart: LineChartView = {
         let chart  = LineChartView()
-        let xScale = 7.0
-        let yScale = 1.0
+        let xScale = 6.0
+        let yScale = 2.0
         chart.zoom(scaleX: xScale, scaleY: yScale, x: 0, y: 0)
         chart.rightAxis.enabled = false
         chart.animate(xAxisDuration: 0, yAxisDuration: 1.5)
         chart.leftAxis.axisMaximum = 2.5
-        chart.leftAxis.axisMinimum = -0.5
+        chart.leftAxis.axisMinimum = 0.0
         chart.borderColor = .white
         chart.rightAxis.labelTextColor = .white
         chart.leftAxis.labelTextColor = .white
         chart.xAxis.labelTextColor = .white
         chart.xAxis.gridColor = .white
         chart.rightAxis.gridColor = .white
+        chart.leftAxis.gridColor = .white
+        chart.borderColor = .white
         chart.doubleTapToZoomEnabled = false
         chart.scaleXEnabled = false
         chart.scaleYEnabled = false
         chart.drawBordersEnabled = false
-        chart.borderColor = .white
         chart.leftAxis.forceLabelsEnabled = true
-
         chart.translatesAutoresizingMaskIntoConstraints = false
         
         return chart
@@ -378,12 +373,12 @@ class RegionWeatherViewController: UIViewController {
         chart.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
         chart.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
         chart.topAnchor.constraint(equalTo: waveHeightLabel.bottomAnchor).isActive = true
-        chart.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.2).isActive = true
+        chart.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.15).isActive = true
         
         weekWeatherTableView.topAnchor.constraint(equalTo: chart.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         weekWeatherTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+        weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25).isActive = true
+        weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25).isActive = true
         
     }
 }
@@ -396,7 +391,7 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
-        label.text = dateArray[section]
+        label.text = dateArray[section].transferStringToDate()?.transferDateToString()
         label.font = .systemFont(ofSize: 19, weight: .regular)
         label.textColor = .white
         
@@ -423,12 +418,4 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
         
         return cell
     }
-    
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return view.bounds.height * 0.06
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        return view.bounds.height * 0.06
-//    }
 }

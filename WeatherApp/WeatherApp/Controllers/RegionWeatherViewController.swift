@@ -359,13 +359,14 @@ class RegionWeatherViewController: UIViewController {
         tempStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         tempStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         
-        surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
-        surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.2).isActive = true
-        surfImageView.widthAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.width * 0.6).isActive = true
+        surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: 10).isActive = true
+        surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.25).isActive = true
         surfImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
+        surfImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        surfImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+
         descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: surfImageView.bottomAnchor, constant: view.bounds.height * 0.01).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: surfImageView.bottomAnchor, constant: 10).isActive = true
         
         waveHeightLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         waveHeightLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: view.bounds.height * 0.002).isActive = true

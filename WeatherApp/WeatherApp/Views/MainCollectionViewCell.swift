@@ -72,7 +72,7 @@ class MainCollectionViewCell: UITableViewCell {
         let temperatuerLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         temperatuerLabel.translatesAutoresizingMaskIntoConstraints = false
         temperatuerLabel.text = "_"
-        temperatuerLabel.font = .systemFont(ofSize: 48, weight: .regular)
+        temperatuerLabel.font = .systemFont(ofSize: 40, weight: .regular)
         temperatuerLabel.textColor = .white
 
         return temperatuerLabel

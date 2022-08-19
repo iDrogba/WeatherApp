@@ -9,7 +9,6 @@
 - 기온, 강수..
 
 ## :people_hugging: Authors
-![6 5형-2](https://user-images.githubusercontent.com/74828662/185643467-d032624c-2d27-4096-9a2f-598b9adb9f57.png)
 |Drogba|Lena|
 |:---|:---|
 |[Drogba](https://github.com/iDrogba)|[Lena](https://github.com/lenamin)|

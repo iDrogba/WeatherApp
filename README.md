@@ -6,6 +6,12 @@ __서핑 앱__
 |:---|:---|
 |[Drogba](https://github.com/iDrogba)|[Lena](https://github.com/lenamin)|
 
+## App Store
+https://apps.apple.com/kr/app/time-to-surf/id1636290938
+
+## 버전
+1.0
+
 ## Git Commit Message
 |*Type*|*Subject*|
 |:---|:---|

@@ -14,16 +14,10 @@
 |[Drogba](https://github.com/iDrogba)|[Lena](https://github.com/lenamin)|
 
 ## :fireworks: Screenshots
-<img src="https://user-images.githubusercontent.com/74828662/185643705-812df99c-f3b1-4ec4-9e52-b53a5248cddb.png" width="250" height="500"/>
-<img src="https://user-images.githubusercontent.com/74828662/185643570-effa6746-9c94-4131-864d-b658fc00095c.png" width="250" height="500"/>
-<img src="https://user-images.githubusercontent.com/74828662/185643590-8dd35ce1-1e9f-4e7e-9cda-923a7087e3e8.png" width="250" height="500"/>
-<img src="https://user-images.githubusercontent.com/74828662/185643600-334b5658-b7a2-4f81-a5ba-5dfdb8e4fdc8.png" width="250" height="500"/>
-<img src="https://user-images.githubusercontent.com/74828662/185643672-72c39012-7d79-4fcc-b7e6-83717c3ba2df.png" width="250" height="500"/>
-<img src="https://user-images.githubusercontent.com/74828662/185643686-be50949e-3821-4ce6-afc6-ea364a44cb81.png" width="250" height="500"/>
+<img src="https://user-images.githubusercontent.com/74828662/185643705-812df99c-f3b1-4ec4-9e52-b53a5248cddb.png" width="250" height="500"/> <img src="https://user-images.githubusercontent.com/74828662/185643570-effa6746-9c94-4131-864d-b658fc00095c.png" width="250" height="500"/> <img src="https://user-images.githubusercontent.com/74828662/185643590-8dd35ce1-1e9f-4e7e-9cda-923a7087e3e8.png" width="250" height="500"/> <img src="https://user-images.githubusercontent.com/74828662/185643600-334b5658-b7a2-4f81-a5ba-5dfdb8e4fdc8.png" width="250" height="500"/> <img src="https://user-images.githubusercontent.com/74828662/185643672-72c39012-7d79-4fcc-b7e6-83717c3ba2df.png" width="250" height="500"/> <img src="https://user-images.githubusercontent.com/74828662/185643686-be50949e-3821-4ce6-afc6-ea364a44cb81.png" width="250" height="500"/>
 
 ## :sparkles: Skills & Tech Stack
 - UIKit
-- SwiftUI
 - Combine
 - Alamofire
 - Chart

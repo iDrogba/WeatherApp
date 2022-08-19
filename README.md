@@ -1,17 +1,42 @@
-# Time to surf
-__서핑 앱__
+# :iphone: Time to surf
+파도를 기다리는 서퍼들을 위한 서핑 날씨 앱입니다.
 
-## Members
+## :pushpin: Features
+- 날씨 요약 정보 모아보기
+- 날씨 상세 정보
+- 상세한 지역 검색
+- 파고 그래프
+- 기온, 강수..
+
+## :people_hugging: Authors
+![6 5형-2](https://user-images.githubusercontent.com/74828662/185643467-d032624c-2d27-4096-9a2f-598b9adb9f57.png)
 |Drogba|Lena|
 |:---|:---|
 |[Drogba](https://github.com/iDrogba)|[Lena](https://github.com/lenamin)|
 
-## App Store
-https://apps.apple.com/kr/app/time-to-surf/id1636290938
+## :fireworks: Screenshots
+![6 5형](https://user-images.githubusercontent.com/74828662/185643705-812df99c-f3b1-4ec4-9e52-b53a5248cddb.png)
+![6 5형-1](https://user-images.githubusercontent.com/74828662/185643570-effa6746-9c94-4131-864d-b658fc00095c.png)
+![6 5형-2](https://user-images.githubusercontent.com/74828662/185643590-8dd35ce1-1e9f-4e7e-9cda-923a7087e3e8.png)
+![6 5형-3](https://user-images.githubusercontent.com/74828662/185643600-334b5658-b7a2-4f81-a5ba-5dfdb8e4fdc8.png)
+![6 5형-4](https://user-images.githubusercontent.com/74828662/185643672-72c39012-7d79-4fcc-b7e6-83717c3ba2df.png)
+![6 5형-5](https://user-images.githubusercontent.com/74828662/185643686-be50949e-3821-4ce6-afc6-ea364a44cb81.png)
 
+## :sparkles: Skills & Tech Stack
+- UIKit
+- SwiftUI
+- Combine
+- Alamofire
+- Chart
+- Image rendering
+
+# App Store
+## 링크
+https://apps.apple.com/kr/app/time-to-surf/id1636290938
 ## 버전
 1.0
 
+# Git
 ## Git Commit Message
 |*Type*|*Subject*|
 |:---|:---|

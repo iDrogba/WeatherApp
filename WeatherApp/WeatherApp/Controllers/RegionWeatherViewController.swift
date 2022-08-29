@@ -12,6 +12,7 @@ class RegionWeatherViewController: UIViewController {
     public var regionalCode: String = ""
     private var dateArray: [String] = []
     private var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
+    var surfCondition: SurfConditionOutput!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +43,7 @@ class RegionWeatherViewController: UIViewController {
             self.configureConstraints()
             self.applyData()
             self.applyBackground()
-            self.applySurfImage()
+            self.applySurfConditionImageLabel()
             self.setChart()
         }
     }
@@ -56,18 +57,22 @@ class RegionWeatherViewController: UIViewController {
     
     private func setChart() {
         guard let regionWeatherForecastModelArray = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return }
-        guard let baseDate = Double(regionWeatherForecastModelArray.first?.forecastDate ?? "0") else { return }
+
         var lineChartEntry = [ChartDataEntry]() // graph 에 보여줄 data array
         var waveHeightArray: [Double] = []
         var timeArray: [Double] = []
         var xAxisArray: [String] = []
-        regionWeatherForecastModelArray.forEach{
+        regionWeatherForecastModelArray.forEach {
             guard let wave = Double($0.WAV) else { return }
-            guard var dateTime = Double($0.forecastTime.prefix(2)) else { return }
-            guard let modelDate = Double($0.forecastDate) else { return }
-            dateTime = dateTime + (modelDate - baseDate) * 24
             waveHeightArray.append(wave)
-            timeArray.append(dateTime)
+
+            guard let modelDate = ($0.forecastDate + $0.forecastTime.prefix(2)).transferStringToFullDate() else { return }
+
+            var dateTimeDouble = round(DateInterval(start: Date.currentFullDate, end: modelDate).duration / 3600)
+            dateTimeDouble -= 9
+            print(modelDate)
+            print(dateTimeDouble)
+            timeArray.append(dateTimeDouble)
             if $0.forecastTime == "0000" {
                 let date = String($0.forecastDate.suffix(4))
                 xAxisArray.append(date)
@@ -80,10 +85,12 @@ class RegionWeatherViewController: UIViewController {
         // chart data array 에 데이터 추가
         for i in 0 ..< timeArray.count {
             let value = ChartDataEntry(x: timeArray[i], y: waveHeightArray[i])
-            
             lineChartEntry.append(value)
         }
-        
+        print("====================")
+        print(xAxisArray)
+        print(lineChartEntry)
+        print("====================")
         let line1 = LineChartDataSet(entries: lineChartEntry, label: "파고(m)")
         line1.colors = [NSUIColor.white]
         line1.circleRadius = 3
@@ -235,24 +242,45 @@ class RegionWeatherViewController: UIViewController {
         return chart
     }()
     
-    private func applySurfImage() {
+    private func applySurfConditionImageLabel() {
         var surfImageName: String
+        var surfConditionLabelText: String
+        guard var surfConditionPercentage = surfCondition.X1Probability[surfCondition.X1] else { return }
+        surfConditionPercentage = floor(surfConditionPercentage * 1000) / 10
         guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
-        
         guard let modelWaveValue = Double(model.WAV) else { return }
-        if modelWaveValue >= 2 { // 높은 파도
-            surfImageName = "surf4"
-        } else if modelWaveValue >= 1 { // 서핑하기 좋음
-            surfImageName = "surf3"
-        } else if modelWaveValue >= 0.5 { // 초심자에게 좋음
-            surfImageName = "surf2"
-        } else if modelWaveValue == 0 { // 파도 없음
-            surfImageName = "surf1"
-        } else {
-            surfImageName = "surf1"
-        }
+        guard let surfConditionDouble = Double(surfCondition.X1) else { return }
         
+        switch surfConditionDouble {
+        case 0:
+            surfImageName = "surf1"
+            if modelWaveValue == 0 {
+                surfConditionLabelText = "파도가 없는 지역입니다."
+            } else {
+                surfConditionLabelText = "파도가 약합니다."
+            }
+        case 1:
+            surfImageName = "surf2"
+            surfConditionLabelText = "입문자가 즐기기 좋습니다."
+        case 2:
+            surfImageName = "surf2"
+            surfConditionLabelText = "초급자가 즐기기 좋습니다."
+        case 3:
+            surfImageName = "surf3"
+            surfConditionLabelText = "중급자가 즐기기 좋습니다."
+        case 4:
+            surfImageName = "surf3"
+            surfConditionLabelText = "상급자가 즐기기 좋습니다."
+        case 5:
+            surfImageName = "surf4"
+            surfConditionLabelText = "서핑을 즐기기 위험합니다."
+        default:
+            surfImageName = "surf1"
+            surfConditionLabelText = "오류."
+        }
+
         surfImageView.image = UIImage(named: surfImageName)
+        descriptionLabel.text = surfConditionLabelText + " (\(surfConditionPercentage)%)"
     }
     
     private func applyBackground() {
@@ -296,22 +324,6 @@ class RegionWeatherViewController: UIViewController {
         guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return }
         guard let pastTMMModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return }
         
-        var descriptionLabelText: String
-        
-        guard let modelWaveValue = Double(model.WAV) else { return }
-        if modelWaveValue >= 2 {
-            descriptionLabelText = "파도가 높습니다"
-        } else if modelWaveValue >= 1 {
-            descriptionLabelText = "서핑을 즐기기 좋습니다"
-        } else if modelWaveValue >= 0.5 {
-            descriptionLabelText = "초심자가 즐기기 좋습니다"
-        } else if modelWaveValue == 0 {
-            descriptionLabelText = "파도가 없거나 약한 지역입니다"
-            waveHeightLabel.text = ""
-        } else {
-            descriptionLabelText = "파도가 약합니다"
-        }
-        
         if model.subRegionName.isEmpty {
             cityLabel.text = model.regionName
         } else { cityLabel.text = model.subRegionName}
@@ -321,8 +333,7 @@ class RegionWeatherViewController: UIViewController {
         minTemperatureLabel.text = "최저: " + String(describing: TMN) + "°"
         maxTemperatureLabel.text = "최고: " + String(describing: TMX) + "°"
         temperatureLabel.text = model.TMP
-        descriptionLabel.text = descriptionLabelText
-        waveHeightLabel.text = model.WAV + "m"
+        waveHeightLabel.text = "파고: " + model.WAV + " m " + " 풍속: " + model.WSD + " m/s"
     }
     
     var viewTranslation = CGPoint(x: 0, y:0)
@@ -391,7 +402,7 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
-        label.text = dateArray[section].transferStringToDate()?.transferDateToString()
+        label.text = dateArray[section].transferStringToDate()?.transferDateToKorean()
         label.font = .systemFont(ofSize: 19, weight: .regular)
         label.textColor = .white
         

@@ -8,6 +8,8 @@
 import UIKit
 
 class MainCollectionViewCell: UITableViewCell {
+    var surfCondition: SurfConditionOutput? = nil
+    
     private lazy var subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
         subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -131,7 +133,7 @@ class MainCollectionViewCell: UITableViewCell {
     }
     
     func setUI(_ model: WeatherForecastModel, _ pastTMNModel: WeatherForecastModel, _ pastTMXModel: WeatherForecastModel) {
-        var surfConditionText: String
+        var surfConditionLabelText: String
         var backgroundImageName: String
         var skyCondition: String
         
@@ -158,20 +160,33 @@ class MainCollectionViewCell: UITableViewCell {
         default :
             break
         }
-       
         waveLabel.text = "파고: " + model.WAV + "m"
+        
         guard let modelWaveValue = Double(model.WAV) else { return }
-        if modelWaveValue >= 2 {
-            surfConditionText = "파도가 높습니다"
-        } else if modelWaveValue >= 1 {
-            surfConditionText = "서핑을 즐기기 좋습니다"
-        } else if modelWaveValue >= 0.5 {
-            surfConditionText = "초심자가 즐기기 좋습니다"
-        } else if modelWaveValue == 0 {
-            surfConditionText = "파도가 없거나 약한 지역입니다"
-            waveLabel.text = ""
-        } else {
-            surfConditionText = "파도가 약합니다"
+        guard let modelWindValue = Double(model.WSD) else { return }
+        guard let surfCondition = ML.shared.fetchPrediction(wave: modelWaveValue, wind: modelWindValue) else { return }
+        self.surfCondition = surfCondition
+        guard let surfConditionDouble = Double(surfCondition.X1) else { return }
+
+        switch surfConditionDouble {
+        case 0:
+            if modelWaveValue == 0 {
+                surfConditionLabelText = "파도가 없는 지역입니다"
+            } else {
+                surfConditionLabelText = "파도가 약합니다"
+            }
+        case 1:
+            surfConditionLabelText = "입문자가 즐기기 좋습니다"
+        case 2:
+            surfConditionLabelText = "초급자가 즐기기 좋습니다"
+        case 3:
+            surfConditionLabelText = "중급자가 즐기기 좋습니다"
+        case 4:
+            surfConditionLabelText = "상급자가 즐기기 좋습니다"
+        case 5:
+            surfConditionLabelText = "서핑을 즐기기 위험합니다"
+        default:
+            surfConditionLabelText = "오류"
         }
         
         let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
@@ -180,13 +195,11 @@ class MainCollectionViewCell: UITableViewCell {
         minTemperatureLabel.text = "최저:" + String(describing: TMN) + "°"
         maxTemperatureLabel.text = "최고:" + String(describing: TMX) + "°"
         currentTemperatuerLabel.text = model.TMP + "°"
-        surfConditionLabel.text = surfConditionText
+        surfConditionLabel.text = surfConditionLabelText
         skyConditionLabel.text = skyCondition
         backgroundImageView.image = UIImage(named: backgroundImageName)
         regionLabel.text = model.regionName
         subRegionLabel.text = model.subRegionName
-//        minTemperatureLabel.text = "최저:" + pastTMNModel.TMN + "°"
-//        maxTemperatureLabel.text = "최고:" + pastTMXModel.TMX + "°"
     }
     
     func setConstraints() {

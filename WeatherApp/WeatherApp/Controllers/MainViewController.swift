@@ -254,7 +254,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard tableView.isEqual(searchTableView) else {
             guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
 
-            guard let cell = tableView.cellForRow(at: indexPath) else { return }
+            guard let cell = tableView.cellForRow(at: indexPath) as? MainCollectionViewCell else { return }
             let cellOriginPoint =  cell.superview?.convert(cell.center, to: nil)
             let cellOriginFrame =  cell.superview?.convert(cell.frame, to: nil)
             
@@ -265,6 +265,8 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
             guard WeatherForecastModelManager.shared.currentWeatherForecastModels[cellRegionalCode] != nil else { return }
             viewController.regionalCode = cellRegionalCode
+            viewController.surfCondition = cell.surfCondition
+            
             viewController.transitioningDelegate = self
             viewController.modalPresentationStyle = .custom
             DispatchQueue.main.async {

@@ -108,7 +108,7 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         dayLabelText = forecastDateMid.transferDateToStringDay()
         
         let dateString = model.forecastTime.transferStringToTime() ?? Date()
-        timeLabelText = dateString.transferTimeToString()
+        timeLabelText = dateString.transferTimeToKorean()
         
         if model.forecastTime == "0000" {
             timeLabel.text = "\(dayLabelText) \(timeLabelText)"

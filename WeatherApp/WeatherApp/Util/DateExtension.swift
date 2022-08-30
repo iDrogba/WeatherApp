@@ -14,17 +14,6 @@ extension Date {
         dateFormatter.dateFormat = "M월 d일 E요일"
         return dateFormatter.string(from: self)
     }
-}
-
-extension Date {
-    func transferDateToStringDay() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M/d"
-        return dateFormatter.string(from: self)
-    }
-}
-
-extension Date {
     func transferTimeToKorean() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "H시"
@@ -35,21 +24,33 @@ extension Date {
         dateFormatter.dateFormat = "HHmm"
         return dateFormatter.string(from: self)
     }
-    
+    func transferDateToStringDay() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd"
+        return dateFormatter.string(from: self)
+    }
+}
+
+extension Date {
     static var currentFullDate: Date {
-        let date = Date()
+        var date = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_kr")
         dateFormatter.timeZone = TimeZone(abbreviation: "KST")
         dateFormatter.dateFormat = "yyyyMMddHH"
+        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
+        date = date.addingTimeInterval(timeZoneDifference)
+        
         return date
     }
     static var currentTime: Date {
-        let date = Date()
+        var date = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_kr")
         dateFormatter.timeZone = TimeZone(abbreviation: "KST")
         dateFormatter.dateFormat = "HHmm"
+        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
+        date = date.addingTimeInterval(timeZoneDifference)
         
         return date
     }

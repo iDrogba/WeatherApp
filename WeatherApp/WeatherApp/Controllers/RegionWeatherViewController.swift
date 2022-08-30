@@ -225,22 +225,16 @@ class RegionWeatherViewController: UIViewController {
             windSpeedArray.append(wind)
 
             guard let modelDate = ($0.forecastDate + $0.forecastTime.prefix(2)).transferStringToFullDate() else { return }
-
-            var dateTimeDouble = round(DateInterval(start: Date.currentFullDate, end: modelDate).duration / 3600)
-            dateTimeDouble -= 9
-            if dateTimeDouble >= 0 {
-                timeArray.append(dateTimeDouble)
-                if $0.forecastTime == "0000" {
-                    let date = String($0.forecastDate.suffix(4))
-                    waveChartXAxisArray.append(date)
-                    windChartXAxisArray.append(date)
-                } else {
-                    let time = String($0.forecastTime.prefix(2)) + "시"
-                    waveChartXAxisArray.append(time)
-                    windChartXAxisArray.append(time)
-                }
+            let dateTimeDouble = ceil((modelDate - Date.currentTime) / 3600)
+            timeArray.append(dateTimeDouble)
+            if $0.forecastTime == "0000" {
+                let date = String($0.forecastDate.suffix(4))
+                waveChartXAxisArray.append(date)
+                windChartXAxisArray.append(date)
             } else {
-                print(modelDate)
+                let time = String($0.forecastTime.prefix(2)) + "시"
+                waveChartXAxisArray.append(time)
+                windChartXAxisArray.append(time)
             }
         }
         // chart data array 에 데이터 추가
@@ -343,28 +337,28 @@ class RegionWeatherViewController: UIViewController {
         case 0:
             surfImageName = "surf1"
             if wave == 0 {
-                surfConditionLabelText = "파도가 없는 지역입니다."
+                surfConditionLabelText = "파도가 없는 지역입니다"
             } else {
-                surfConditionLabelText = "파도가 약합니다."
+                surfConditionLabelText = "파도가 약합니다"
             }
         case 1:
             surfImageName = "surf2"
-            surfConditionLabelText = "입문자가 즐기기 좋습니다."
+            surfConditionLabelText = "입문자가 즐기기 좋습니다"
         case 2:
             surfImageName = "surf3"
-            surfConditionLabelText = "초급자가 즐기기 좋습니다."
+            surfConditionLabelText = "초급자가 즐기기 좋습니다"
         case 3:
             surfImageName = "surf3"
-            surfConditionLabelText = "중급자가 즐기기 좋습니다."
+            surfConditionLabelText = "중급자가 즐기기 좋습니다"
         case 4:
             surfImageName = "surf3"
-            surfConditionLabelText = "상급자가 즐기기 좋습니다."
+            surfConditionLabelText = "상급자가 즐기기 좋습니다"
         case 5:
             surfImageName = "surf4"
-            surfConditionLabelText = "서핑을 즐기기 위험합니다."
+            surfConditionLabelText = "서핑을 즐기기 위험합니다"
         default:
             surfImageName = "surf1"
-            surfConditionLabelText = "오류."
+            surfConditionLabelText = "오류"
         }
         surfImageView.image = UIImage(named: surfImageName)
         descriptionLabel.text = surfConditionLabelText
@@ -440,7 +434,6 @@ class RegionWeatherViewController: UIViewController {
 
 extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        print(dateArray)
         return dateArray.count
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -456,7 +449,6 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
             self.dismiss(animated: true)
             return 0
         }
-        
         return dataCount
     }
     

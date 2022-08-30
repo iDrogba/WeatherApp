@@ -34,7 +34,7 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     
     private var rainPercentage: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .regular)
+        label.font = .systemFont(ofSize: 8, weight: .regular)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -76,16 +76,17 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
         
         weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         weatherImage.topAnchor.constraint(equalTo: dayLabel.bottomAnchor).isActive = true
-        weatherImage.bottomAnchor.constraint(equalTo: rainPercentage.topAnchor).isActive = true
+        weatherImage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
         
         rainPercentage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         rainPercentage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        rainPercentage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
-        rainPercentage.heightAnchor.constraint(equalToConstant: 14).isActive = true
+        rainPercentage.bottomAnchor.constraint(equalTo: weatherImage.bottomAnchor).isActive = true
+        rainPercentage.heightAnchor.constraint(equalTo: weatherImage.heightAnchor, multiplier: 0.25).isActive = true
         
         temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         temperatureLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        temperatureLabel.heightAnchor.constraint(equalToConstant: 15).isActive = true
     }
     
     func applyData(_ model: WeatherForecastModel) {

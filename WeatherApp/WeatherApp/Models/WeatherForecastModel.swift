@@ -106,6 +106,13 @@ class WeatherForecastModelManager {
                 currentWeatherForecastModels[regionalCode]?.append(WeatherForecastModel.init(regionalCode, item))
             }
         }
+        // 과거 값은 쳐내
+        self.currentWeatherForecastModels[regionalCode] = currentWeatherForecastModels[regionalCode]?.filter {
+            guard let modelDate = ($0.forecastDate + $0.forecastTime.prefix(2)).transferStringToFullDate() else { return false }
+            let dateTimeDouble = (modelDate - Date.currentTime) / 3600
+            guard dateTimeDouble > -1 else { return false }
+            return true
+        }
     }
     
     func setPastWeatherForecastModels(items : [Item], regionalCode: String) {

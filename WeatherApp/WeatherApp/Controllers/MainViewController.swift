@@ -265,7 +265,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
             guard WeatherForecastModelManager.shared.currentWeatherForecastModels[cellRegionalCode] != nil else { return }
             viewController.regionalCode = cellRegionalCode
-            viewController.surfCondition = cell.surfCondition
+            viewController.surfConditionOutput = cell.surfCondition
             
             viewController.transitioningDelegate = self
             viewController.modalPresentationStyle = .custom

@@ -8,7 +8,6 @@
 import UIKit
 
 class WeekWeatherTableViewCell: UITableViewCell {
-
     private var dayLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .regular)

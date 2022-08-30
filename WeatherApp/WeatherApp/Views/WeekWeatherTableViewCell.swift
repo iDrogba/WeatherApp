@@ -7,41 +7,45 @@
 
 import UIKit
 
-class WeekWeatherTableViewCell: UITableViewCell {
+class WeekWeatherTableViewCell: UICollectionViewCell {
     private var dayLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 19, weight: .regular)
+        label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .white
-        
+        label.textAlignment = .center
+
         return label
     }()
     
     private var weatherImage: UIImageView = {
-       let imageView = UIImageView()
+        let imageView = UIImageView()
         imageView.tintColor = .white
-        
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     private var temperatureLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = .systemFont(ofSize: 20, weight: .regular)
-       
+        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.textAlignment = .center
         return label
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+    private var rainPercentage: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 10, weight: .regular)
+        label.textAlignment = .center
+        label.textColor = .white
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         contentView.backgroundColor = UIColor(white: 0, alpha: 0)
-        [dayLabel, weatherImage, temperatureLabel].forEach {
+        [dayLabel, weatherImage, rainPercentage, temperatureLabel].forEach {
             contentView.addSubview($0)
         }
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
         DispatchQueue.main.async {
             self.configureCellConstraints()
         }
@@ -56,19 +60,32 @@ class WeekWeatherTableViewCell: UITableViewCell {
         dayLabel.text = nil
         weatherImage.image = nil
         temperatureLabel.text = nil
+        rainPercentage.text = ""
     }
     
     private func configureCellConstraints() {
         dayLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherImage.translatesAutoresizingMaskIntoConstraints = false
         temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        rainPercentage.translatesAutoresizingMaskIntoConstraints = false
         
         dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        dayLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        dayLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        dayLabel.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        dayLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
         weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        weatherImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        weatherImage.topAnchor.constraint(equalTo: dayLabel.bottomAnchor).isActive = true
+        weatherImage.bottomAnchor.constraint(equalTo: rainPercentage.topAnchor).isActive = true
+        
+        rainPercentage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        rainPercentage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        rainPercentage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
+        rainPercentage.heightAnchor.constraint(equalToConstant: 14).isActive = true
+        
+        temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        temperatureLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     
     func applyData(_ model: WeatherForecastModel) {
@@ -90,19 +107,55 @@ class WeekWeatherTableViewCell: UITableViewCell {
         switch model.PTY {
         case "1": // 비
             weatherImageName = "cloud.rain"
+            rainPercentage.text = model.POP + "%"
         case "2": // 비 혹은 눈
             weatherImageName = "cloud.sleet"
+            rainPercentage.text = model.POP + "%"
         case "3": // 눈
             weatherImageName = "cloud.snow"
+            rainPercentage.text = model.POP + "%"
         case "4": //소나기
             weatherImageName = "cloud.drizzle"
+            rainPercentage.text = model.POP + "%"
         default:
             break
         }
-
-        
         dayLabel.text = dayLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
-        temperatureLabel.text = model.TMP + "°"
+        temperatureLabel.text = " " + model.TMP + "°"
+    }
+}
+
+class WeekWeatherCollectionViewHeader: UICollectionReusableView {
+    override class func awakeFromNib() {
+        super.awakeFromNib()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.addSubview(dateLabel)
+        self.setConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    let dateLabel: UILabel = {
+        let label = UILabel()
+        label.adjustsFontSizeToFitWidth = true
+        label.textColor = .white
+        label.textAlignment = .center
+        
+        return label
+    }()
+    
+    private func setConstraints() {
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        dateLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        dateLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        dateLabel.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        dateLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
     }
 }

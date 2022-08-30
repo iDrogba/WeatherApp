@@ -36,7 +36,6 @@ class RegionWeatherViewController: UIViewController {
         
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
         
-        weekWeatherTableView.separatorStyle = .none
         weekWeatherTableView.delegate = self
         weekWeatherTableView.dataSource = self
         chart.delegate = self
@@ -50,14 +49,21 @@ class RegionWeatherViewController: UIViewController {
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+    
     /// RegionWeatherView : 주간 날씨 테이블뷰
-    private var weekWeatherTableView: UITableView = {
-        let tableView = UITableView(frame: CGRect(), style: .grouped)
-        tableView.register(WeekWeatherTableViewCell.self, forCellReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
+    private var weekWeatherTableView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let tableView = UICollectionView(frame: CGRect(), collectionViewLayout: layout)
+        tableView.register(WeekWeatherTableViewCell.self, forCellWithReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier)
+        tableView.register(WeekWeatherCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: WeekWeatherCollectionViewHeader.reuseIdentifier)
         tableView.backgroundColor = transparentBackground
         tableView.showsVerticalScrollIndicator = false
+        tableView.showsHorizontalScrollIndicator = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
         return tableView
     }()
     
@@ -424,30 +430,27 @@ class RegionWeatherViewController: UIViewController {
         chart.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor).isActive = true
         chart.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.25).isActive = true
         
-        weekWeatherTableView.topAnchor.constraint(equalTo: chart.bottomAnchor, constant: view.bounds.height * 0.02).isActive = true
+        weekWeatherTableView.topAnchor.constraint(equalTo: chart.bottomAnchor).isActive = true
         weekWeatherTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25).isActive = true
-        weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25).isActive = true
+        weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
         
     }
 }
 
-extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        
+extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        print(dateArray)
         return dateArray.count
     }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel()
-        label.text = dateArray[section].transferStringToDate()?.transferDateToKorean()
-        label.font = .systemFont(ofSize: 19, weight: .regular)
-        label.textColor = .white
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader else { return UICollectionReusableView() }
+        guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: WeekWeatherCollectionViewHeader.reuseIdentifier, for: indexPath) as? WeekWeatherCollectionViewHeader else { return UICollectionReusableView()}
+        header.dateLabel.text = dateArray[indexPath.section].transferStringToDate()?.transferDateToStringDay()
         
-        return label
+        return header
     }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionDate = dateArray[section]
         guard let dataCount = weatherForecastModels[sectionDate]?.count else {
             self.dismiss(animated: true)
@@ -457,15 +460,29 @@ extension RegionWeatherViewController: UITableViewDelegate, UITableViewDataSourc
         return dataCount
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = weekWeatherTableView.dequeueReusableCell(withIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UITableViewCell() }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = weekWeatherTableView.dequeueReusableCell(withReuseIdentifier: WeekWeatherTableViewCell.reuseIdentifier, for: indexPath) as? WeekWeatherTableViewCell else { return UICollectionViewCell() }
         
         let sectionDate = dateArray[indexPath.section]
-        guard let dayModel = weatherForecastModels[sectionDate]?[indexPath.row] else { return cell }
+        guard let dayModel = weatherForecastModels[sectionDate]?[indexPath.item] else { return cell }
         cell.applyData(dayModel)
         cell.backgroundColor = .clear
         
         return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let width = collectionView.frame.width * 0.15
+        let height = collectionView.frame.height * 0.9
+        
+        return CGSize(width: width, height: height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.frame.width * 0.15
+        let height = collectionView.frame.height * 0.9
+        
+        return CGSize(width: width, height: height)
     }
 }
 

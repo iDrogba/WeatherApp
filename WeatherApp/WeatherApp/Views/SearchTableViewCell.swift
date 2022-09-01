@@ -16,7 +16,7 @@ class SearchTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setUI(_ regionalDataModel: RegionalDataModel) {
+    func setUI(_ regionalDataModel: UpdatedRegionalDataModel) {
         self.textLabel?.text = regionalDataModel.first + " " + regionalDataModel.second + " " + regionalDataModel.third
     }
 }

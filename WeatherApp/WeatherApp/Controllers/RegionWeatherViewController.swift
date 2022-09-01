@@ -11,7 +11,7 @@ import Charts
 class RegionWeatherViewController: UIViewController {
     public var regionalCode: String = ""
     private var dateArray: [String] = []
-    private var weatherForecastModels: [String:[WeatherForecastModel]] = [:]
+    private var weatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
     var surfConditionOutput: SurfConditionOutput!
     var waveLineChartEntry = [ChartDataEntry]() // graph 에 보여줄 wave data array
     var windLineChartEntry = [ChartDataEntry]() // graph 에 보여줄 wind data array
@@ -19,15 +19,15 @@ class RegionWeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let forecastDateArray = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]
-        forecastDateArray?.forEach{
-            if weatherForecastModels[$0.forecastDate] == nil {
-                weatherForecastModels.updateValue([$0], forKey: $0.forecastDate)
-            } else {
-                weatherForecastModels[$0.forecastDate]?.append($0)
-            }
-            
-        }
+        let forecastDateArray = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode]
+//        forecastDateArray?.forEach{
+//            if weatherForecastModels[$0.forecastDate] == nil {
+//                weatherForecastModels.updateValue([$0], forKey: $0.forecastDate)
+//            } else {
+//                weatherForecastModels[$0.forecastDate]?.append($0)
+//            }
+//            
+//        }
         dateArray = weatherForecastModels.keys.sorted(by: <)
         
         [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, mlPercentageLabel, surfImageView, waveWindLabel, weekWeatherTableView, chart].forEach {
@@ -180,7 +180,7 @@ class RegionWeatherViewController: UIViewController {
     }()
     
     private lazy var chart: LineChartView = {
-        guard let regionWeatherForecastModelArray = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return LineChartView() }
+        guard let regionWeatherForecastModelArray = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode] else { return LineChartView() }
         let chart  = LineChartView()
         let xScale = Double(regionWeatherForecastModelArray.count / 7)
         let yScale = 2.0
@@ -211,86 +211,86 @@ class RegionWeatherViewController: UIViewController {
     }()
     
     private func setChart() {
-        guard let regionWeatherForecastModelArray = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return }
-        
-        var waveHeightArray: [Double] = []
-        var windSpeedArray: [Double] = []
-        var waveChartXAxisArray: [String] = []
-        var timeArray: [Double] = []
-
-        regionWeatherForecastModelArray.forEach {
-            guard let wave = Double($0.WAV) else { return }
-            guard let wind = Double($0.WSD) else { return }
-            waveHeightArray.append(wave)
-            windSpeedArray.append(wind)
-
-            guard let modelDate = ($0.forecastDate + $0.forecastTime.prefix(2)).transferStringToFullDate() else { return }
-            let dateTimeDouble = ceil((modelDate - Date.currentTime) / 3600)
-            print(modelDate - Date.currentTime)
-            print(dateTimeDouble)
-            timeArray.append(dateTimeDouble)
-            if $0.forecastTime == "0000" {
-                var date = $0.forecastDate.suffix(4).description
-                date = date.prefix(2) + "/" + date.suffix(2)
-                waveChartXAxisArray.append(date)
-            } else {
-                let time = $0.forecastTime.prefix(2).description + "시"
-                waveChartXAxisArray.append(time)
-            }
-        }
-        chart.xAxis.labelPosition = .bottom
-        chart.xAxis.valueFormatter = IndexAxisValueFormatter(values: waveChartXAxisArray)
-        // chart data array 에 데이터 추가
-        for i in 0 ..< timeArray.count {
-            let waveChartEntry = ChartDataEntry(x: timeArray[i], y: waveHeightArray[i])
-            waveLineChartEntry.append(waveChartEntry)
-            
-            let windChartEntry = ChartDataEntry(x: timeArray[i], y: windSpeedArray[i])
-            windLineChartEntry.append(windChartEntry)
-        }
-        let line1 = LineChartDataSet(entries: waveLineChartEntry, label: "파고(m)")
-        line1.colors = [NSUIColor.white]
-        line1.circleRadius = 3
-        let line2 = LineChartDataSet(entries: windLineChartEntry, label: "풍속(m/s)")
-        line2.colors = [NSUIColor.gray]
-        line2.circleRadius = 3
-        
-        let data = LineChartData(dataSets: [line1, line2])
-        data.setValueTextColor(.clear)
-        chart.data = data
+//        guard let regionWeatherForecastModelArray = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode] else { return }
+//
+//        var waveHeightArray: [Double] = []
+//        var windSpeedArray: [Double] = []
+//        var waveChartXAxisArray: [String] = []
+//        var timeArray: [Double] = []
+//
+//        regionWeatherForecastModelArray.forEach {
+//            guard let wave = Double($0.WAV) else { return }
+//            guard let wind = Double($0.WSD) else { return }
+//            waveHeightArray.append(wave)
+//            windSpeedArray.append(wind)
+//
+//            guard let modelDate = ($0.forecastDate + $0.forecastTime.prefix(2)).transferStringToFullDate() else { return }
+//            let dateTimeDouble = ceil((modelDate - Date.currentTime) / 3600)
+//            print(modelDate - Date.currentTime)
+//            print(dateTimeDouble)
+//            timeArray.append(dateTimeDouble)
+//            if $0.forecastTime == "0000" {
+//                var date = $0.forecastDate.suffix(4).description
+//                date = date.prefix(2) + "/" + date.suffix(2)
+//                waveChartXAxisArray.append(date)
+//            } else {
+//                let time = $0.forecastTime.prefix(2).description + "시"
+//                waveChartXAxisArray.append(time)
+//            }
+//        }
+//        chart.xAxis.labelPosition = .bottom
+//        chart.xAxis.valueFormatter = IndexAxisValueFormatter(values: waveChartXAxisArray)
+//        // chart data array 에 데이터 추가
+//        for i in 0 ..< timeArray.count {
+//            let waveChartEntry = ChartDataEntry(x: timeArray[i], y: waveHeightArray[i])
+//            waveLineChartEntry.append(waveChartEntry)
+//
+//            let windChartEntry = ChartDataEntry(x: timeArray[i], y: windSpeedArray[i])
+//            windLineChartEntry.append(windChartEntry)
+//        }
+//        let line1 = LineChartDataSet(entries: waveLineChartEntry, label: "파고(m)")
+//        line1.colors = [NSUIColor.white]
+//        line1.circleRadius = 3
+//        let line2 = LineChartDataSet(entries: windLineChartEntry, label: "풍속(m/s)")
+//        line2.colors = [NSUIColor.gray]
+//        line2.circleRadius = 3
+//
+//        let data = LineChartData(dataSets: [line1, line2])
+//        data.setValueTextColor(.clear)
+//        chart.data = data
     }
     
     private func applySurfConditionImageLabel() {
-        guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
-        guard let modelWaveValue = Double(model.WAV) else { return }
+        guard let model = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode]?.first else { return }
+        let modelWaveValue = model.waveHeight
         
         setSurfConditionImageAndPercentage(wave: modelWaveValue)
     }
     
     private func applyBackground() {
-        var backgroundImageName: String
-        guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
+        var backgroundImageName: String = "sunnyFull.png"
+        guard let model = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode]?.first else { return }
         
-        switch model.SKY {
-        case "1" :
-            backgroundImageName = "sunnyFull.png"
-        case "3" :
-            backgroundImageName = "cloudyFull.png"
-        case "4":
-            backgroundImageName = "cloudyFull.png"
-        default :
-            backgroundImageName = "cloudyFull.png"
-        }
-    
-        switch model.PTY {
-        case "1" :
-            backgroundImageName = "rainyFull.png"
-        case "3" :
-            backgroundImageName = "snowFull.png"
-        default :
-            break
-        }
-        
+//        switch model.SKY {
+//        case "1" :
+//            backgroundImageName = "sunnyFull.png"
+//        case "3" :
+//            backgroundImageName = "cloudyFull.png"
+//        case "4":
+//            backgroundImageName = "cloudyFull.png"
+//        default :
+//            backgroundImageName = "cloudyFull.png"
+//        }
+//
+//        switch model.PTY {
+//        case "1" :
+//            backgroundImageName = "rainyFull.png"
+//        case "3" :
+//            backgroundImageName = "snowFull.png"
+//        default :
+//            break
+//        }
+//
         let background = UIImage(named: backgroundImageName)
         
         var imageView: UIImageView!
@@ -304,21 +304,17 @@ class RegionWeatherViewController: UIViewController {
     }
     
     func applyData() {
-        guard let model = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode]?.first else { return }
-        guard let pastTMXModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "1500" }).first else { return }
-        guard let pastTMMModel = WeatherForecastModelManager.shared.pastWeatherForecastModels[regionalCode]?.filter({ $0.forecastTime == "0600" }).first else { return }
-        
+        guard let model = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode]?.first else { return }
+       
         if model.subRegionName.isEmpty {
             cityLabel.text = model.regionName
         } else { cityLabel.text = model.subRegionName}
-        let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
-        let TMN = Int(round(Double(pastTMMModel.TMN) ?? 0))
         
-        minTemperatureLabel.text = "최저: " + String(describing: TMN) + "°"
-        maxTemperatureLabel.text = "최고: " + String(describing: TMX) + "°"
-        temperatureLabel.text = model.TMP
+        minTemperatureLabel.text = "최저: " + String(describing: model.airTemperature) + "°"
+        maxTemperatureLabel.text = "최고: " + String(describing: model.airTemperature) + "°"
+        temperatureLabel.text = model.airTemperature.description
         
-        setWaveWindLabel(wave: model.WAV, wind: model.WSD)
+        setWaveWindLabel(wave: model.waveHeight.description, wind: model.waveHeight.description)
     }
     
     private func setWaveWindLabel(wave: String, wind: String) {

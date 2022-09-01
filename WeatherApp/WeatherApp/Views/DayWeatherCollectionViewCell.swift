@@ -73,50 +73,50 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
         dayStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
     }
     
-    func applyData(_ model: WeatherForecastModel) {
+    func applyData(_ model: UpdatedWeatherForecastModel) {
         
         var timeLabelText: String
-        var weatherImageName: String
+        var weatherImageName: String = "sun.max"
         var tempLabelText: String
         var dayLabelText: String
 
-        switch model.SKY {
-        case "1": // 맑음
-            weatherImageName = "sun.max"
-        case "3": // 구름많음
-            weatherImageName = "cloud"
-        case "4": // 흐림
-            weatherImageName = "cloud"
-        default:
-            weatherImageName = "cloud"
-        }
-        
-        switch model.PTY {
-        case "1": // 비
-            weatherImageName = "cloud.rain"
-        case "2": // 비 혹은 눈
-            weatherImageName = "cloud.sleet"
-        case "3": // 눈
-            weatherImageName = "cloud.snow"
-        case "4": //소나기
-            weatherImageName = "cloud.drizzle"
-        default:
-            break
-        }
+//        switch model.SKY {
+//        case "1": // 맑음
+//            weatherImageName = "sun.max"
+//        case "3": // 구름많음
+//            weatherImageName = "cloud"
+//        case "4": // 흐림
+//            weatherImageName = "cloud"
+//        default:
+//            weatherImageName = "cloud"
+//        }
+//        
+//        switch model.PTY {
+//        case "1": // 비
+//            weatherImageName = "cloud.rain"
+//        case "2": // 비 혹은 눈
+//            weatherImageName = "cloud.sleet"
+//        case "3": // 눈
+//            weatherImageName = "cloud.snow"
+//        case "4": //소나기
+//            weatherImageName = "cloud.drizzle"
+//        default:
+//            break
+//        }
 
-        let forecastDateMid = model.forecastDate.transferStringToDate() ?? Date()
+        let forecastDateMid = model.time.transferStringToDate() ?? Date()
         dayLabelText = forecastDateMid.transferDateToStringDay()
         
-        let dateString = model.forecastTime.transferStringToTime() ?? Date()
+        let dateString = model.time.transferStringToTime() ?? Date()
         timeLabelText = dateString.transferTimeToKorean()
         
-        if model.forecastTime == "0000" {
+        if model.time == "0000" {
             timeLabel.text = "\(dayLabelText) \(timeLabelText)"
         } else {
             timeLabel.text = timeLabelText
         }
         
-        tempLabelText = model.TMP
+        tempLabelText = model.airTemperature.description
         
         weatherImage.image = UIImage(systemName: weatherImageName)
         tempLabel.text = tempLabelText + "°"

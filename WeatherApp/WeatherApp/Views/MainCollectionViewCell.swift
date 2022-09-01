@@ -132,45 +132,45 @@ class MainCollectionViewCell: UITableViewCell {
         self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
     }
     
-    func setUI(_ model: WeatherForecastModel, _ pastTMNModel: WeatherForecastModel, _ pastTMXModel: WeatherForecastModel) {
+    func setUI(_ model: UpdatedWeatherForecastModel) {
         var surfConditionLabelText: String
         var backgroundImageName: String
         var skyCondition: String
         
-        switch model.SKY {
-        case "1" :
-            backgroundImageName = "sunny.png"
-            skyCondition = "맑음"
-        case "3" :
-            backgroundImageName = "cloudy.png"
-            skyCondition = "구름 많음"
-        case "4":
-            backgroundImageName = "cloudy.png"
-            skyCondition = "흐림"
-        default :
-            backgroundImageName = "cloudy.png"
-            skyCondition = "구름 많음"
-        }
-    
-        switch model.PTY {
-        case "1" :
-            backgroundImageName = "rainy.png"
-        case "3" :
-            backgroundImageName = "snow.png"
-        default :
-            break
-        }
-        waveLabel.text = "파고: " + model.WAV + "m"
+//        switch model.SKY {
+//        case "1" :
+//            backgroundImageName = "sunny.png"
+//            skyCondition = "맑음"
+//        case "3" :
+//            backgroundImageName = "cloudy.png"
+//            skyCondition = "구름 많음"
+//        case "4":
+//            backgroundImageName = "cloudy.png"
+//            skyCondition = "흐림"
+//        default :
+//            backgroundImageName = "cloudy.png"
+//            skyCondition = "구름 많음"
+//        }
+//
+//        switch model.PTY {
+//        case "1" :
+//            backgroundImageName = "rainy.png"
+//        case "3" :
+//            backgroundImageName = "snow.png"
+//        default :
+//            break
+//        }
+        waveLabel.text = "파고: " + model.waveHeight.description + "m"
         
-        guard let modelWaveValue = Double(model.WAV) else { return }
-        guard let modelWindValue = Double(model.WSD) else { return }
-        guard let surfCondition = ML.shared.fetchPrediction(wave: modelWaveValue, wind: modelWindValue) else { return }
+//        guard let modelWaveValue = model.waveHeight else { return }
+//        guard let modelWindValue = Double(model.WSD) else { return }
+        guard let surfCondition = ML.shared.fetchPrediction(wave: model.waveHeight, wind: 5) else { return }
         self.surfCondition = surfCondition
         guard let surfConditionDouble = Double(surfCondition.X1) else { return }
 
         switch surfConditionDouble {
         case 0:
-            if modelWaveValue == 0 {
+            if model.waveHeight == 0 {
                 surfConditionLabelText = "파도가 없는 지역입니다"
             } else {
                 surfConditionLabelText = "파도가 약합니다"
@@ -189,15 +189,15 @@ class MainCollectionViewCell: UITableViewCell {
             surfConditionLabelText = "오류"
         }
         
-        let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
-        let TMN = Int(round(Double(pastTMNModel.TMN) ?? 0))
+//        let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
+//        let TMN = Int(round(Double(pastTMNModel.TMN) ?? 0))
         
-        minTemperatureLabel.text = "최저:" + String(describing: TMN) + "°"
-        maxTemperatureLabel.text = "최고:" + String(describing: TMX) + "°"
-        currentTemperatuerLabel.text = model.TMP + "°"
+        minTemperatureLabel.text = "최저:" + "°"
+        maxTemperatureLabel.text = "최고:" + "°"
+        currentTemperatuerLabel.text = model.airTemperature.description + "°"
         surfConditionLabel.text = surfConditionLabelText
-        skyConditionLabel.text = skyCondition
-        backgroundImageView.image = UIImage(named: backgroundImageName)
+        skyConditionLabel.text = "베리굿" //skyCondition
+//        backgroundImageView.image = UIImage(named: backgroundImageName)
         regionLabel.text = model.regionName
         subRegionLabel.text = model.subRegionName
     }
@@ -344,8 +344,8 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
     }
     
     func setUI(_ regionalCode: String) {
-        let regionalModel = RegionalDataManager.shared.retrieveRegionalDataModel(regionalCode)
-        regionLabel.text = regionalModel?.regionName
+        let regionalModel = UpdatedRegionalDataModelManager.shared.retrieveRegionalDataModel(regionalCode)
+        regionLabel.text = regionalModel?.first
         subRegionLabel.text = regionalModel?.third
     }
     

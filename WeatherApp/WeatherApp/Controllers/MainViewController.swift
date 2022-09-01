@@ -61,7 +61,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         view.backgroundColor = .systemBackground
         view.addSubview(titleLabel)
         view.addSubview(searchBar)
@@ -228,16 +228,16 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             guard let model = self.mainViewModel.weatherForecastModels[cellRegionalCode]?.first else { placeHolderCell.setUI(cellRegionalCode)
                 return placeHolderCell
             }
-            guard let pastTMNModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "0600" }).first else { placeHolderCell.setUI(cellRegionalCode)
-                return placeHolderCell
-            }
-            
-            guard let pastTMXModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "1500" }).first else { placeHolderCell.setUI(cellRegionalCode)
-                return placeHolderCell
-            }
+//            guard let pastTMNModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "0600" }).first else { placeHolderCell.setUI(cellRegionalCode)
+//                return placeHolderCell
+//            }
+//
+//            guard let pastTMXModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "1500" }).first else { placeHolderCell.setUI(cellRegionalCode)
+//                return placeHolderCell
+//            }
             
             DispatchQueue.main.async {
-                cell.setUI(model, pastTMNModel, pastTMXModel)
+                cell.setUI(model)
             }
             
             return cell
@@ -263,7 +263,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             
             let viewController = RegionWeatherViewController()
             let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
-            guard WeatherForecastModelManager.shared.currentWeatherForecastModels[cellRegionalCode] != nil else { return }
+            guard UpdatedWeatherForecastModelManager.shared.weatherForecastModels[cellRegionalCode] != nil else { return }
             viewController.regionalCode = cellRegionalCode
             viewController.surfConditionOutput = cell.surfCondition
             
@@ -275,8 +275,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             return
         }
         let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.row]
-        self.mainViewModel.addAddedRegionalDataModels(regionalDataModel.regionalCode){
-            self.mainViewModel.fetchWeatherForecastModels()
+        Task{
+            await self.mainViewModel.addAddedRegionalDataModels(regionalDataModel.regionalCode){}
+            await self.mainViewModel.fetchWeatherForecastModels()
         }
         searchBar.endEditing(true)
     }

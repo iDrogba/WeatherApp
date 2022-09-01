@@ -89,41 +89,41 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
         temperatureLabel.heightAnchor.constraint(equalToConstant: 15).isActive = true
     }
     
-    func applyData(_ model: WeatherForecastModel) {
+    func applyData(_ model: UpdatedWeatherForecastModel) {
         var dayLabelText: String
-        var weatherImageName: String
-        dayLabelText = model.forecastTime.prefix(2) + "시"
+        var weatherImageName: String = "sun.max"
+        dayLabelText = model.time.prefix(3) + "시"
         
-        switch model.SKY {
-        case "1": // 맑음
-            weatherImageName = "sun.max"
-        case "3": // 구름많음
-            weatherImageName = "cloud"
-        case "4": // 흐림
-            weatherImageName = "cloud"
-        default:
-            weatherImageName = "cloud"
-        }
-        
-        switch model.PTY {
-        case "1": // 비
-            weatherImageName = "cloud.rain"
-            rainPercentage.text = model.POP + "%"
-        case "2": // 비 혹은 눈
-            weatherImageName = "cloud.sleet"
-            rainPercentage.text = model.POP + "%"
-        case "3": // 눈
-            weatherImageName = "cloud.snow"
-            rainPercentage.text = model.POP + "%"
-        case "4": //소나기
-            weatherImageName = "cloud.drizzle"
-            rainPercentage.text = model.POP + "%"
-        default:
-            break
-        }
+//        switch model.SKY {
+//        case "1": // 맑음
+//            weatherImageName = "sun.max"
+//        case "3": // 구름많음
+//            weatherImageName = "cloud"
+//        case "4": // 흐림
+//            weatherImageName = "cloud"
+//        default:
+//            weatherImageName = "cloud"
+//        }
+//
+//        switch model.PTY {
+//        case "1": // 비
+//            weatherImageName = "cloud.rain"
+//            rainPercentage.text = model.POP + "%"
+//        case "2": // 비 혹은 눈
+//            weatherImageName = "cloud.sleet"
+//            rainPercentage.text = model.POP + "%"
+//        case "3": // 눈
+//            weatherImageName = "cloud.snow"
+//            rainPercentage.text = model.POP + "%"
+//        case "4": //소나기
+//            weatherImageName = "cloud.drizzle"
+//            rainPercentage.text = model.POP + "%"
+//        default:
+//            break
+//        }
         dayLabel.text = dayLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
-        temperatureLabel.text = " " + model.TMP + "°"
+        temperatureLabel.text = " " + model.airTemperature.description + "°"
     }
 }
 

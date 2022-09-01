@@ -72,6 +72,31 @@ class APIRequestManager {
                 }
         }
     }
+    static func SampleRequest() {
+            AF.request("https://api.stormglass.io/v2/weather/point",
+                       method: .get,
+                       parameters: ["lat": 35.175, "lng": 129.125, "params": "airTemperature,waveHeight,wavePeriod,waveDirection"],
+                       encoding: URLEncoding.default,
+                       headers: ["Authorization": Storage().stormGlassAPIKey])
+                .validate(statusCode: 200..<300)
+                .responseData { jsonData in
+                    switch jsonData.result {
+                    case .success:
+                        print(jsonData.data)
+                        guard let result = jsonData.data else { return }
+                        do {
+                            let decoder = JSONDecoder()
+                            let json = try decoder.decode(NewResponse.self, from: result)
+                            print(json.hours)
+                        } catch {
+                            print("error!\(error)")
+                        }
+                    default:
+                        print("NetworkingError")
+                        return
+                    }
+                }
+        }
 }
 
 enum RequestInfoType {
@@ -81,7 +106,7 @@ enum RequestInfoType {
 
 class RequestInfo {
     let baseURL: String = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?"
-    let serviceKey: String = "a9yYPkQC6ZFqv%2BNOEY4%2FEldg63EPl422HBRJA2Y8Zv1euZIQ2ZKKDQx%2B%2Bo2WZObznqZL71lZ1Kgd%2FUZpJRc7Xw%3D%3D"
+    let serviceKey: String = Storage().koreaAPIKey
     let pageNo: String = "1"
     var numOfRows: String = "1000"
     let dataType: String = "JSON"

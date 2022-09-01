@@ -47,3 +47,20 @@ enum Category: String, Codable {
     case POP, PTY, PCP, REH, SNO, SKY, TMP, TMN, TMX, UUU, VVV, WAV, VEC, WSD
 }
 
+
+struct NewResponse: Codable {
+    let hours: [Hours]
+    let meta: Meta
+}
+
+struct Hours: Codable {
+    let time: String
+    let airTemperature, waveHeight, wavePeriod, waveDirection: [String: Double]
+}
+
+struct Meta: Codable {
+    let dailyQuota: Double
+    let lat: Double
+    let lng: Double
+    let requestCount: Double
+}

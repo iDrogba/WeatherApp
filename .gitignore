@@ -9,6 +9,9 @@
 #           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGNORE THE LOCK FILE
 Pods/
 
+### Users ###
+Storage.swift
+
 ### macOS ###
 # General
 .DS_Store

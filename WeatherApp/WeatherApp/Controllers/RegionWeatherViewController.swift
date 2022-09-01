@@ -180,8 +180,9 @@ class RegionWeatherViewController: UIViewController {
     }()
     
     private lazy var chart: LineChartView = {
+        guard let regionWeatherForecastModelArray = WeatherForecastModelManager.shared.currentWeatherForecastModels[regionalCode] else { return LineChartView() }
         let chart  = LineChartView()
-        let xScale = 6.0
+        let xScale = Double(regionWeatherForecastModelArray.count / 7)
         let yScale = 2.0
         chart.zoom(scaleX: xScale, scaleY: yScale, x: 0, y: 0)
         chart.rightAxis.enabled = false
@@ -215,7 +216,6 @@ class RegionWeatherViewController: UIViewController {
         var waveHeightArray: [Double] = []
         var windSpeedArray: [Double] = []
         var waveChartXAxisArray: [String] = []
-        var windChartXAxisArray: [String] = []
         var timeArray: [Double] = []
 
         regionWeatherForecastModelArray.forEach {
@@ -226,17 +226,20 @@ class RegionWeatherViewController: UIViewController {
 
             guard let modelDate = ($0.forecastDate + $0.forecastTime.prefix(2)).transferStringToFullDate() else { return }
             let dateTimeDouble = ceil((modelDate - Date.currentTime) / 3600)
+            print(modelDate - Date.currentTime)
+            print(dateTimeDouble)
             timeArray.append(dateTimeDouble)
             if $0.forecastTime == "0000" {
-                let date = String($0.forecastDate.suffix(4))
+                var date = $0.forecastDate.suffix(4).description
+                date = date.prefix(2) + "/" + date.suffix(2)
                 waveChartXAxisArray.append(date)
-                windChartXAxisArray.append(date)
             } else {
-                let time = String($0.forecastTime.prefix(2)) + "시"
+                let time = $0.forecastTime.prefix(2).description + "시"
                 waveChartXAxisArray.append(time)
-                windChartXAxisArray.append(time)
             }
         }
+        chart.xAxis.labelPosition = .bottom
+        chart.xAxis.valueFormatter = IndexAxisValueFormatter(values: waveChartXAxisArray)
         // chart data array 에 데이터 추가
         for i in 0 ..< timeArray.count {
             let waveChartEntry = ChartDataEntry(x: timeArray[i], y: waveHeightArray[i])
@@ -255,9 +258,6 @@ class RegionWeatherViewController: UIViewController {
         let data = LineChartData(dataSets: [line1, line2])
         data.setValueTextColor(.clear)
         chart.data = data
-        
-        chart.xAxis.labelPosition = .bottom
-        chart.xAxis.valueFormatter = IndexAxisValueFormatter(values: waveChartXAxisArray)
     }
     
     private func applySurfConditionImageLabel() {
@@ -465,14 +465,14 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let width = collectionView.frame.width * 0.15
-        let height = collectionView.frame.height * 0.9
+        let height = collectionView.frame.height * 0.8
         
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width * 0.15
-        let height = collectionView.frame.height * 0.9
+        let height = collectionView.frame.height * 0.8
         
         return CGSize(width: width, height: height)
     }

@@ -17,6 +17,6 @@ class SearchTableViewCell: UITableViewCell {
     }
     
     func setUI(_ regionalDataModel: UpdatedRegionalDataModel) {
-        self.textLabel?.text = regionalDataModel.first + " " + regionalDataModel.second + " " + regionalDataModel.third
+        self.textLabel?.text = regionalDataModel.regionName
     }
 }

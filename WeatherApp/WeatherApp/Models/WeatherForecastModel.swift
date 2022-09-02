@@ -136,7 +136,7 @@ import Foundation
 
 
 struct UpdatedWeatherForecastModel {
-    var time: String = ""
+    var time: Date = Date()
     var regionalCode: String = ""
     var regionName: String = ""
     var subRegionName: String = ""
@@ -147,22 +147,22 @@ struct UpdatedWeatherForecastModel {
 
     init(_ regionalCode: String, _ hours: Hours) {
         guard let regionalDataModel = UpdatedRegionalDataModelManager.shared.retrieveRegionalDataModel(regionalCode) else { return }
-        
-        self.time = hours.time
+        self.time = hours.time.description.transferStringToLocalDate()!
         self.regionalCode = regionalCode
         self.regionName = regionalDataModel.first
         self.subRegionName = regionalDataModel.second + regionalDataModel.third
-        self.airTemperature = averageVal(data: hours.airTemperature)
-        self.waveHeight = averageVal(data: hours.waveHeight)
-        self.wavePeriod = averageVal(data: hours.wavePeriod)
-        self.waveDirection = averageVal(data: hours.waveDirection)
+        self.airTemperature = averageVal(data: hours.airTemperature, rounder: 10)
+        self.waveHeight = averageVal(data: hours.waveHeight, rounder: 100)
+        self.wavePeriod = averageVal(data: hours.wavePeriod, rounder: 100)
+        self.waveDirection = averageVal(data: hours.waveDirection, rounder: 10)
     }
     
-    private func averageVal(data: [String:Double]?) -> Double {
+    private func averageVal(data: [String:Double]?, rounder: Double) -> Double {
         guard let data = data else { return 0 }
-        let sum = data.values.reduce(0, { first, second in
+        var sum = data.values.reduce(0, { first, second in
             return (first + second) / Double(data.count)
         })
+        sum = round(sum * rounder) / rounder
         return sum
     }
 }
@@ -176,12 +176,30 @@ class UpdatedWeatherForecastModelManager {
      */
     var weatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
     
+    // 오늘 24시간 동안의 데이터 가져오기
+    func retrieveTodayWeatherFoercastModels() async -> [String:[UpdatedWeatherForecastModel]] {
+        var returnValue: [String:[UpdatedWeatherForecastModel]] = [:]
+        returnValue = UpdatedWeatherForecastModelManager.shared.weatherForecastModels
+        UpdatedWeatherForecastModelManager.shared.weatherForecastModels.forEach{
+            if $0.value.count > 24 {
+                returnValue[$0.key]?[24 ..< ($0.value.count)] = []
+            }
+        }
+        print("3")
+        return returnValue
+    }
+    
     func setCurrentWeatherForecastModels(regionalCode: String, hours: [Hours]) async {
         if self.weatherForecastModels[regionalCode] == nil {
             self.weatherForecastModels[regionalCode] = []
         }
         hours.forEach{
-            self.weatherForecastModels[regionalCode]?.append(UpdatedWeatherForecastModel(regionalCode, $0))
+            let model = UpdatedWeatherForecastModel(regionalCode, $0)
+            self.weatherForecastModels[regionalCode]?.append(model)
+
+//            if (model.time - Date.dateA) > -3600 {
+//                self.weatherForecastModels[regionalCode]?.append(model)
+//            }
         }
     }
     

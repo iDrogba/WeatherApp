@@ -92,7 +92,7 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     func applyData(_ model: UpdatedWeatherForecastModel) {
         var dayLabelText: String
         var weatherImageName: String = "sun.max"
-        dayLabelText = model.time.prefix(3) + "시"
+        dayLabelText = model.time.transferDateToStringDay() + "시"
         
 //        switch model.SKY {
 //        case "1": // 맑음

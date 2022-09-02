@@ -8,6 +8,7 @@
 import UIKit
 struct UpdatedRegionalDataModel: Equatable {
     let regionalCode: String
+    let regionName: String
     let first: String
     let second: String
     let third: String
@@ -25,10 +26,11 @@ struct UpdatedRegionalDataModel: Equatable {
         self.latitude = stringRegionalData[5]
         self.longitude = stringRegionalData[6]
         self.regionalCode = stringRegionalData[7]
+        self.regionName = stringRegionalData[0] + " " + stringRegionalData[1] + " " + stringRegionalData[2] + " " + stringRegionalData[3] + " " + stringRegionalData[4]
     }
     
     public static func < (lhs: UpdatedRegionalDataModel, rhs: UpdatedRegionalDataModel) -> Bool{
-        return lhs.first < rhs.first
+        return lhs.regionName < rhs.regionName
     }
 }
 

@@ -132,11 +132,24 @@ class MainCollectionViewCell: UITableViewCell {
         self.contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
     }
     
-    func setUI(_ model: UpdatedWeatherForecastModel) {
+    func setUI(_ models: [UpdatedWeatherForecastModel]) {
         var surfConditionLabelText: String
         var backgroundImageName: String
         var skyCondition: String
         
+        guard let currentModel = models.first(where: { ($0.time - Date.dateA) < 3600 }) else { return }
+        print(currentModel)
+        var highestWaveHeight: Double = currentModel.waveHeight
+        var lowestWaveHeight: Double = currentModel.waveHeight
+        
+        models.forEach{
+            if $0.waveHeight > highestWaveHeight {
+                highestWaveHeight = $0.waveHeight
+            }
+            if $0.waveHeight < lowestWaveHeight {
+                lowestWaveHeight = $0.waveHeight
+            }
+        }
 //        switch model.SKY {
 //        case "1" :
 //            backgroundImageName = "sunny.png"
@@ -160,17 +173,16 @@ class MainCollectionViewCell: UITableViewCell {
 //        default :
 //            break
 //        }
-        waveLabel.text = "파고: " + model.waveHeight.description + "m"
-        
-//        guard let modelWaveValue = model.waveHeight else { return }
-//        guard let modelWindValue = Double(model.WSD) else { return }
-        guard let surfCondition = ML.shared.fetchPrediction(wave: model.waveHeight, wind: 5) else { return }
+        waveLabel.text = "파고: " + currentModel.waveHeight.description + "m"
+
+        // wind 바꾸기
+        guard let surfCondition = ML.shared.fetchPrediction(wave: currentModel.waveHeight, wind: 5) else { return }
         self.surfCondition = surfCondition
         guard let surfConditionDouble = Double(surfCondition.X1) else { return }
 
         switch surfConditionDouble {
         case 0:
-            if model.waveHeight == 0 {
+            if currentModel.waveHeight == 0 {
                 surfConditionLabelText = "파도가 없는 지역입니다"
             } else {
                 surfConditionLabelText = "파도가 약합니다"
@@ -189,17 +201,14 @@ class MainCollectionViewCell: UITableViewCell {
             surfConditionLabelText = "오류"
         }
         
-//        let TMX = Int(round(Double(pastTMXModel.TMX) ?? 0))
-//        let TMN = Int(round(Double(pastTMNModel.TMN) ?? 0))
-        
-        minTemperatureLabel.text = "최저:" + "°"
-        maxTemperatureLabel.text = "최고:" + "°"
-        currentTemperatuerLabel.text = model.airTemperature.description + "°"
+        maxTemperatureLabel.text = "최저:" + highestWaveHeight.description + "°"
+        minTemperatureLabel.text = "최고:" + lowestWaveHeight.description + "°"
+        currentTemperatuerLabel.text = currentModel.airTemperature.description + "°"
         surfConditionLabel.text = surfConditionLabelText
         skyConditionLabel.text = "베리굿" //skyCondition
 //        backgroundImageView.image = UIImage(named: backgroundImageName)
-        regionLabel.text = model.regionName
-        subRegionLabel.text = model.subRegionName
+        regionLabel.text = currentModel.regionName
+        subRegionLabel.text = currentModel.subRegionName
     }
     
     func setConstraints() {

@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 class MainViewModel: ObservableObject {
-    @Published var weatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
+    @Published var todayWeatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
     @Published var addedRegionalDataModels: [UpdatedRegionalDataModel] = []
     @Published var searchedRegionalDataModels: [UpdatedRegionalDataModel] = []
     var pastWeatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
@@ -23,7 +23,7 @@ class MainViewModel: ObservableObject {
     
     func fetchWeatherForecastModels() async {
         await APIRequestManager.fetchData()
-        self.weatherForecastModels = UpdatedWeatherForecastModelManager.shared.weatherForecastModels
+        await self.todayWeatherForecastModels = UpdatedWeatherForecastModelManager.shared.retrieveTodayWeatherFoercastModels()
     }
     
     func searchRegionalDataModel(_ searchTerm: String) {
@@ -66,11 +66,9 @@ class MainViewModel: ObservableObject {
     }
     
     func removeWeatherForecastModels(_ regionalCode: String) {
-        self.weatherForecastModels.removeValue(forKey: regionalCode)
+        self.todayWeatherForecastModels.removeValue(forKey: regionalCode)
         self.pastWeatherForecastModels.removeValue(forKey: regionalCode)
         UpdatedWeatherForecastModelManager.shared.removeWeatherForecastModels(regionalCode)
-        print(weatherForecastModels.count)
-        print(addedRegionalDataModels.count)
     }
     
     /// RegionalDataManager 로 부터 오름차순으로 가져옴.

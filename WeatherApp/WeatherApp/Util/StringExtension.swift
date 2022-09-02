@@ -18,9 +18,9 @@ extension String {
             return nil
         }
     }
-    func transferStringToFullDate() -> Date? {
+    func transferStringToTime() -> Date? {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMddHH"
+        dateFormatter.dateFormat = "HHmm"
         dateFormatter.timeZone = TimeZone(identifier: "UTC")
         if let date = dateFormatter.date(from: self) {
             return date
@@ -28,14 +28,12 @@ extension String {
             return nil
         }
     }
-}
-
-extension String {
-    func transferStringToTime() -> Date? {
+    func transferStringToLocalDate() -> Date? {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HHmm"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         dateFormatter.timeZone = TimeZone(identifier: "UTC")
-        if let date = dateFormatter.date(from: self) {
+        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
+        if let date = dateFormatter.date(from: self)?.addingTimeInterval(timeZoneDifference) {
             return date
         } else {
             return nil

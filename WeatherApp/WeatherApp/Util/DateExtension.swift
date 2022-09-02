@@ -32,29 +32,59 @@ extension Date {
 }
 
 extension Date {
-    static var currentFullDate: Date {
+    static var dateA: Date {
         var date = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_kr")
-        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
-        dateFormatter.dateFormat = "yyyyMMddHH"
-        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
-        date = date.addingTimeInterval(timeZoneDifference)
-        
-        return date
-    }
-    static var currentTime: Date {
-        var date = Date()
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_kr")
-        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
-        dateFormatter.dateFormat = "HHmm"
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
         date = date.addingTimeInterval(timeZoneDifference)
         
         return date
     }
     
+    static var dateB: Date {
+        var date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.dateFormat = "yyyyMMddHH"
+        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
+        date = date.addingTimeInterval(timeZoneDifference)
+        
+        return date
+    }
+    
+    static var dateC: Date {
+        var date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.dateFormat = "yyyyMMdd"
+        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
+        date = date.addingTimeInterval(timeZoneDifference)
+        
+        return date
+    }
+    
+    //현지가 00시일때의 UTC 구하기
+    static var yesterdayUTC: Date? {
+        let date = Date()
+        let midnight = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        let dateCom = DateComponents(timeZone: TimeZone(identifier: "UTC"), year: midnight.year, month: midnight.month, day: midnight.day, hour: 0, minute: 0)
+        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
+        let resultDate = Calendar.current.date(from: dateCom)?.addingTimeInterval(-timeZoneDifference)
+        return resultDate
+    }
+    
+    static var currentTime: Date {
+        var date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.dateFormat = "HHmm"
+        let timeZoneDifference = TimeInterval(TimeZone.current.secondsFromGMT())
+        date = date.addingTimeInterval(timeZoneDifference)
+        
+        return date
+    }
 }
 extension Date {
     static func - (lhs: Date, rhs: Date) -> TimeInterval {

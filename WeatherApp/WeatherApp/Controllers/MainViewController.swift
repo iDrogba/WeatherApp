@@ -86,10 +86,10 @@ class MainViewController: UIViewController {
     }
     
     private func bindMainViewModel() {
-        self.mainViewModel.$weatherForecastModels
+        self.mainViewModel.$todayWeatherForecastModels
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
-                guard self?.mainViewModel.addedRegionalDataModels.count == self?.mainViewModel.weatherForecastModels.count else { return }
+                guard self?.mainViewModel.addedRegionalDataModels.count == self?.mainViewModel.todayWeatherForecastModels.count else { return }
                 self?.mainCollectionView.reloadData()
                 print("mainCollectionView.reloadData()")
             })
@@ -185,7 +185,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         label.textColor = .gray
         label.font = .systemFont(ofSize: 15, weight: .regular)
         guard  mainViewModel.addedRegionalDataModels.count == 0 else {
-            if  mainViewModel.addedRegionalDataModels.count != mainViewModel.weatherForecastModels.count {
+            if  mainViewModel.addedRegionalDataModels.count != mainViewModel.todayWeatherForecastModels.count {
                 label.text = "날씨 데이터를 불러옵니다."
                 return label
             }
@@ -197,7 +197,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        guard mainViewModel.addedRegionalDataModels.count != mainViewModel.weatherForecastModels.count || mainViewModel.addedRegionalDataModels.count == 0 else { return 0 }
+        guard mainViewModel.addedRegionalDataModels.count != mainViewModel.todayWeatherForecastModels.count || mainViewModel.addedRegionalDataModels.count == 0 else { return 0 }
         return tableView.frame.height * 0.2
     }
     
@@ -225,19 +225,16 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             guard let placeHolderCell = tableView.dequeueReusableCell(withIdentifier: PlaceHolderCollectionViewCell.reuseIdentifier) as? PlaceHolderCollectionViewCell else { return UITableViewCell() }
                         
             let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
-            guard let model = self.mainViewModel.weatherForecastModels[cellRegionalCode]?.first else { placeHolderCell.setUI(cellRegionalCode)
+            
+            guard let models = self.mainViewModel.todayWeatherForecastModels[cellRegionalCode] else {
+                placeHolderCell.setUI(cellRegionalCode)
                 return placeHolderCell
             }
-//            guard let pastTMNModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "0600" }).first else { placeHolderCell.setUI(cellRegionalCode)
-//                return placeHolderCell
-//            }
-//
-//            guard let pastTMXModel = self.mainViewModel.pastWeatherForecastModels[cellRegionalCode]?.filter({ $0.forecastTime == "1500" }).first else { placeHolderCell.setUI(cellRegionalCode)
-//                return placeHolderCell
-//            }
-            
+//            ?.filter({ model in
+//                floor((model.time - Date()) / 86400) < 1})
+
             DispatchQueue.main.async {
-                cell.setUI(model)
+                cell.setUI(models)
             }
             
             return cell

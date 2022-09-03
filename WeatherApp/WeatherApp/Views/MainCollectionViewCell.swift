@@ -50,24 +50,24 @@ class MainCollectionViewCell: UITableViewCell {
         return weatherLabel
     }()
     
-    private lazy var minTemperatureLabel: UILabel = {
-        let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
-        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
-        minTemperatureLabel.textColor = .white
-        minTemperatureLabel.text = "최저: _"
-
-        return minTemperatureLabel
-    }()
-    
     private lazy var maxTemperatureLabel: UILabel = {
         let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         maxTemperatureLabel.textColor = .white
         maxTemperatureLabel.text = "최고: _"
-        
+
         return maxTemperatureLabel
+    }()
+    
+    private lazy var minTemperatureLabel: UILabel = {
+        let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        minTemperatureLabel.textColor = .white
+        minTemperatureLabel.text = "최저: _"
+        
+        return minTemperatureLabel
     }()
     
     private lazy var currentTemperatuerLabel: UILabel = {
@@ -106,8 +106,8 @@ class MainCollectionViewCell: UITableViewCell {
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(subRegionLabel)
         self.contentView.addSubview(currentTemperatuerLabel)
-        self.contentView.addSubview(minTemperatureLabel)
         self.contentView.addSubview(maxTemperatureLabel)
+        self.contentView.addSubview(minTemperatureLabel)
         self.contentView.addSubview(skyConditionLabel)
         self.contentView.addSubview(surfConditionLabel)
         self.contentView.addSubview(waveLabel)
@@ -137,8 +137,7 @@ class MainCollectionViewCell: UITableViewCell {
         var backgroundImageName: String
         var skyCondition: String
         
-        guard let currentModel = models.first(where: { ($0.time - Date.dateA) < 3600 }) else { return }
-        print(currentModel)
+        guard let currentModel = models.first(where: { (Date.dateA - $0.time) < 3600 }) else { return }
         var highestWaveHeight: Double = currentModel.waveHeight
         var lowestWaveHeight: Double = currentModel.waveHeight
         
@@ -201,8 +200,8 @@ class MainCollectionViewCell: UITableViewCell {
             surfConditionLabelText = "오류"
         }
         
-        maxTemperatureLabel.text = "최저:" + highestWaveHeight.description + "°"
-        minTemperatureLabel.text = "최고:" + lowestWaveHeight.description + "°"
+        minTemperatureLabel.text = "최저:" + lowestWaveHeight.description + "m"
+        maxTemperatureLabel.text = "최고:" + highestWaveHeight.description + "m"
         currentTemperatuerLabel.text = currentModel.airTemperature.description + "°"
         surfConditionLabel.text = surfConditionLabelText
         skyConditionLabel.text = "베리굿" //skyCondition
@@ -231,16 +230,16 @@ class MainCollectionViewCell: UITableViewCell {
             currentTemperatuerLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20),
         ]
         let maxTemperatureLabelConstraints = [
-            maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
-            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
-        ]
-        let minTemperatureLabelConstraints = [
-            minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
+            minTemperatureLabel.trailingAnchor.constraint(equalTo: maxTemperatureLabel.leadingAnchor, constant: -5),
             minTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
         ]
+        let minTemperatureLabelConstraints = [
+            maxTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+        ]
         let weatherLabelConstraints = [
-            skyConditionLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: 0),
-            skyConditionLabel.bottomAnchor.constraint(equalTo: maxTemperatureLabel.topAnchor, constant: 0)
+            skyConditionLabel.trailingAnchor.constraint(equalTo: maxTemperatureLabel.trailingAnchor, constant: 0),
+            skyConditionLabel.bottomAnchor.constraint(equalTo: minTemperatureLabel.topAnchor, constant: 0)
         ]
         let surfConditionLabelConstraints = [
             surfConditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
@@ -273,24 +272,24 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         return subRegionLabel
     }()
     
-    private lazy var minTemperatureLabel: UILabel = {
-        let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
-        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
-        minTemperatureLabel.textColor = .white
-        minTemperatureLabel.text = "최저: _°"
-
-        return minTemperatureLabel
-    }()
-    
     private lazy var maxTemperatureLabel: UILabel = {
         let maxTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         maxTemperatureLabel.textColor = .white
         maxTemperatureLabel.text = "최고: _°"
-        
+
         return maxTemperatureLabel
+    }()
+    
+    private lazy var minTemperatureLabel: UILabel = {
+        let minTemperatureLabel = UILabel(frame: CGRect(origin: .zero, size: .zero))
+        minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        minTemperatureLabel.textColor = .white
+        minTemperatureLabel.text = "최저: _°"
+        
+        return minTemperatureLabel
     }()
     
     private lazy var currentTemperatuerLabel: UILabel = {
@@ -329,8 +328,8 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         self.contentView.addSubview(regionLabel)
         self.contentView.addSubview(subRegionLabel)
         self.contentView.addSubview(currentTemperatuerLabel)
-        self.contentView.addSubview(minTemperatureLabel)
         self.contentView.addSubview(maxTemperatureLabel)
+        self.contentView.addSubview(minTemperatureLabel)
         self.backgroundColor = .gray
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
@@ -378,12 +377,12 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
             currentTemperatuerLabel.topAnchor.constraint(equalTo: regionLabel.topAnchor, constant: 0),
         ]
         let maxTemperatureLabelConstraints = [
-            maxTemperatureLabel.trailingAnchor.constraint(equalTo: minTemperatureLabel.leadingAnchor, constant: -5),
-            maxTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
+            minTemperatureLabel.trailingAnchor.constraint(equalTo: maxTemperatureLabel.leadingAnchor, constant: -5),
+            minTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
         ]
         let minTemperatureLabelConstraints = [
-            minTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
-            minTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
+            maxTemperatureLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
+            maxTemperatureLabel.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor, constant: -10)
         ]
         NSLayoutConstraint.activate(backgroundImageViewConstraints)
         NSLayoutConstraint.activate(regionLabelConstraints)

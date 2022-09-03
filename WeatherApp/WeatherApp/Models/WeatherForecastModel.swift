@@ -160,8 +160,9 @@ struct UpdatedWeatherForecastModel {
     private func averageVal(data: [String:Double]?, rounder: Double) -> Double {
         guard let data = data else { return 0 }
         var sum = data.values.reduce(0, { first, second in
-            return (first + second) / Double(data.count)
+            return (first + second)
         })
+        sum /=  Double(data.count)
         sum = round(sum * rounder) / rounder
         return sum
     }
@@ -185,7 +186,6 @@ class UpdatedWeatherForecastModelManager {
                 returnValue[$0.key]?[24 ..< ($0.value.count)] = []
             }
         }
-        print("3")
         return returnValue
     }
     
@@ -196,10 +196,6 @@ class UpdatedWeatherForecastModelManager {
         hours.forEach{
             let model = UpdatedWeatherForecastModel(regionalCode, $0)
             self.weatherForecastModels[regionalCode]?.append(model)
-
-//            if (model.time - Date.dateA) > -3600 {
-//                self.weatherForecastModels[regionalCode]?.append(model)
-//            }
         }
     }
     

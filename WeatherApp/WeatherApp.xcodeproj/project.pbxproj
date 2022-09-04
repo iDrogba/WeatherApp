@@ -27,7 +27,6 @@
 		0A6A1E7328792054003BB4A0 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A1E7228792054003BB4A0 /* APIResponse.swift */; };
 		0A6A1E7528792069003BB4A0 /* RegionalDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A1E7428792069003BB4A0 /* RegionalDataModel.swift */; };
 		0A6A1E77287920A5003BB4A0 /* WeatherForecastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A1E76287920A5003BB4A0 /* WeatherForecastModel.swift */; };
-		0A6A1E7928792160003BB4A0 /* RegionalData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 0A6A1E7828792160003BB4A0 /* RegionalData.csv */; };
 		0A7EAE832883C5920087C4F5 /* RegionWeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE822883C5920087C4F5 /* RegionWeatherViewController.swift */; };
 		0A7EAE852883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE842883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift */; };
 		0A7EAE872883C5B20087C4F5 /* WeekWeatherTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EAE862883C5B20087C4F5 /* WeekWeatherTableViewCell.swift */; };
@@ -84,7 +83,6 @@
 		0A6A1E7228792054003BB4A0 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
 		0A6A1E7428792069003BB4A0 /* RegionalDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionalDataModel.swift; sourceTree = "<group>"; };
 		0A6A1E76287920A5003BB4A0 /* WeatherForecastModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastModel.swift; sourceTree = "<group>"; };
-		0A6A1E7828792160003BB4A0 /* RegionalData.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RegionalData.csv; path = ../../../WeatherAppToy/WeatherAppToy/RegionalData.csv; sourceTree = "<group>"; };
 		0A7EAE822883C5920087C4F5 /* RegionWeatherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionWeatherViewController.swift; sourceTree = "<group>"; };
 		0A7EAE842883C5AD0087C4F5 /* DayWeatherCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayWeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 		0A7EAE862883C5B20087C4F5 /* WeekWeatherTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeekWeatherTableViewCell.swift; sourceTree = "<group>"; };
@@ -233,7 +231,6 @@
 			children = (
 				0A3DF5D928C06ADE000C657E /* UpdatedRegionalData.csv */,
 				0A7EAE882883C6140087C4F5 /* CustomColors.swift */,
-				0A6A1E7828792160003BB4A0 /* RegionalData.csv */,
 				0A6A1E6D28791FDC003BB4A0 /* Extensions.swift */,
 				0ABD5A0C288C0F0700B70589 /* Animation.swift */,
 				0A3A77B2288D5F8E004F9A3C /* StringExtension.swift */,
@@ -386,7 +383,6 @@
 			files = (
 				0A5AFE0D2867381800DA18BE /* LaunchScreen.storyboard in Resources */,
 				0A5AFE0A2867381800DA18BE /* Assets.xcassets in Resources */,
-				0A6A1E7928792160003BB4A0 /* RegionalData.csv in Resources */,
 				0A3DF5DA28C06ADE000C657E /* UpdatedRegionalData.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

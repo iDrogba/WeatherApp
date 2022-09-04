@@ -172,6 +172,7 @@ class MainCollectionViewCell: UITableViewCell {
 //        default :
 //            break
 //        }
+        print(currentModel.waveHeight)
         waveLabel.text = "파고: " + currentModel.waveHeight.description + "m"
 
         // wind 바꾸기

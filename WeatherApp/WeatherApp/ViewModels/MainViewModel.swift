@@ -9,25 +9,22 @@ import Foundation
 import Combine
 
 class MainViewModel: ObservableObject {
+    var regionalDataManager = UpdatedRegionalDataModelManager.shared
+    var weatherForecastManager = UpdatedWeatherForecastModelManager.shared
     @Published var todayWeatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
     @Published var addedRegionalDataModels: [UpdatedRegionalDataModel] = []
     @Published var searchedRegionalDataModels: [UpdatedRegionalDataModel] = []
-    var pastWeatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
     
     init() {
         Task{
-            await self.fetchAddedRegionalDataModels{}
-            await self.fetchWeatherForecastModels()
+            await self.regionalDataManager.setSharedClass()
+            await self.fetchAddedRegionalDataModels()
+            await self.setWeatherForecastModels()
         }
     }
-    
-    func fetchWeatherForecastModels() async {
-        await APIRequestManager.fetchData()
-        await self.todayWeatherForecastModels = UpdatedWeatherForecastModelManager.shared.retrieveTodayWeatherFoercastModels()
-    }
-    
+}
+extension MainViewModel {
     func searchRegionalDataModel(_ searchTerm: String) {
-        let regionalDataManager = UpdatedRegionalDataModelManager.shared
         var retrivedRegionalData: [UpdatedRegionalDataModel] = []
         
         guard searchTerm != "" else {
@@ -48,34 +45,39 @@ class MainViewModel: ObservableObject {
         self.searchedRegionalDataModels = retrivedRegionalData
     }
     
-    func addAddedRegionalDataModels(_ regionalCode: String, _ completion: @escaping () -> Void) async {
-        UpdatedRegionalDataModelManager.shared.addAddedRegionalCodeAtUserDefaults(regionalCode)
-        UpdatedRegionalDataModelManager.shared.setAddedRegionalDataArray()
-        await self.fetchAddedRegionalDataModels{
-            completion()
-        }
-        //TODO: 딱 한개의 요소만 네트워킹하는 로직 작성 필요
+    func addAddedRegionalDataModel(_ regionalCode: String) async {
+        await regionalDataManager.addAddedRegionalCodeAtUserDefaults(regionalCode)
+        await regionalDataManager.setAddedRegionalDataArray()
+        await self.fetchAddedRegionalDataModels()
+    }
+    func removeAddedRegionalDataModel(_ regionalCode: String) async {
+        await regionalDataManager.removeAddedRegionalCodeAtUserDefaults(regionalCode)
+        await regionalDataManager.setAddedRegionalDataArray()
+        await self.fetchAddedRegionalDataModels()
+    }
+    private func fetchAddedRegionalDataModels() async {
+        await self.addedRegionalDataModels = regionalDataManager.retrieveSortedAddedRegionalDataModels()
     }
     
-    func removeAddedRegionalDataModels(_ regionalCode: String, _ indexAt: Int) {
-        UpdatedRegionalDataModelManager.shared.removeAddedRegionalCodeAtUserDefaults(regionalCode)
-        UpdatedRegionalDataModelManager.shared.setAddedRegionalDataArray()
-        Task{
-            await self.fetchAddedRegionalDataModels{}
-        }
+}
+
+extension MainViewModel {
+    func setWeatherForecastModels() async {
+        await APIRequestManager.fetchWeatherForecastModels()
+        await self.todayWeatherForecastModels = weatherForecastManager.retrieveTodayWeatherFoercastModels()
     }
     
-    func removeWeatherForecastModels(_ regionalCode: String) {
+    func fetchWeatherForecastModel(_ regionalModel: UpdatedRegionalDataModel) async {
+        await APIRequestManager.fetchWeatherForecastModel(regionalModel)
+        await self.appendRegionToTodayWeatherForecastModels(regionalModel.regionalCode)
+    }
+    
+    func appendRegionToTodayWeatherForecastModels(_ regionalCode: String) async {
+        self.todayWeatherForecastModels = await weatherForecastManager.retrieveTodayWeatherFoercastModels()
+    }
+    
+    func removeRegionFromTodayWeatherForecastModels(_ regionalCode: String) async {
         self.todayWeatherForecastModels.removeValue(forKey: regionalCode)
-        self.pastWeatherForecastModels.removeValue(forKey: regionalCode)
-        UpdatedWeatherForecastModelManager.shared.removeWeatherForecastModels(regionalCode)
-    }
-    
-    /// RegionalDataManager 로 부터 오름차순으로 가져옴.
-    private func fetchAddedRegionalDataModels(_ completion: @escaping () -> Void) async {
-        Task{
-            self.addedRegionalDataModels = UpdatedRegionalDataModelManager.shared.addedRegionalDataModels.sorted(by: <)
-            completion()
-        }
+        await weatherForecastManager.removeWeatherForecastModels(regionalCode)
     }
 }

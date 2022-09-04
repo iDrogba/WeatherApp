@@ -230,8 +230,6 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
                 placeHolderCell.setUI(cellRegionalCode)
                 return placeHolderCell
             }
-//            ?.filter({ model in
-//                floor((model.time - Date()) / 86400) < 1})
 
             DispatchQueue.main.async {
                 cell.setUI(models)
@@ -271,10 +269,11 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             }
             return
         }
+
         let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.row]
         Task{
-            await self.mainViewModel.addAddedRegionalDataModels(regionalDataModel.regionalCode){}
-            await self.mainViewModel.fetchWeatherForecastModels()
+            await self.mainViewModel.addAddedRegionalDataModel(regionalDataModel.regionalCode)
+            await self.mainViewModel.fetchWeatherForecastModel(regionalDataModel)
         }
         searchBar.endEditing(true)
     }
@@ -292,11 +291,13 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard self.mainViewModel.addedRegionalDataModels.count != 0 else {return UISwipeActionsConfiguration()}
         
         let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
-            guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
-            let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
-            self.mainViewModel.removeAddedRegionalDataModels(regionalDataModel.regionalCode, indexPath.row)
-            self.mainViewModel.removeWeatherForecastModels(regionalDataModel.regionalCode)
-            completion(true)
+            Task{
+                guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
+                let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
+                await self.mainViewModel.removeAddedRegionalDataModel(regionalDataModel.regionalCode)
+                await self.mainViewModel.removeRegionFromTodayWeatherForecastModels(regionalDataModel.regionalCode)
+                completion(true)
+            }
         }
 
         let image = UIImage(systemName: "trash.circle")

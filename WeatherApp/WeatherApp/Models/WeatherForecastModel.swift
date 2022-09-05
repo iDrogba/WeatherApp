@@ -88,6 +88,12 @@ class UpdatedWeatherForecastModelManager {
         return returnValue
     }
     
+    /// 현시각을 포함하여 앞으로의 예보 모델 가져온다.
+    func retrieveWeatherForecastModelsAfterCurrentTime(regionalCode: String) async -> [UpdatedWeatherForecastModel] {
+        guard let returnVal = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode]?.filter({($0.time - Date.dateA) >= -3600}) else { return [] }
+        return returnVal
+    }
+    
     func appendCurrentWeatherForecastModels(regionalCode: String, hours: [Hours]) async {
         if self.weatherForecastModels[regionalCode] == nil {
             self.weatherForecastModels[regionalCode] = []

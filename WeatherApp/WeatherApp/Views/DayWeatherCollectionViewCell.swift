@@ -105,12 +105,12 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
 //        }
 
         let forecastDateMid = model.time
-        dayLabelText = forecastDateMid.transferDateToStringDay()
+        dayLabelText = forecastDateMid.transferDateToNumDate()
         
         let dateString = model.time
-        timeLabelText = dateString.transferTimeToKorean()
+        timeLabelText = dateString.transferTimeToStringTime()
         
-        if model.time.transferTimeToString() == "0000" {
+        if model.time.transferTimeToNumTime() == "0000" {
             timeLabel.text = "\(dayLabelText) \(timeLabelText)"
         } else {
             timeLabel.text = timeLabelText

@@ -261,6 +261,8 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             guard UpdatedWeatherForecastModelManager.shared.weatherForecastModels[cellRegionalCode] != nil else { return }
             viewController.regionalCode = cellRegionalCode
             viewController.surfConditionOutput = cell.surfCondition
+            viewController.highestWaveHeight = cell.highestWaveHeight
+            viewController.lowestWaveHeight = cell.lowestWaveHeight
             
             viewController.transitioningDelegate = self
             viewController.modalPresentationStyle = .custom

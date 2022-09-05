@@ -9,6 +9,8 @@ import UIKit
 //MARK: MainCollectionViewCell
 class MainCollectionViewCell: UITableViewCell {
     var surfCondition: SurfConditionOutput? = nil
+    var highestWaveHeight: Double = 0
+    var lowestWaveHeight: Double = 0
     
     private lazy var subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
@@ -133,13 +135,13 @@ class MainCollectionViewCell: UITableViewCell {
     }
     
     func setUI(_ models: [UpdatedWeatherForecastModel]) {
-        var surfConditionLabelText = ""
-        var backgroundImageName = ""
-        var skyCondition = ""
+        var surfConditionLabelText = "파도가 없는 지역입니다"
+        var backgroundImageName = "sunny.png"
+        var skyCondition = "맑음"
         
         guard let currentModel = models.first(where: { (Date.dateA - $0.time) < 3600 }) else { return }
-        var highestWaveHeight: Double = currentModel.waveHeight
-        var lowestWaveHeight: Double = currentModel.waveHeight
+        highestWaveHeight = currentModel.waveHeight
+        lowestWaveHeight = currentModel.waveHeight
         
         models.forEach{
             if $0.waveHeight > highestWaveHeight {
@@ -282,6 +284,8 @@ class MainCollectionViewCell: UITableViewCell {
         NSLayoutConstraint.activate(waveLabelConstraints)
     }
 }
+
+
 //MARK: PlaceHolderCollectionViewCell
 class PlaceHolderCollectionViewCell: UITableViewCell {
     private lazy var subRegionLabel: UILabel = {

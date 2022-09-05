@@ -8,30 +8,34 @@
 import Foundation
 
 extension Date {
-    func transferDateToKorean() -> String {
+    func transferDateToStringDate() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko")
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
         dateFormatter.dateFormat = "M월 d일 E요일"
         return dateFormatter.string(from: self)
     }
-    func transferTimeToKorean() -> String {
+    func transferTimeToStringTime() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "H시"
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.dateFormat = "a h시"
         return dateFormatter.string(from: self)
     }
-    func transferTimeToString() -> String {
+    func transferTimeToNumTime() -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
         dateFormatter.dateFormat = "HHmm"
         return dateFormatter.string(from: self)
     }
-    func transferDateToStringDay() -> String {
+    func transferDateToNumDate() -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
         dateFormatter.dateFormat = "MM/dd"
         return dateFormatter.string(from: self)
     }
 }
 
 extension Date {
+    /// Format : yyyy-MM-dd'T'HH:mm:ssZ
     static var dateA: Date {
         var date = Date()
         let dateFormatter = DateFormatter()
@@ -42,7 +46,7 @@ extension Date {
         
         return date
     }
-    
+    /// Format : yyyyMMddHH
     static var dateB: Date {
         var date = Date()
         let dateFormatter = DateFormatter()
@@ -53,7 +57,7 @@ extension Date {
         
         return date
     }
-    
+    /// Format : yyyyMMdd
     static var dateC: Date {
         var date = Date()
         let dateFormatter = DateFormatter()

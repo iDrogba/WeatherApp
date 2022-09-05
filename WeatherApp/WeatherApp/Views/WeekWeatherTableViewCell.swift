@@ -2,13 +2,13 @@
 //  WeekWeatherTableViewCell.swift
 //  WeatherApp
 //
-//  Created by Lena on 2022/07/09.
+//  Created by Lena, Drogba on 2022/07/09.
 //
 
 import UIKit
 
 class WeekWeatherTableViewCell: UICollectionViewCell {
-    private var dayLabel: UILabel = {
+    private var timeLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .white
@@ -43,7 +43,7 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = UIColor(white: 0, alpha: 0)
-        [dayLabel, weatherImage, rainPercentage, temperatureLabel].forEach {
+        [timeLabel, weatherImage, rainPercentage, temperatureLabel].forEach {
             contentView.addSubview($0)
         }
         DispatchQueue.main.async {
@@ -57,25 +57,25 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        dayLabel.text = nil
+        timeLabel.text = nil
         weatherImage.image = nil
         temperatureLabel.text = nil
         rainPercentage.text = ""
     }
     
     private func configureCellConstraints() {
-        dayLabel.translatesAutoresizingMaskIntoConstraints = false
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherImage.translatesAutoresizingMaskIntoConstraints = false
         temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         rainPercentage.translatesAutoresizingMaskIntoConstraints = false
         
-        dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        dayLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        dayLabel.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        dayLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        timeLabel.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        timeLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        weatherImage.topAnchor.constraint(equalTo: dayLabel.bottomAnchor).isActive = true
+        weatherImage.topAnchor.constraint(equalTo: timeLabel.bottomAnchor).isActive = true
         weatherImage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
         
         rainPercentage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
@@ -90,10 +90,33 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     }
     
     func applyData(_ model: UpdatedWeatherForecastModel) {
-        var dayLabelText: String
+        var timeLabelText: String
+        timeLabelText = model.time.transferTimeToStringTime()
         var weatherImageName: String = "sun.max"
-        dayLabelText = model.time.transferDateToStringDay() + "시"
+        if model.cloudCover <= 30 {
+            // 맑음
+            weatherImageName = "sun.max"
+        } else if model.cloudCover <= 50 {
+            // 약간 흐림
+            weatherImageName = "cloud"
+        } else if model.cloudCover <= 80 {
+            // 구름 많음
+            weatherImageName = "cloud"
+        } else if model.cloudCover <= 100 {
+            // 흐림
+            weatherImageName = "cloud"
+        }
         
+        if model.precipitation > 0.1 {
+            // 비
+            weatherImageName = "cloud.rain"
+            rainPercentage.text = model.precipitation.description + "mm/h"
+        }
+        if model.snowDepth > 0.1 {
+            // 눈
+            weatherImageName = "cloud.snow"
+            rainPercentage.text = model.snowDepth.description + "m"
+        }
 //        switch model.SKY {
 //        case "1": // 맑음
 //            weatherImageName = "sun.max"
@@ -104,7 +127,6 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
 //        default:
 //            weatherImageName = "cloud"
 //        }
-//
 //        switch model.PTY {
 //        case "1": // 비
 //            weatherImageName = "cloud.rain"
@@ -121,7 +143,7 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
 //        default:
 //            break
 //        }
-        dayLabel.text = dayLabelText
+        timeLabel.text = timeLabelText
         weatherImage.image = UIImage(systemName: weatherImageName)
         temperatureLabel.text = " " + model.airTemperature.description + "°"
     }

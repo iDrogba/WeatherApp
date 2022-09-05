@@ -292,11 +292,12 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         
         let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
             Task{
+                print("removeData")
                 guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
                 let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
                 await self.mainViewModel.removeAddedRegionalDataModel(regionalDataModel.regionalCode)
                 await self.mainViewModel.removeRegionFromTodayWeatherForecastModels(regionalDataModel.regionalCode)
-                completion(true)
+                print("finishRemoveData")
             }
         }
 

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+//MARK: MainCollectionViewCell
 class MainCollectionViewCell: UITableViewCell {
     var surfCondition: SurfConditionOutput? = nil
     
@@ -133,9 +133,9 @@ class MainCollectionViewCell: UITableViewCell {
     }
     
     func setUI(_ models: [UpdatedWeatherForecastModel]) {
-        var surfConditionLabelText: String
-        var backgroundImageName: String
-        var skyCondition: String
+        var surfConditionLabelText = ""
+        var backgroundImageName = ""
+        var skyCondition = ""
         
         guard let currentModel = models.first(where: { (Date.dateA - $0.time) < 3600 }) else { return }
         var highestWaveHeight: Double = currentModel.waveHeight
@@ -149,7 +149,30 @@ class MainCollectionViewCell: UITableViewCell {
                 lowestWaveHeight = $0.waveHeight
             }
         }
-//        switch model.SKY {
+        
+        if currentModel.cloudCover <= 30 {
+            backgroundImageName = "sunny.png"
+            skyCondition = "맑음"
+        } else if currentModel.cloudCover <= 50 {
+            backgroundImageName = "sunny.png"
+            skyCondition = "약간 흐림"
+        } else if currentModel.cloudCover <= 80 {
+            backgroundImageName = "cloudy.png"
+            skyCondition = "구름 많음"
+        } else if currentModel.cloudCover <= 100 {
+            backgroundImageName = "cloudy.png"
+            skyCondition = "흐림"
+        }
+        
+        if currentModel.precipitation > 0.1 {
+            backgroundImageName = "rainy.png"
+            skyCondition = "비"
+        }
+        if currentModel.snowDepth > 0.1 {
+            backgroundImageName = "snow.png"
+            skyCondition = "눈"
+        }
+                
 //        case "1" :
 //            backgroundImageName = "sunny.png"
 //            skyCondition = "맑음"
@@ -162,8 +185,7 @@ class MainCollectionViewCell: UITableViewCell {
 //        default :
 //            backgroundImageName = "cloudy.png"
 //            skyCondition = "구름 많음"
-//        }
-//
+
 //        switch model.PTY {
 //        case "1" :
 //            backgroundImageName = "rainy.png"
@@ -172,11 +194,10 @@ class MainCollectionViewCell: UITableViewCell {
 //        default :
 //            break
 //        }
-        print(currentModel.waveHeight)
         waveLabel.text = "파고: " + currentModel.waveHeight.description + "m"
 
         // wind 바꾸기
-        guard let surfCondition = ML.shared.fetchPrediction(wave: currentModel.waveHeight, wind: 5) else { return }
+        guard let surfCondition = ML.shared.fetchPrediction(wave: currentModel.waveHeight, wind: currentModel.windSpeed) else { return }
         self.surfCondition = surfCondition
         guard let surfConditionDouble = Double(surfCondition.X1) else { return }
 
@@ -205,8 +226,8 @@ class MainCollectionViewCell: UITableViewCell {
         maxTemperatureLabel.text = "최고:" + highestWaveHeight.description + "m"
         currentTemperatuerLabel.text = currentModel.airTemperature.description + "°"
         surfConditionLabel.text = surfConditionLabelText
-        skyConditionLabel.text = "베리굿" //skyCondition
-//        backgroundImageView.image = UIImage(named: backgroundImageName)
+        skyConditionLabel.text = skyCondition
+        backgroundImageView.image = UIImage(named: backgroundImageName)
         regionLabel.text = currentModel.regionName
         subRegionLabel.text = currentModel.subRegionName
     }
@@ -261,7 +282,7 @@ class MainCollectionViewCell: UITableViewCell {
         NSLayoutConstraint.activate(waveLabelConstraints)
     }
 }
-
+//MARK: PlaceHolderCollectionViewCell
 class PlaceHolderCollectionViewCell: UITableViewCell {
     private lazy var subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()

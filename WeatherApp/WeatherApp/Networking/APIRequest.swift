@@ -11,7 +11,7 @@ import Alamofire
 class APIRequestManager {
     static let shared = APIRequestManager()
     private let baseURL: String = "https://api.stormglass.io/v2/weather/point"
-    private var parameters = ["params": "airTemperature,waveHeight,wavePeriod,waveDirection"]
+    private var parameters = ["params": "airTemperature,waveHeight,wavePeriod,waveDirection,windSpeed,cloudCover,precipitation,snowDepth"]
     private init() { }
     
     private let session: Session = {

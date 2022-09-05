@@ -55,7 +55,7 @@ struct NewResponse: Codable {
 
 struct Hours: Codable {
     let time: String
-    let airTemperature, waveHeight, wavePeriod, waveDirection: [String: Double]?
+    let airTemperature, waveHeight, wavePeriod, waveDirection, windSpeed, cloudCover, precipitation, snowDepth: [String: Double]?
 }
 
 struct Meta: Codable {

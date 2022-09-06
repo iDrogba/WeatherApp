@@ -24,7 +24,6 @@ class RegionWeatherViewController: UIViewController {
 
         Task{
             await self.weatherForecastModel = UpdatedWeatherForecastModelManager.shared.retrieveWeatherForecastModelsAfterCurrentTime(regionalCode: regionalCode)
-            weatherForecastModel.forEach{print($0.time)}
             dateArray = weatherForecastModel.map{$0.time.transferDateToNumDate()}
             dateArray = dateArray.uniqued()
         }
@@ -40,11 +39,19 @@ class RegionWeatherViewController: UIViewController {
         chart.delegate = self
 
         DispatchQueue.main.async {
+            [self.weekWeatherTableView, self.chart].forEach{ $0.alpha = 0 }
             self.configureConstraints()
             self.applyData()
             self.applyBackground()
             self.applySurfConditionImageLabel()
             self.setChart()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            [self.weekWeatherTableView, self.chart].forEach{ view in
+                UIView.animate(withDuration: 1) {
+                    view.alpha = 1
+                }
+            }
         }
     }
     
@@ -205,9 +212,7 @@ class RegionWeatherViewController: UIViewController {
             waveHeightArray.append($0.waveHeight)
             wavePeriodArray.append($0.wavePeriod)
             windSpeedArray.append($0.windSpeed)
-            print($0.time)
             let dateTimeDouble = ceil(($0.time - Date.dateA) / 3600)
-            print(dateTimeDouble)
             timeArray.append(dateTimeDouble)
             if $0.time.transferTimeToNumTime() == "0000" {
                 waveChartXAxisArray.append($0.time.transferDateToNumDate())
@@ -294,6 +299,7 @@ class RegionWeatherViewController: UIViewController {
         imageView.clipsToBounds = true
         imageView.image = background
         imageView.center = view.center
+        imageView.layer.name = "backgroundImageView"
         view.addSubview(imageView)
         self.view.sendSubviewToBack(imageView)
     }

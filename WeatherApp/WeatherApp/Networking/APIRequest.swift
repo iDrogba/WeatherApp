@@ -16,8 +16,8 @@ class APIRequestManager {
     
     private let session: Session = {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 10
-        configuration.timeoutIntervalForResource = 10
+        configuration.timeoutIntervalForRequest = 15
+        configuration.timeoutIntervalForResource = 15
         configuration.headers = ["Authorization": Storage().stormGlassAPIKey]
         return Session(configuration: configuration)
     }()

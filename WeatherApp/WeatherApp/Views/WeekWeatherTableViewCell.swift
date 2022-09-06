@@ -42,17 +42,20 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = UIColor(white: 0, alpha: 0)
-        [timeLabel, weatherImage, rainPercentage, temperatureLabel].forEach {
-            contentView.addSubview($0)
-        }
-        DispatchQueue.main.async {
-            self.configureCellConstraints()
-        }
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        DispatchQueue.main.async { [self] in
+            self.contentView.backgroundColor = UIColor(white: 0, alpha: 0)
+            [timeLabel, weatherImage, rainPercentage, temperatureLabel].forEach {
+                self.contentView.addSubview($0)
+            }
+            self.configureCellConstraints()
+        }
     }
     
     override func prepareForReuse() {
@@ -72,21 +75,20 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
         timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         timeLabel.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        timeLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        weatherImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         weatherImage.topAnchor.constraint(equalTo: timeLabel.bottomAnchor).isActive = true
         weatherImage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
+        weatherImage.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
-        rainPercentage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        rainPercentage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        rainPercentage.bottomAnchor.constraint(equalTo: weatherImage.bottomAnchor).isActive = true
+        rainPercentage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        rainPercentage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
         rainPercentage.heightAnchor.constraint(equalTo: weatherImage.heightAnchor, multiplier: 0.25).isActive = true
         
         temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         temperatureLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        temperatureLabel.heightAnchor.constraint(equalToConstant: 15).isActive = true
     }
     
     func applyData(_ model: UpdatedWeatherForecastModel) {

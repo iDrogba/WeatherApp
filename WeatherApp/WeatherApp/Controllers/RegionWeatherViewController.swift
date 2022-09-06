@@ -39,14 +39,15 @@ class RegionWeatherViewController: UIViewController {
         chart.delegate = self
 
         DispatchQueue.main.async {
-            [self.weekWeatherTableView, self.chart].forEach{ $0.alpha = 0 }
             self.configureConstraints()
             self.applyData()
             self.applyBackground()
             self.applySurfConditionImageLabel()
             self.setChart()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             [self.weekWeatherTableView, self.chart].forEach{ view in
                 UIView.animate(withDuration: 1) {
                     view.alpha = 1
@@ -69,6 +70,7 @@ class RegionWeatherViewController: UIViewController {
         tableView.backgroundColor = transparentBackground
         tableView.showsVerticalScrollIndicator = false
         tableView.showsHorizontalScrollIndicator = false
+        tableView.alpha = 0
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -78,7 +80,6 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 37, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -89,7 +90,6 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 48, weight: .semibold)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -101,7 +101,6 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .light)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -113,7 +112,6 @@ class RegionWeatherViewController: UIViewController {
         stackView.spacing = view.bounds.width * 0.03
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
-        stackView.alpha = 1
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
@@ -124,7 +122,6 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -135,7 +132,6 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -172,7 +168,7 @@ class RegionWeatherViewController: UIViewController {
     private lazy var chart: LineChartView = {
         guard let regionWeatherForecastModelArray = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode] else { return LineChartView() }
         let chart  = LineChartView()
-        chart.alpha = 1
+        chart.alpha = 0
         let xScale = Double(regionWeatherForecastModelArray.count / 7)
         let yScale = 2.0
         chart.zoom(scaleX: xScale, scaleY: yScale, x: 0, y: 0)

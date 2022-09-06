@@ -224,8 +224,8 @@ class MainCollectionViewCell: UITableViewCell {
             surfConditionLabelText = "오류"
         }
         
-        minTemperatureLabel.text = "최저:" + lowestWaveHeight.description + "m"
-        maxTemperatureLabel.text = "최고:" + highestWaveHeight.description + "m"
+        minTemperatureLabel.text = "최고:" + highestWaveHeight.description + "m"
+        maxTemperatureLabel.text = "최저:" + lowestWaveHeight.description + "m"
         currentTemperatuerLabel.text = currentModel.airTemperature.description + "°"
         surfConditionLabel.text = surfConditionLabelText
         skyConditionLabel.text = skyCondition
@@ -287,7 +287,7 @@ class MainCollectionViewCell: UITableViewCell {
 
 
 //MARK: PlaceHolderCollectionViewCell
-class PlaceHolderCollectionViewCell: UITableViewCell {
+class PlaceHolderCollectionViewCell: UITableViewCell {    
     private lazy var subRegionLabel: UILabel = {
         let subRegionLabel = UILabel()
         subRegionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -303,7 +303,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         maxTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         maxTemperatureLabel.textColor = .white
-        maxTemperatureLabel.text = "최고: _°"
+        maxTemperatureLabel.text = "최저: _°"
 
         return maxTemperatureLabel
     }()
@@ -313,7 +313,7 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         minTemperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         minTemperatureLabel.font = .systemFont(ofSize: 12, weight: .semibold)
         minTemperatureLabel.textColor = .white
-        minTemperatureLabel.text = "최저: _°"
+        minTemperatureLabel.text = "최고: _°"
         
         return minTemperatureLabel
     }()
@@ -360,6 +360,22 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         self.clipsToBounds = true
         self.layer.cornerRadius = 4
         self.selectedBackgroundView = UIView()
+        DispatchQueue.main.async {
+            Timer.scheduledTimer(withTimeInterval: 1.2, repeats: true) {timer in
+                UILabel.animate(withDuration: 1, delay: 0.0, options: [.curveEaseInOut], animations: {
+                    if self.maxTemperatureLabel.alpha == 1 {
+                        self.maxTemperatureLabel.alpha = 0.2
+                        self.minTemperatureLabel.alpha = 0.2
+                        self.currentTemperatuerLabel.alpha = 0.2
+                        
+                    } else {
+                        self.maxTemperatureLabel.alpha = 1
+                        self.minTemperatureLabel.alpha = 1
+                        self.currentTemperatuerLabel.alpha = 1
+                    }
+                }, completion: nil)
+            }
+        }
     }
     
     required init?(coder: NSCoder) {

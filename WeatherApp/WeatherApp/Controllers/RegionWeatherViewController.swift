@@ -28,10 +28,8 @@ class RegionWeatherViewController: UIViewController {
             dateArray = weatherForecastModel.map{$0.time.transferDateToNumDate()}
             dateArray = dateArray.uniqued()
         }
-        
-        print(dateArray)
-        
-        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, mlPercentageLabel, surfImageView, waveWindLabel, weekWeatherTableView, chart].forEach {
+                
+        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveWindLabel, weekWeatherTableView, chart].forEach {
             view.addSubview($0)
         }
         
@@ -73,8 +71,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 37, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = customShadow
+        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -85,8 +82,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 48, weight: .semibold)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = customShadow
+        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -98,8 +94,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .light)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = customShadow
+        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -111,6 +106,7 @@ class RegionWeatherViewController: UIViewController {
         stackView.spacing = view.bounds.width * 0.03
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
+        stackView.alpha = 1
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
@@ -121,8 +117,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
-        label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = customShadow
+        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -133,6 +128,7 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
+        label.alpha = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -148,11 +144,9 @@ class RegionWeatherViewController: UIViewController {
     
     private var waveWindLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .light)
+        label.font = .systemFont(ofSize: 14, weight: .regular)
         label.frame = CGRect()
         label.textColor = .white
-        label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = customShadow
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -163,18 +157,6 @@ class RegionWeatherViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect()
         label.textColor = .white
-        label.shadowOffset = CGSize(width: 2, height: 2)
-        label.shadowColor = customShadow
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-    private lazy var mlPercentageLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .regular)
-        label.textAlignment = .left
-        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -183,6 +165,7 @@ class RegionWeatherViewController: UIViewController {
     private lazy var chart: LineChartView = {
         guard let regionWeatherForecastModelArray = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode] else { return LineChartView() }
         let chart  = LineChartView()
+        chart.alpha = 1
         let xScale = Double(regionWeatherForecastModelArray.count / 7)
         let yScale = 2.0
         chart.zoom(scaleX: xScale, scaleY: yScale, x: 0, y: 0)
@@ -245,10 +228,10 @@ class RegionWeatherViewController: UIViewController {
             windLineChartEntries.append(windChartEntry)
         }
         let line1 = LineChartDataSet(entries: waveLineChartEntries, label: "파고(m)")
-        line1.colors = [NSUIColor.white]
+        line1.colors = [NSUIColor.black]
         line1.circleRadius = 3
         let line2 = LineChartDataSet(entries: wavePeriodLineChartEntries, label: "파주기(s)")
-        line2.colors = [NSUIColor.black]
+        line2.colors = [NSUIColor.white]
         line2.circleRadius = 3
         let line3 = LineChartDataSet(entries: windLineChartEntries, label: "풍속(m/s)")
         line3.colors = [NSUIColor.gray]
@@ -330,17 +313,21 @@ class RegionWeatherViewController: UIViewController {
     }
     
     private func setWaveWindLabel(wave: Double, wavePeriod: Double, wind: Double) {
-        waveWindLabel.text = " 파고: " + wave.description + " m " + " 파주기: " + wavePeriod.description + " s " + " 풍속: " + wind.description + " m/s"
+        UIView.animate(withDuration: 0.5) {
+            self.waveWindLabel.alpha = 0
+        } completion: { _ in
+            self.waveWindLabel.text = " 파고: " + wave.description + " m " + " 파주기: " + wavePeriod.description + " s " + " 풍속: " + wind.description + " m/s"
+            UIView.animate(withDuration: 0.5) {
+                self.waveWindLabel.alpha = 1
+            }
+        }
+        
     }
     
     private func setSurfConditionImageAndPercentage(wave: Double) {
         var surfImageName: String
         var surfConditionLabelText: String
-        guard var surfConditionPercentage = surfConditionOutput.X1Probability[surfConditionOutput.X1] else { return }
-        surfConditionPercentage = floor(surfConditionPercentage * 1000) / 10
-       
         guard let surfConditionDouble = Double(surfConditionOutput.X1) else { return }
-        
         switch surfConditionDouble {
         case 0:
             surfImageName = "surf1"
@@ -368,9 +355,17 @@ class RegionWeatherViewController: UIViewController {
             surfImageName = "surf1"
             surfConditionLabelText = "오류"
         }
-        surfImageView.image = UIImage(named: surfImageName)
-        descriptionLabel.text = surfConditionLabelText
-        mlPercentageLabel.text = "신뢰도: " + surfConditionPercentage.description + "%"
+        UIView.animate(withDuration: 0.5) {
+            self.surfImageView.alpha = 0
+            self.descriptionLabel.alpha = 0
+        } completion: { _ in
+            self.surfImageView.image = UIImage(named: surfImageName)
+            self.descriptionLabel.text = surfConditionLabelText
+            UIView.animate(withDuration: 0.5) {
+                self.surfImageView.alpha = 1
+                self.descriptionLabel.alpha = 1
+            }
+        }
     }
     
     private func setSurfCondition(wave: Double, wind: Double) {
@@ -423,10 +418,6 @@ class RegionWeatherViewController: UIViewController {
         descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         descriptionLabel.topAnchor.constraint(equalTo: waveWindLabel.bottomAnchor, constant: view.bounds.height * 0.002).isActive = true
         
-        mlPercentageLabel.leadingAnchor.constraint(equalTo: descriptionLabel.trailingAnchor).isActive = true
-        mlPercentageLabel.firstBaselineAnchor.constraint(equalTo: descriptionLabel.firstBaselineAnchor).isActive = true
-        mlPercentageLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
-        
         chart.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
         chart.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
         chart.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor).isActive = true
@@ -436,10 +427,10 @@ class RegionWeatherViewController: UIViewController {
         weekWeatherTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         weekWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
         weekWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        
     }
 }
 
+// MARK: CollectionviewDelegate
 extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return dateArray.count

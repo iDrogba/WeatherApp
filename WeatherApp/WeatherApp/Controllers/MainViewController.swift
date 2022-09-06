@@ -177,6 +177,7 @@ extension MainViewController: UISearchBarDelegate {
     }
 }
 
+// MARK: TableViewDelegate
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         guard tableView.isEqual(mainCollectionView) else {return nil}
@@ -187,6 +188,15 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard  mainViewModel.addedRegionalDataModels.count == 0 else {
             if  mainViewModel.addedRegionalDataModels.count != mainViewModel.todayWeatherForecastModels.count {
                 label.text = "날씨 데이터를 불러옵니다."
+                Timer.scheduledTimer(withTimeInterval: 1.2, repeats: true) {timer in
+                    UILabel.animate(withDuration: 1, delay: 0.0, options: [.curveEaseInOut], animations: {
+                        if label.alpha == 1 {
+                            label.alpha = 0.2
+                        } else {
+                            label.alpha = 1
+                        }
+                    }, completion: nil)
+                }
                 return label
             }
             return UIView()
@@ -223,9 +233,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MainCollectionViewCell.reuseIdentifier) as? MainCollectionViewCell else { return UITableViewCell() }
             // 로딩중에 보여주는 셀
             guard let placeHolderCell = tableView.dequeueReusableCell(withIdentifier: PlaceHolderCollectionViewCell.reuseIdentifier) as? PlaceHolderCollectionViewCell else { return UITableViewCell() }
-                        
             let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
-            
             guard let models = self.mainViewModel.todayWeatherForecastModels[cellRegionalCode] else {
                 placeHolderCell.setUI(cellRegionalCode)
                 return placeHolderCell
@@ -322,6 +330,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: Animation
 extension MainViewController: UIViewControllerTransitioningDelegate, UINavigationControllerDelegate {
     // present될때 실행애니메이션
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {

@@ -48,7 +48,6 @@ class AnimationTransition: UIPercentDrivenInteractiveTransition, UIViewControlle
                 // MARK: 원래자리로 되돌리면서 애니메이션 이동효과
                 toView.transform = .identity
                 toView.alpha = 1
-                
             }) { _ in
                 toView.translatesAutoresizingMaskIntoConstraints = false
                 toView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true

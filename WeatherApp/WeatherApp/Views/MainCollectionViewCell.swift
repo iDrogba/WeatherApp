@@ -175,27 +175,6 @@ class MainCollectionViewCell: UITableViewCell {
             skyCondition = "눈"
         }
                 
-//        case "1" :
-//            backgroundImageName = "sunny.png"
-//            skyCondition = "맑음"
-//        case "3" :
-//            backgroundImageName = "cloudy.png"
-//            skyCondition = "구름 많음"
-//        case "4":
-//            backgroundImageName = "cloudy.png"
-//            skyCondition = "흐림"
-//        default :
-//            backgroundImageName = "cloudy.png"
-//            skyCondition = "구름 많음"
-
-//        switch model.PTY {
-//        case "1" :
-//            backgroundImageName = "rainy.png"
-//        case "3" :
-//            backgroundImageName = "snow.png"
-//        default :
-//            break
-//        }
         waveLabel.text = "파고: " + currentModel.waveHeight.description + "m"
 
         // wind 바꾸기

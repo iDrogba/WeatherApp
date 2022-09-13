@@ -35,7 +35,7 @@
 ## 링크
 https://apps.apple.com/kr/app/time-to-surf/id1636290938
 ## 버전
-1.0
+3.0
 
 
 # Git

@@ -8,11 +8,14 @@
 import Combine
 import SwiftUI
 import Alamofire
+import MapKit
 
 class MainViewController: UIViewController {
     @ObservedObject private var mainViewModel = MainViewModel()
     private var cancelBag = Set<AnyCancellable>()
     private var transition = AnimationTransition()
+    private var searchCompleter = MKLocalSearchCompleter()
+    private var searchResults = [MKLocalSearchCompletion]()
     
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
@@ -36,7 +39,7 @@ class MainViewController: UIViewController {
         let searchBar = UISearchBar()
         searchBar.searchBarStyle = .prominent
         searchBar.backgroundImage = UIImage()
-        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "지역으로 검색", attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText])
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "해변 이름으로 검색", attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText])
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.showsCancelButton = false
 
@@ -61,28 +64,34 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
         view.backgroundColor = .systemBackground
+        searchTableView.isHidden = true
+        addSubView()
+        configureDelegate()
+        bindMainViewModel()
+        applyConstraints()
+        configureMainTableView()
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
+    }
+    
+    private func addSubView() {
         view.addSubview(titleLabel)
         view.addSubview(searchBar)
         view.addSubview(mainCollectionView)
         view.addSubview(searchTableView)
-        applyConstraints()
-        searchTableView.isHidden = true
-        
-        mainCollectionView.dataSource = self
-        mainCollectionView.delegate = self
-        searchBar.delegate = self
-        searchTableView.dataSource = self
-        searchTableView.delegate = self
-
-        mainCollectionView.contentInset = .zero
-        mainCollectionView.contentInsetAdjustmentBehavior = .never
-        mainCollectionView.separatorStyle = .none
-        
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
-        bindMainViewModel()
+    }
+    
+    private func configureDelegate() {
+        self.mainCollectionView.dataSource = self
+        self.mainCollectionView.delegate = self
+        self.searchBar.delegate = self
+        self.searchTableView.dataSource = self
+        self.searchTableView.delegate = self
+        self.searchCompleter.delegate = self
+        self.searchCompleter.resultTypes = .pointOfInterest
+        self.searchCompleter.pointOfInterestFilter = MKPointOfInterestFilter.init(including: [.beach])
+        self.searchBar.delegate = self
     }
     
     private func bindMainViewModel() {
@@ -140,6 +149,12 @@ class MainViewController: UIViewController {
         NSLayoutConstraint.activate(mainCollectionViewConstraints)
         NSLayoutConstraint.activate(searchTableViewConstraints)
     }
+    
+    private func configureMainTableView() {
+        mainCollectionView.contentInset = .zero
+        mainCollectionView.contentInsetAdjustmentBehavior = .never
+        mainCollectionView.separatorStyle = .none
+    }
 }
 
 extension MainViewController: UISearchBarDelegate {
@@ -155,20 +170,22 @@ extension MainViewController: UISearchBarDelegate {
         searchTableView.isHidden = false
         searchBar.showsCancelButton = true
         guard let searchTerm = searchBar.text else { return }
-        
-        mainViewModel.searchRegionalDataModel(searchTerm)
-    }
-    
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        searchTableView.isHidden = true
-        searchBar.showsCancelButton = false
+        searchCompleter.queryFragment = searchTerm
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText == "" {
+            searchResults.removeAll()
             searchBar.endEditing(true)
         }
-        mainViewModel.searchRegionalDataModel(searchText)
+        print(searchResults)
+        searchCompleter.queryFragment = searchText
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchResults.removeAll()
+        searchTableView.isHidden = true
+        searchBar.showsCancelButton = false
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -210,15 +227,13 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard mainViewModel.addedRegionalDataModels.count != mainViewModel.todayWeatherForecastModels.count || mainViewModel.addedRegionalDataModels.count == 0 else { return 0 }
         return tableView.frame.height * 0.2
     }
-    
+    // 테이블 뷰 셀 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard tableView.isEqual(searchTableView) else {
-            guard mainViewModel.addedRegionalDataModels.count != 0 else {
-                
-                return 0 }
+            guard mainViewModel.addedRegionalDataModels.count != 0 else { return 0 }
             return mainViewModel.addedRegionalDataModels.count
         }
-        let itemCount = mainViewModel.searchedRegionalDataModels.count
+        let itemCount = searchResults.count
         if itemCount == 0 {
             tableView.alpha = 0.4
         } else {
@@ -226,7 +241,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         }
         return itemCount
     }
-    
+    // 테이블 뷰 ReusableCell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard tableView.isEqual(searchTableView) else {
             // 진짜 셀
@@ -245,14 +260,15 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             
             return cell
         }
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as? SearchTableViewCell else {
+        guard let cell = searchTableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as? SearchTableViewCell else {
             return UITableViewCell()
         }
-        let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.row]
-        cell.setUI(regionalDataModel)
+        let searchResult = searchResults[indexPath.row]
+        cell.setUI(result: searchResult)
+
         return cell
     }
-    
+    // 테이블 뷰 셀 선택 시 도악
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard tableView.isEqual(searchTableView) else {
             guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
@@ -302,12 +318,10 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         
         let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
             Task{
-                print("removeData")
                 guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
                 let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
                 await self.mainViewModel.removeAddedRegionalDataModel(regionalDataModel.regionalCode)
                 await self.mainViewModel.removeRegionFromTodayWeatherForecastModels(regionalDataModel.regionalCode)
-                print("finishRemoveData")
             }
         }
 
@@ -327,6 +341,17 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             animations: {
                 cell.alpha = 1
         })
+    }
+}
+
+extension MainViewController: MKLocalSearchCompleterDelegate {
+    // 자동완성 완료시 결과를 받는 method
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        searchResults = completer.results
+        searchTableView.reloadData()
+    }
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        print(error.localizedDescription)
     }
 }
 

@@ -14,22 +14,28 @@ class MainViewController: UIViewController {
     @ObservedObject private var mainViewModel = MainViewModel()
     private var cancelBag = Set<AnyCancellable>()
     private var transition = AnimationTransition()
-    private var searchCompleter = MKLocalSearchCompleter()
-    private var searchResults = [MKLocalSearchCompletion]()
+    
     
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
         searchTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
         searchTableView.translatesAutoresizingMaskIntoConstraints = false
         searchTableView.showsVerticalScrollIndicator = false
-        searchTableView.alpha = 0.4
+        searchTableView.backgroundColor = UIColor.white.withAlphaComponent(0.4)
+        searchTableView.isHidden = true
 
         return searchTableView
     }()
     
+    private let titleView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private let titleLabel: UILabel = {
        let label = UILabel()
-        label.text = "날씨"
+        label.text = "해변 날씨"
         label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -64,22 +70,33 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        searchTableView.isHidden = true
-        addSubView()
-        configureDelegate()
-        bindMainViewModel()
-        applyConstraints()
-        configureMainTableView()
+        
+        DispatchQueue.main.async {
+            self.view.backgroundColor = .systemBackground
+            self.addSubView()
+            self.applyConstraints()
+            self.setupBlurEffect()
+            self.configureMainTableView()
+            self.configureDelegate()
+            self.bindMainViewModel()
+        }
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .label
     }
     
+    func setupBlurEffect() {
+        let blurEffect = UIBlurEffect(style: .regular)
+        let visualEffectView = UIVisualEffectView(effect: blurEffect)
+        visualEffectView.frame = searchTableView.frame
+        searchTableView.backgroundView = visualEffectView
+    }
+    
     private func addSubView() {
-        view.addSubview(titleLabel)
-        view.addSubview(searchBar)
         view.addSubview(mainCollectionView)
         view.addSubview(searchTableView)
+        view.addSubview(titleView)
+        titleView.addSubview(titleLabel)
+        titleView.addSubview(searchBar)
     }
     
     private func configureDelegate() {
@@ -88,9 +105,7 @@ class MainViewController: UIViewController {
         self.searchBar.delegate = self
         self.searchTableView.dataSource = self
         self.searchTableView.delegate = self
-        self.searchCompleter.delegate = self
-        self.searchCompleter.resultTypes = .pointOfInterest
-        self.searchCompleter.pointOfInterestFilter = MKPointOfInterestFilter.init(including: [.beach])
+        mainViewModel.searchCompleter.delegate = self
         self.searchBar.delegate = self
     }
     
@@ -104,7 +119,7 @@ class MainViewController: UIViewController {
             })
             .store(in: &self.cancelBag)
 
-        self.mainViewModel.$searchedRegionalDataModels
+        self.mainViewModel.$searchResults
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
                 self?.searchTableView.reloadData()
@@ -122,20 +137,26 @@ class MainViewController: UIViewController {
     }
 
     private func applyConstraints() {
+        let titleViewConstraints = [
+            titleView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            titleView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            titleView.topAnchor.constraint(equalTo: view.topAnchor),
+            titleView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2)
+        ]
         let titleLabelConstraints = [
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: titleView.leadingAnchor, constant: 20),
         ]
         let searchBarConstraints = [
-            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            searchBar.leadingAnchor.constraint(equalTo: titleView.leadingAnchor, constant: 10),
+            searchBar.trailingAnchor.constraint(equalTo: titleView.trailingAnchor, constant: -10),
             searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0),
         ]
         let mainCollectionViewConstraints = [
             mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            mainCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0),
-            mainCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 0)
+            mainCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            mainCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor)
         ]
         let searchTableViewConstraints = [
             searchTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
@@ -143,7 +164,7 @@ class MainViewController: UIViewController {
             searchTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ]
-        
+        NSLayoutConstraint.activate(titleViewConstraints)
         NSLayoutConstraint.activate(titleLabelConstraints)
         NSLayoutConstraint.activate(searchBarConstraints)
         NSLayoutConstraint.activate(mainCollectionViewConstraints)
@@ -170,20 +191,17 @@ extension MainViewController: UISearchBarDelegate {
         searchTableView.isHidden = false
         searchBar.showsCancelButton = true
         guard let searchTerm = searchBar.text else { return }
-        searchCompleter.queryFragment = searchTerm
+        mainViewModel.searchCompleter.queryFragment = searchTerm
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText == "" {
-            searchResults.removeAll()
             searchBar.endEditing(true)
         }
-        print(searchResults)
-        searchCompleter.queryFragment = searchText
+        mainViewModel.searchCompleter.queryFragment = searchText
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        searchResults.removeAll()
         searchTableView.isHidden = true
         searchBar.showsCancelButton = false
     }
@@ -197,7 +215,7 @@ extension MainViewController: UISearchBarDelegate {
 // MARK: TableViewDelegate
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        guard tableView.isEqual(mainCollectionView) else {return nil}
+        guard tableView.isEqual(mainCollectionView) else {return UIView()}
         let label = UILabel()
         label.textAlignment = .center
         label.textColor = .gray
@@ -233,12 +251,15 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             guard mainViewModel.addedRegionalDataModels.count != 0 else { return 0 }
             return mainViewModel.addedRegionalDataModels.count
         }
-        let itemCount = searchResults.count
-        if itemCount == 0 {
-            tableView.alpha = 0.4
-        } else {
-            tableView.alpha = 1
-        }
+        let itemCount = mainViewModel.searchResults.count
+//        if itemCount == 0 {
+//            tableView.backgroundView?.alpha = 0.4
+////            tableView.alpha = 0.4
+//        } else {
+//            tableView.view
+//
+////            tableView.alpha = 1
+//        }
         return itemCount
     }
     // 테이블 뷰 ReusableCell
@@ -263,9 +284,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = searchTableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as? SearchTableViewCell else {
             return UITableViewCell()
         }
-        let searchResult = searchResults[indexPath.row]
+        let searchResult = mainViewModel.searchResults[indexPath.row]
         cell.setUI(result: searchResult)
-
+        
         return cell
     }
     // 테이블 뷰 셀 선택 시 도악
@@ -347,8 +368,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
 extension MainViewController: MKLocalSearchCompleterDelegate {
     // 자동완성 완료시 결과를 받는 method
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        searchResults = completer.results
-        searchTableView.reloadData()
+        mainViewModel.setSearchResults(completer.results)
     }
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         print(error.localizedDescription)

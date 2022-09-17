@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import MapKit
 
 class MainViewModel: ObservableObject {
     var regionalDataManager = UpdatedRegionalDataModelManager.shared
@@ -14,9 +15,12 @@ class MainViewModel: ObservableObject {
     @Published var todayWeatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
     @Published var addedRegionalDataModels: [UpdatedRegionalDataModel] = []
     @Published var searchedRegionalDataModels: [UpdatedRegionalDataModel] = []
+    @Published var searchCompleter = MKLocalSearchCompleter()
+    @Published var searchResults = [MKLocalSearchCompletion]()
     
     init() {
         Task{
+            await self.setSearchCompleter()
             await self.regionalDataManager.setSharedClass()
             await self.fetchAddedRegionalDataModels()
             await self.setWeatherForecastModels()
@@ -24,6 +28,15 @@ class MainViewModel: ObservableObject {
     }
 }
 extension MainViewModel {
+    func setSearchCompleter() async {
+        searchCompleter.resultTypes = .pointOfInterest
+        searchCompleter.pointOfInterestFilter = MKPointOfInterestFilter.init(including: [.beach])
+    }
+    
+    func setSearchResults(_ result: [MKLocalSearchCompletion]) {
+        self.searchResults = result
+    }
+    
     func searchRegionalDataModel(_ searchTerm: String) {
         var retrivedRegionalData: [UpdatedRegionalDataModel] = []
         

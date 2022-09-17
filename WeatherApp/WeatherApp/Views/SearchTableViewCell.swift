@@ -29,5 +29,6 @@ class SearchTableViewCell: UITableViewCell {
 
         }
         self.textLabel?.attributedText = attribtuedString
+        self.backgroundColor = .clear
     }
 }

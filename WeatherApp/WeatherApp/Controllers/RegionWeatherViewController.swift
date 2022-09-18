@@ -9,7 +9,7 @@ import UIKit
 import Charts
 
 class RegionWeatherViewController: UIViewController {
-    public var regionalCode: String = ""
+    public var regionModel: MKRegionDataModel!
     private var dateArray: [String] = []
     private var weatherForecastModel: [UpdatedWeatherForecastModel] = []
     var surfConditionOutput: SurfConditionOutput!
@@ -23,7 +23,7 @@ class RegionWeatherViewController: UIViewController {
         super.viewDidLoad()
 
         Task{
-            await self.weatherForecastModel = UpdatedWeatherForecastModelManager.shared.retrieveWeatherForecastModelsAfterCurrentTime(regionalCode: regionalCode)
+            await self.weatherForecastModel = UpdatedWeatherForecastModelManager.shared.retrieveWeatherForecastModelsAfterCurrentTime(regionModel: regionModel)
             dateArray = weatherForecastModel.map{$0.time.transferDateToNumDate()}
             dateArray = dateArray.uniqued()
         }
@@ -166,7 +166,7 @@ class RegionWeatherViewController: UIViewController {
     }()
     
     private lazy var chart: LineChartView = {
-        guard let regionWeatherForecastModelArray = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode] else { return LineChartView() }
+        guard let regionWeatherForecastModelArray = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionModel] else { return LineChartView() }
         let chart  = LineChartView()
         chart.alpha = 0
         let xScale = Double(regionWeatherForecastModelArray.count / 7)
@@ -244,7 +244,7 @@ class RegionWeatherViewController: UIViewController {
     }
     
     private func applySurfConditionImageLabel() {
-        guard let model = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode]?.first else { return }
+        guard let model = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionModel]?.first else { return }
         let modelWaveValue = model.waveHeight
         
         setSurfConditionImageAndPercentage(wave: modelWaveValue)
@@ -302,11 +302,8 @@ class RegionWeatherViewController: UIViewController {
     
     func applyData() {
         guard let model = weatherForecastModel.first else { return }
-       
-        if model.subRegionName.isEmpty {
-            cityLabel.text = model.regionName
-        } else { cityLabel.text = model.subRegionName }
-        
+    
+        cityLabel.text = self.regionModel.locality
         minTemperatureLabel.text = "최저: " + lowestWaveHeight.description + "m"
         maxTemperatureLabel.text = "최고: " + highestWaveHeight.description + "m"
         temperatureLabel.text = model.airTemperature.description

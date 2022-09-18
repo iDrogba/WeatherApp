@@ -209,8 +209,8 @@ class MainCollectionViewCell: UITableViewCell {
         surfConditionLabel.text = surfConditionLabelText
         skyConditionLabel.text = skyCondition
         backgroundImageView.image = UIImage(named: backgroundImageName)
-        regionLabel.text = currentModel.regionName
-        subRegionLabel.text = currentModel.subRegionName
+        regionLabel.text = currentModel.regionModel.locality
+        subRegionLabel.text = currentModel.regionModel.subLocality
     }
     
     func setConstraints() {
@@ -372,10 +372,9 @@ class PlaceHolderCollectionViewCell: UITableViewCell {
         }
     }
     
-    func setUI(_ regionalCode: String) {
-        let regionalModel = UpdatedRegionalDataModelManager.shared.retrieveRegionalDataModel(regionalCode)
-        regionLabel.text = regionalModel?.first
-        subRegionLabel.text = regionalModel?.third
+    func setUI(_ regionModel: MKRegionDataModel) {
+        regionLabel.text = regionModel.locality
+        subRegionLabel.text = regionModel.subLocality
     }
     
     func setConstraints() {

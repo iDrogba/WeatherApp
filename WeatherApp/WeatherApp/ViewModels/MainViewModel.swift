@@ -8,13 +8,13 @@
 import Foundation
 import Combine
 import MapKit
+import SwiftUI
 
 class MainViewModel: ObservableObject {
-    var regionalDataManager = UpdatedRegionalDataModelManager.shared
+    var regionalDataManager = MKRegionDataModelManager.shared
     var weatherForecastManager = UpdatedWeatherForecastModelManager.shared
-    @Published var todayWeatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
-    @Published var addedRegionalDataModels: [UpdatedRegionalDataModel] = []
-    @Published var searchedRegionalDataModels: [UpdatedRegionalDataModel] = []
+    @Published var todayWeatherForecastModels: [MKRegionDataModel:[UpdatedWeatherForecastModel]] = [:]
+    @Published var addedRegionalDataModels: [MKRegionDataModel] = []
     @Published var searchCompleter = MKLocalSearchCompleter()
     @Published var searchResults = [MKLocalSearchCompletion]()
     
@@ -37,41 +37,34 @@ extension MainViewModel {
         self.searchResults = result
     }
     
-    func searchRegionalDataModel(_ searchTerm: String) {
-        var retrivedRegionalData: [UpdatedRegionalDataModel] = []
-        
-        guard searchTerm != "" else {
-            self.searchedRegionalDataModels = retrivedRegionalData
-            return
+    func fetchDetailRegionData(_ indexPath: IndexPath) async -> MKRegionDataModel? {
+        let selectedResult = searchResults[indexPath.row]
+        let searchRequest = MKLocalSearch.Request(completion: selectedResult)
+        let search = MKLocalSearch(request: searchRequest)
+        var result: MKRegionDataModel? = nil
+        do{
+            let response = try await search.start()
+            let placeMark = response.mapItems[0].placemark
+            result = MKRegionDataModel(placeMark: placeMark)
+        }catch{
+            print(error)
         }
-        
-    outer:for regionalData in regionalDataManager.regionalDataModels {
-        let regionalTerm = regionalData.first + regionalData.second + regionalData.third
-        inner:for searchChar in searchTerm {
-            if searchChar == " " { continue inner}
-            if regionalTerm.contains(searchChar) == false {
-                continue outer
-            }
-        }
-        retrivedRegionalData.append(regionalData)
-    }
-        self.searchedRegionalDataModels = retrivedRegionalData
+        return result
     }
     
-    func addAddedRegionalDataModel(_ regionalCode: String) async {
-        await regionalDataManager.addAddedRegionalCodeAtUserDefaults(regionalCode)
+    func addAddedRegionalDataModel(_ model: MKRegionDataModel) async {
+        await regionalDataManager.addAddedRegionalCodeAtUserDefaults(model)
         await regionalDataManager.setAddedRegionalDataArray()
         await self.fetchAddedRegionalDataModels()
     }
-    func removeAddedRegionalDataModel(_ regionalCode: String) async {
-        await regionalDataManager.removeAddedRegionalCodeAtUserDefaults(regionalCode)
+    func removeAddedRegionalDataModel(_ model: MKRegionDataModel) async {
+        await regionalDataManager.removeAddedRegionalCodeAtUserDefaults(model)
         await regionalDataManager.setAddedRegionalDataArray()
         await self.fetchAddedRegionalDataModels()
     }
     private func fetchAddedRegionalDataModels() async {
         await self.addedRegionalDataModels = regionalDataManager.retrieveSortedAddedRegionalDataModels()
     }
-    
 }
 
 extension MainViewModel {
@@ -80,17 +73,17 @@ extension MainViewModel {
         await self.todayWeatherForecastModels = weatherForecastManager.retrieveTodayWeatherFoercastModels()
     }
     
-    func fetchWeatherForecastModel(_ regionalModel: UpdatedRegionalDataModel) async {
-        await APIRequestManager.fetchWeatherForecastModel(regionalModel)
-        await self.appendRegionToTodayWeatherForecastModels(regionalModel.regionalCode)
+    func fetchWeatherForecastModel(_ regionModel: MKRegionDataModel) async {
+        await APIRequestManager.fetchWeatherForecastModel(regionModel)
+        await self.appendRegionToTodayWeatherForecastModels(regionModel)
     }
     
-    func appendRegionToTodayWeatherForecastModels(_ regionalCode: String) async {
+    func appendRegionToTodayWeatherForecastModels(_ regionModel: MKRegionDataModel) async {
         self.todayWeatherForecastModels = await weatherForecastManager.retrieveTodayWeatherFoercastModels()
     }
     
-    func removeRegionFromTodayWeatherForecastModels(_ regionalCode: String) async {
-        self.todayWeatherForecastModels.removeValue(forKey: regionalCode)
-        await weatherForecastManager.removeWeatherForecastModels(regionalCode)
+    func removeRegionFromTodayWeatherForecastModels(_ regionModel: MKRegionDataModel) async {
+        self.todayWeatherForecastModels.removeValue(forKey: regionModel)
+        await weatherForecastManager.removeWeatherForecastModels(regionModel: regionModel)
     }
 }

@@ -15,7 +15,6 @@ class MainViewController: UIViewController {
     private var cancelBag = Set<AnyCancellable>()
     private var transition = AnimationTransition()
     
-    
     private let searchTableView: UITableView = {
         let searchTableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .plain)
         searchTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
@@ -26,13 +25,11 @@ class MainViewController: UIViewController {
 
         return searchTableView
     }()
-    
     private let titleView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
     private let titleLabel: UILabel = {
        let label = UILabel()
         label.text = "해변 날씨"
@@ -40,7 +37,6 @@ class MainViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.searchBarStyle = .prominent
@@ -51,7 +47,6 @@ class MainViewController: UIViewController {
 
         return searchBar
     }()
-    
     private let mainCollectionView: UITableView = {
         let mainCollectionView = UITableView(frame: .zero, style: .plain)
         mainCollectionView.register(MainCollectionViewCell.self, forCellReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
@@ -220,6 +215,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         label.textAlignment = .center
         label.textColor = .gray
         label.font = .systemFont(ofSize: 15, weight: .regular)
+        print("mainViewModel.addedRegionalDataModels.count : " + mainViewModel.addedRegionalDataModels.count.description)
         guard  mainViewModel.addedRegionalDataModels.count == 0 else {
             if  mainViewModel.addedRegionalDataModels.count != mainViewModel.todayWeatherForecastModels.count {
                 label.text = "날씨 데이터를 불러옵니다."
@@ -252,14 +248,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             return mainViewModel.addedRegionalDataModels.count
         }
         let itemCount = mainViewModel.searchResults.count
-//        if itemCount == 0 {
-//            tableView.backgroundView?.alpha = 0.4
-////            tableView.alpha = 0.4
-//        } else {
-//            tableView.view
-//
-////            tableView.alpha = 1
-//        }
+
         return itemCount
     }
     // 테이블 뷰 ReusableCell
@@ -269,9 +258,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MainCollectionViewCell.reuseIdentifier) as? MainCollectionViewCell else { return UITableViewCell() }
             // 로딩중에 보여주는 셀
             guard let placeHolderCell = tableView.dequeueReusableCell(withIdentifier: PlaceHolderCollectionViewCell.reuseIdentifier) as? PlaceHolderCollectionViewCell else { return UITableViewCell() }
-            let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
-            guard let models = self.mainViewModel.todayWeatherForecastModels[cellRegionalCode] else {
-                placeHolderCell.setUI(cellRegionalCode)
+            let cellRegion = self.mainViewModel.addedRegionalDataModels[indexPath.row]
+            guard let models = self.mainViewModel.todayWeatherForecastModels[cellRegion] else {
+                placeHolderCell.setUI(cellRegion)
                 return placeHolderCell
             }
 
@@ -284,6 +273,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = searchTableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as? SearchTableViewCell else {
             return UITableViewCell()
         }
+        cell.selectionStyle = .none
         let searchResult = mainViewModel.searchResults[indexPath.row]
         cell.setUI(result: searchResult)
         
@@ -302,9 +292,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             self.transition.setFrame(frame: cellOriginFrame)
             
             let viewController = RegionWeatherViewController()
-            let cellRegionalCode = self.mainViewModel.addedRegionalDataModels[indexPath.row].regionalCode
-            guard UpdatedWeatherForecastModelManager.shared.weatherForecastModels[cellRegionalCode] != nil else { return }
-            viewController.regionalCode = cellRegionalCode
+            let cellRegion = self.mainViewModel.addedRegionalDataModels[indexPath.row]
+            guard UpdatedWeatherForecastModelManager.shared.weatherForecastModels[cellRegion] != nil else { return }
+            viewController.regionModel = cellRegion
             viewController.surfConditionOutput = cell.surfCondition
             viewController.highestWaveHeight = cell.highestWaveHeight
             viewController.lowestWaveHeight = cell.lowestWaveHeight
@@ -317,10 +307,10 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             return
         }
 
-        let regionalDataModel = mainViewModel.searchedRegionalDataModels[indexPath.row]
         Task{
-            await self.mainViewModel.addAddedRegionalDataModel(regionalDataModel.regionalCode)
-            await self.mainViewModel.fetchWeatherForecastModel(regionalDataModel)
+            guard let regionModel = await self.mainViewModel.fetchDetailRegionData(indexPath) else { return }
+            await self.mainViewModel.addAddedRegionalDataModel(regionModel)
+            await self.mainViewModel.fetchWeatherForecastModel(regionModel)
         }
         searchBar.endEditing(true)
     }
@@ -340,9 +330,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         let deleteAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
             Task{
                 guard self.mainViewModel.addedRegionalDataModels.count != 0 else { return }
-                let regionalDataModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
-                await self.mainViewModel.removeAddedRegionalDataModel(regionalDataModel.regionalCode)
-                await self.mainViewModel.removeRegionFromTodayWeatherForecastModels(regionalDataModel.regionalCode)
+                let regionModel = self.mainViewModel.addedRegionalDataModels[indexPath.row]
+                await self.mainViewModel.removeAddedRegionalDataModel(regionModel)
+                await self.mainViewModel.removeRegionFromTodayWeatherForecastModels(regionModel)
             }
         }
 

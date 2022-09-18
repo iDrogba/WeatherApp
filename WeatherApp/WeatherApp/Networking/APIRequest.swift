@@ -23,19 +23,19 @@ class APIRequestManager {
     }()
     
     static func fetchWeatherForecastModels() async {
-        async let regionalModels = UpdatedRegionalDataModelManager.shared.addedRegionalDataModels
+        async let regionalModels = MKRegionDataModelManager.shared.addedRegionalDataModels
         for model in await regionalModels {
             await fetchWeatherForecastModel(model)
         }
     }
     
-    static func fetchWeatherForecastModel(_ regionalModel: UpdatedRegionalDataModel) async {
+    static func fetchWeatherForecastModel(_ regionModel: MKRegionDataModel) async {
         do {
             shared.parameters["start"] = Date.yesterdayUTC!.timeIntervalSince1970.description
-            shared.parameters["lat"] = regionalModel.latitude
-            shared.parameters["lng"] = regionalModel.longitude
+            shared.parameters["lat"] = regionModel.latitude
+            shared.parameters["lng"] = regionModel.longitude
             let networkingResult = try await APIRequestManager.shared.requestJSON(shared.baseURL, type: NewResponse.self, method: .get, parameters: shared.parameters)
-            await UpdatedWeatherForecastModelManager.shared.appendCurrentWeatherForecastModels(regionalCode: regionalModel.regionalCode, hours: networkingResult.hours)
+            await UpdatedWeatherForecastModelManager.shared.appendCurrentWeatherForecastModels(regionModel: regionModel, hours: networkingResult.hours)
         }catch{
             print(error)
         }

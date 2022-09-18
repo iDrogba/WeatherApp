@@ -8,10 +8,8 @@
 import Foundation
 
 struct UpdatedWeatherForecastModel {
+    var regionModel: MKRegionDataModel!
     var time: Date = Date()
-    var regionalCode: String = ""
-    var regionName: String = ""
-    var subRegionName: String = ""
     var airTemperature: Double = 0
     var waveHeight: Double = 0
     var wavePeriod: Double = 0
@@ -21,11 +19,9 @@ struct UpdatedWeatherForecastModel {
     var precipitation: Double = 0 //강수량
     var snowDepth: Double = 0
 
-
-    init(_ regionalCode: String, _ hours: Hours) {
-        guard let regionalDataModel = UpdatedRegionalDataModelManager.shared.retrieveRegionalDataModel(regionalCode) else { return }
+    init(_ regionModel: MKRegionDataModel, _ hours: Hours) {
+        self.regionModel = regionModel
         self.time = hours.time.description.transferStringToLocalDate()!
-        self.regionalCode = regionalCode
         self.airTemperature = averageVal(data: hours.airTemperature, rounder: 10)
         self.waveHeight = averageVal(data: hours.waveHeight, rounder: 100)
         self.wavePeriod = averageVal(data: hours.wavePeriod, rounder: 100)
@@ -34,26 +30,6 @@ struct UpdatedWeatherForecastModel {
         self.cloudCover = averageVal(data: hours.cloudCover, rounder: 1)
         self.precipitation = averageVal(data: hours.precipitation, rounder: 100)
         self.snowDepth = averageVal(data: hours.snowDepth, rounder: 10)
-        
-        var regionName = ""
-        var subRegionName = ""
-        if regionalDataModel.fifth != "" {
-            regionName = regionalDataModel.fourth
-            subRegionName = regionalDataModel.fifth
-        } else if regionalDataModel.fourth != "" {
-            regionName = regionalDataModel.third
-            subRegionName = regionalDataModel.fourth
-        } else if regionalDataModel.third != "" {
-            regionName = regionalDataModel.second
-            subRegionName = regionalDataModel.third
-        } else if regionalDataModel.second != "" {
-            regionName = regionalDataModel.first
-            subRegionName = regionalDataModel.second
-        } else {
-            regionName = regionalDataModel.first
-        }
-        self.regionName = regionName
-        self.subRegionName = subRegionName
     }
     
     private func averageVal(data: [String:Double]?, rounder: Double) -> Double {
@@ -74,11 +50,11 @@ class UpdatedWeatherForecastModelManager {
      
      [행정구역 코드 : [날씨 예보 모델]]
      */
-    var weatherForecastModels: [String:[UpdatedWeatherForecastModel]] = [:]
+    var weatherForecastModels: [MKRegionDataModel:[UpdatedWeatherForecastModel]] = [:]
     
     // 오늘 24시간 동안의 데이터 가져오기
-    func retrieveTodayWeatherFoercastModels() async -> [String:[UpdatedWeatherForecastModel]] {
-        var returnValue: [String:[UpdatedWeatherForecastModel]] = [:]
+    func retrieveTodayWeatherFoercastModels() async -> [MKRegionDataModel:[UpdatedWeatherForecastModel]] {
+        var returnValue: [MKRegionDataModel:[UpdatedWeatherForecastModel]] = [:]
         returnValue = UpdatedWeatherForecastModelManager.shared.weatherForecastModels
         UpdatedWeatherForecastModelManager.shared.weatherForecastModels.forEach{
             if $0.value.count > 24 {
@@ -89,22 +65,22 @@ class UpdatedWeatherForecastModelManager {
     }
     
     /// 현시각을 포함하여 앞으로의 예보 모델 가져온다.
-    func retrieveWeatherForecastModelsAfterCurrentTime(regionalCode: String) async -> [UpdatedWeatherForecastModel] {
-        guard let returnVal = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionalCode]?.filter({($0.time - Date.dateA) >= -3600}) else { return [] }
+    func retrieveWeatherForecastModelsAfterCurrentTime(regionModel: MKRegionDataModel) async -> [UpdatedWeatherForecastModel] {
+        guard let returnVal = UpdatedWeatherForecastModelManager.shared.weatherForecastModels[regionModel]?.filter({($0.time - Date.dateA) >= -3600}) else { return [] }
         return returnVal
     }
     
-    func appendCurrentWeatherForecastModels(regionalCode: String, hours: [Hours]) async {
-        if self.weatherForecastModels[regionalCode] == nil {
-            self.weatherForecastModels[regionalCode] = []
+    func appendCurrentWeatherForecastModels(regionModel: MKRegionDataModel, hours: [Hours]) async {
+        if self.weatherForecastModels[regionModel] == nil {
+            self.weatherForecastModels[regionModel] = []
         }
         hours.forEach{
-            let model = UpdatedWeatherForecastModel(regionalCode, $0)
-            self.weatherForecastModels[regionalCode]?.append(model)
+            let model = UpdatedWeatherForecastModel(regionModel, $0)
+            self.weatherForecastModels[regionModel]?.append(model)
         }
     }
     
-    func removeWeatherForecastModels(_ regionalCode: String) async {
-        self.weatherForecastModels.removeValue(forKey: regionalCode)
+    func removeWeatherForecastModels(regionModel: MKRegionDataModel) async {
+        self.weatherForecastModels.removeValue(forKey: regionModel)
     }
 }

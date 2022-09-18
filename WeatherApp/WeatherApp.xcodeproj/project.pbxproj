@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A027D4228D5C55200B1FC13 /* MKRegionDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A027D4128D5C55200B1FC13 /* MKRegionDataModel.swift */; };
 		0A29C09D28BD17510095F59E /* SurfCondition.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0A29C09C28BD17500095F59E /* SurfCondition.mlmodel */; };
 		0A29C09F28BD182F0095F59E /* CoreML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A29C09E28BD182F0095F59E /* CoreML.swift */; };
 		0A29C0A728C05D050095F59E /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A29C0A628C05D050095F59E /* Storage.swift */; };
@@ -60,6 +61,7 @@
 
 /* Begin PBXFileReference section */
 		070777F7F821FBA0011EB242 /* Pods-WeatherAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeatherAppTests.release.xcconfig"; path = "Target Support Files/Pods-WeatherAppTests/Pods-WeatherAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		0A027D4128D5C55200B1FC13 /* MKRegionDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKRegionDataModel.swift; sourceTree = "<group>"; };
 		0A29C09C28BD17500095F59E /* SurfCondition.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SurfCondition.mlmodel; sourceTree = "<group>"; };
 		0A29C09E28BD182F0095F59E /* CoreML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreML.swift; sourceTree = "<group>"; };
 		0A29C0A628C05D050095F59E /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
@@ -207,6 +209,7 @@
 				0A6A1E7428792069003BB4A0 /* RegionalDataModel.swift */,
 				0A6A1E76287920A5003BB4A0 /* WeatherForecastModel.swift */,
 				0A29C0A628C05D050095F59E /* Storage.swift */,
+				0A027D4128D5C55200B1FC13 /* MKRegionDataModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 				0A29C09D28BD17510095F59E /* SurfCondition.mlmodel in Sources */,
 				0ADC500E28800D9200B89518 /* MainViewModel.swift in Sources */,
 				0A29C09F28BD182F0095F59E /* CoreML.swift in Sources */,
+				0A027D4228D5C55200B1FC13 /* MKRegionDataModel.swift in Sources */,
 				0A3A77B5288D5FA2004F9A3C /* DateExtension.swift in Sources */,
 				0AA2376B288D758600EB6BCE /* WeekWeather.swift in Sources */,
 				0A6A1E7528792069003BB4A0 /* RegionalDataModel.swift in Sources */,

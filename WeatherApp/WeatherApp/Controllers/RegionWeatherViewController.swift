@@ -21,6 +21,8 @@ class RegionWeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
 
         Task{
             await self.weatherForecastModel = UpdatedWeatherForecastModelManager.shared.retrieveWeatherForecastModelsAfterCurrentTime(regionModel: regionModel)
@@ -46,16 +48,25 @@ class RegionWeatherViewController: UIViewController {
             self.setChart()
         }
     }
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             [self.weekWeatherTableView, self.chart].forEach{ view in
-                UIView.animate(withDuration: 1) {
+                UIView.animate(withDuration: 0.5) {
                     view.alpha = 1
                 }
             }
         }
     }
-    
+    private func configureDelegate() {
+        weekWeatherTableView.delegate = self
+        weekWeatherTableView.dataSource = self
+        chart.delegate = self
+    }
+    private func addSubviews() {
+        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveWindLabel, weekWeatherTableView, chart].forEach {
+            view.addSubview($0)
+        }
+    }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
     }
@@ -77,6 +88,7 @@ class RegionWeatherViewController: UIViewController {
     
     private var cityLabel: UILabel = {
         let label = UILabel()
+        label.text = " "
         label.font = .systemFont(ofSize: 37, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
@@ -87,6 +99,7 @@ class RegionWeatherViewController: UIViewController {
     
     private var temperatureLabel: UILabel = {
         let label = UILabel()
+        label.text = " "
         label.font = .systemFont(ofSize: 48, weight: .semibold)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
@@ -119,6 +132,7 @@ class RegionWeatherViewController: UIViewController {
     
     private var maxTemperatureLabel: UILabel = {
         let label = UILabel()
+        label.text = " "
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
@@ -129,6 +143,7 @@ class RegionWeatherViewController: UIViewController {
     
     private var minTemperatureLabel: UILabel = {
         let label = UILabel()
+        label.text = " "
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
         label.textColor = .white
@@ -353,15 +368,17 @@ class RegionWeatherViewController: UIViewController {
             surfImageName = "surf1"
             surfConditionLabelText = "오류"
         }
-        UIView.animate(withDuration: 0.5) {
-            self.surfImageView.alpha = 0
-            self.descriptionLabel.alpha = 0
-        } completion: { _ in
-            self.surfImageView.image = UIImage(named: surfImageName)
-            self.descriptionLabel.text = surfConditionLabelText
+        DispatchQueue.main.async {
             UIView.animate(withDuration: 0.5) {
-                self.surfImageView.alpha = 1
-                self.descriptionLabel.alpha = 1
+                self.surfImageView.alpha = 0
+                self.descriptionLabel.alpha = 0
+            } completion: { _ in
+                self.surfImageView.image = UIImage(named: surfImageName)
+                self.descriptionLabel.text = surfConditionLabelText
+                UIView.animate(withDuration: 0.5) {
+                    self.surfImageView.alpha = 1
+                    self.descriptionLabel.alpha = 1
+                }
             }
         }
     }
@@ -394,7 +411,7 @@ class RegionWeatherViewController: UIViewController {
     
     private func configureConstraints() {
         cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        cityLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
+        cityLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.005).isActive = true
         
         temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
@@ -406,7 +423,7 @@ class RegionWeatherViewController: UIViewController {
         tempStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: view.bounds.height * 0.005).isActive = true
         
         surfImageView.topAnchor.constraint(equalTo: tempStackView.bottomAnchor, constant: 10).isActive = true
-        surfImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.25).isActive = true
+        surfImageView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.3).isActive = true
         surfImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
         surfImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
 
@@ -467,14 +484,14 @@ extension RegionWeatherViewController: UICollectionViewDelegate, UICollectionVie
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let width = collectionView.frame.width * 0.15
-        let height = collectionView.frame.height * 0.8
+        let height = (collectionView.frame.height + collectionView.contentInset.top + collectionView.contentInset.bottom) * 0.8
         
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width * 0.17
-        let height = collectionView.frame.height * 0.8
+        let height = (collectionView.frame.height + collectionView.contentInset.top + collectionView.contentInset.bottom) * 0.8
         
         return CGSize(width: width, height: height)
     }

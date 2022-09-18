@@ -10,6 +10,7 @@ import UIKit
 class WeekWeatherTableViewCell: UICollectionViewCell {
     private var timeLabel: UILabel = {
         let label = UILabel()
+        label.text = " "
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .white
         label.textAlignment = .center
@@ -26,6 +27,7 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     
     private var temperatureLabel: UILabel = {
         let label = UILabel()
+        label.text = " "
         label.textColor = .white
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textAlignment = .center
@@ -34,7 +36,8 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     
     private var rainPercentage: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 8, weight: .regular)
+        label.text = " "
+        label.font = .systemFont(ofSize: 10, weight: .light)
         label.textAlignment = .center
         label.textColor = .white
         return label
@@ -42,6 +45,14 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        DispatchQueue.main.async { [self] in
+            self.contentView.backgroundColor = UIColor(white: 0, alpha: 0)
+            [weatherImage, timeLabel, temperatureLabel, rainPercentage].forEach {
+                self.contentView.addSubview($0)
+            }
+            self.configureCellConstraints()
+        }
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -49,13 +60,6 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        DispatchQueue.main.async { [self] in
-            self.contentView.backgroundColor = UIColor(white: 0, alpha: 0)
-            [timeLabel, weatherImage, rainPercentage, temperatureLabel].forEach {
-                self.contentView.addSubview($0)
-            }
-            self.configureCellConstraints()
-        }
     }
     
     override func prepareForReuse() {
@@ -72,23 +76,18 @@ class WeekWeatherTableViewCell: UICollectionViewCell {
         temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
         rainPercentage.translatesAutoresizingMaskIntoConstraints = false
         
-        timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        timeLabel.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        
         weatherImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         weatherImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        weatherImage.topAnchor.constraint(equalTo: timeLabel.bottomAnchor).isActive = true
-        weatherImage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
-        weatherImage.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        weatherImage.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.5).isActive = true
+        
+        timeLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        timeLabel.bottomAnchor.constraint(equalTo: weatherImage.topAnchor).isActive = true
+        
+        temperatureLabel.topAnchor.constraint(equalTo: weatherImage.bottomAnchor).isActive = true
+        temperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         
         rainPercentage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         rainPercentage.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor).isActive = true
-        rainPercentage.heightAnchor.constraint(equalTo: weatherImage.heightAnchor, multiplier: 0.25).isActive = true
-        
-        temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        temperatureLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     
     func applyData(_ model: UpdatedWeatherForecastModel) {
@@ -133,8 +132,10 @@ class WeekWeatherCollectionViewHeader: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.addSubview(dateLabel)
-        self.setConstraints()
+        DispatchQueue.main.async {
+            self.addSubview(self.dateLabel)
+            self.setConstraints()
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -143,6 +144,7 @@ class WeekWeatherCollectionViewHeader: UICollectionReusableView {
     
     let dateLabel: UILabel = {
         let label = UILabel()
+        label.text = " "
         label.adjustsFontSizeToFitWidth = true
         label.textColor = .white
         label.textAlignment = .center

@@ -15,9 +15,9 @@ struct MKRegionDataModel: Equatable, Codable, Hashable {
     let longitude: String
     
     init(placeMark: MKPlacemark) {
-        self.regionName = placeMark.title ?? ""
-        self.locality = placeMark.title ?? ""
-        self.subLocality = placeMark.title ?? ""
+        self.regionName = placeMark.name ?? ""
+        self.locality = placeMark.locality ?? ""
+        self.subLocality = placeMark.subLocality ?? ""
         self.latitude = placeMark.coordinate.latitude.description
         self.longitude = placeMark.coordinate.longitude.description
     }

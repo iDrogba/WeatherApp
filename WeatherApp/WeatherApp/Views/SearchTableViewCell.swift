@@ -26,7 +26,6 @@ class SearchTableViewCell: UITableViewCell {
         range.forEach{
             attribtuedString.addAttribute(.foregroundColor, value: UIColor.black, range: $0.rangeValue)
             attribtuedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 16, weight: .bold), range: $0.rangeValue)
-
         }
         self.textLabel?.attributedText = attribtuedString
         self.backgroundColor = .clear

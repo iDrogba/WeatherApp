@@ -8,7 +8,6 @@
 import UIKit
 
 class DayWeatherCollectionViewCell: UICollectionViewCell {
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(dayStackView)
@@ -74,12 +73,10 @@ class DayWeatherCollectionViewCell: UICollectionViewCell {
     }
     
     func applyData(_ model: UpdatedWeatherForecastModel) {
-        
         var timeLabelText: String
         var weatherImageName: String = "sun.max"
         var tempLabelText: String
         var dayLabelText: String
-
 //        switch model.SKY {
 //        case "1": // 맑음
 //            weatherImageName = "sun.max"

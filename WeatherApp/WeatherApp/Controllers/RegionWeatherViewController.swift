@@ -303,7 +303,7 @@ class RegionWeatherViewController: UIViewController {
     func applyData() {
         guard let model = weatherForecastModel.first else { return }
     
-        cityLabel.text = self.regionModel.locality
+        cityLabel.text = self.regionModel.regionName
         minTemperatureLabel.text = "최저: " + lowestWaveHeight.description + "m"
         maxTemperatureLabel.text = "최고: " + highestWaveHeight.description + "m"
         temperatureLabel.text = model.airTemperature.description
@@ -320,7 +320,6 @@ class RegionWeatherViewController: UIViewController {
                 self.waveWindLabel.alpha = 1
             }
         }
-        
     }
     
     private func setSurfConditionImageAndPercentage(wave: Double) {

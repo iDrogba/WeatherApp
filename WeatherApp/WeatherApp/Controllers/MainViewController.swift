@@ -41,7 +41,7 @@ class MainViewController: UIViewController {
         let searchBar = UISearchBar()
         searchBar.searchBarStyle = .prominent
         searchBar.backgroundImage = UIImage()
-        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "해변 이름으로 검색", attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText])
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "해변 이름으로 검색. ex)송도해수욕장", attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText])
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.showsCancelButton = false
 

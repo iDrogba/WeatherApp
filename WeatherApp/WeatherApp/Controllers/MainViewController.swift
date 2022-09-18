@@ -58,6 +58,15 @@ class MainViewController: UIViewController {
 
         return mainCollectionView
     }()
+    private lazy var mapButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: view.frame.maxX - 70, y: view.frame.maxY - 90, width: 50, height: 50))
+        var image = UIImage(systemName: "map.circle.fill")
+        button.setImage(image, for: .normal)
+        button.tintColor = UIColor(named: "tintColor")
+        button.setPreferredSymbolConfiguration(.init(pointSize: 37, weight: .regular, scale: .default), forImageIn: .normal)
+        
+        return button
+    }()
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.searchBar.endEditing(true)
@@ -92,6 +101,7 @@ class MainViewController: UIViewController {
         view.addSubview(titleView)
         titleView.addSubview(titleLabel)
         titleView.addSubview(searchBar)
+        view.addSubview(mapButton)
     }
     
     private func configureDelegate() {

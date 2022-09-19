@@ -64,7 +64,7 @@ class MainViewController: UIViewController {
         button.setImage(image, for: .normal)
         button.tintColor = UIColor(named: "tintColor")
         button.setPreferredSymbolConfiguration(.init(pointSize: 37, weight: .regular, scale: .default), forImageIn: .normal)
-        
+        button.addTarget(self, action: #selector(onTapMapButton), for: .touchUpInside)
         return button
     }()
     
@@ -180,6 +180,12 @@ class MainViewController: UIViewController {
         mainCollectionView.contentInset = .zero
         mainCollectionView.contentInsetAdjustmentBehavior = .never
         mainCollectionView.separatorStyle = .none
+    }
+    
+    @objc func onTapMapButton() {
+        let viewController = PreviewMapViewController()
+        self.modalPresentationStyle = .pageSheet
+        self.present(viewController, animated: true)
     }
 }
 

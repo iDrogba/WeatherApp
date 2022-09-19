@@ -19,58 +19,11 @@ class RegionWeatherViewController: UIViewController {
     var highestWaveHeight: Double = 0
     var lowestWaveHeight: Double = 0
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
-
-        Task{
-            await self.weatherForecastModel = UpdatedWeatherForecastModelManager.shared.retrieveWeatherForecastModelsAfterCurrentTime(regionModel: regionModel)
-            dateArray = weatherForecastModel.map{$0.time.transferDateToNumDate()}
-            dateArray = dateArray.uniqued()
-        }
-                
-        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveWindLabel, weekWeatherTableView, chart].forEach {
-            view.addSubview($0)
-        }
-        
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
-        
-        weekWeatherTableView.delegate = self
-        weekWeatherTableView.dataSource = self
-        chart.delegate = self
-
-        DispatchQueue.main.async {
-            self.configureConstraints()
-            self.applyData()
-            self.applyBackground()
-            self.applySurfConditionImageLabel()
-            self.setChart()
-        }
-    }
-    override func viewDidAppear(_ animated: Bool) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            [self.weekWeatherTableView, self.chart].forEach{ view in
-                UIView.animate(withDuration: 0.5) {
-                    view.alpha = 1
-                }
-            }
-        }
-    }
-    private func configureDelegate() {
-        weekWeatherTableView.delegate = self
-        weekWeatherTableView.dataSource = self
-        chart.delegate = self
-    }
-    private func addSubviews() {
-        [cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveWindLabel, weekWeatherTableView, chart].forEach {
-            view.addSubview($0)
-        }
-    }
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
-    
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     /// RegionWeatherView : 주간 날씨 테이블뷰
     private var weekWeatherTableView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -212,6 +165,46 @@ class RegionWeatherViewController: UIViewController {
         return chart
     }()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
+        self.configureDelegate()
+        Task{
+            await self.weatherForecastModel = UpdatedWeatherForecastModelManager.shared.retrieveWeatherForecastModelsAfterCurrentTime(regionModel: regionModel)
+            dateArray = weatherForecastModel.map{$0.time.transferDateToNumDate()}
+            dateArray = dateArray.uniqued()
+            DispatchQueue.main.async {
+                self.applyData()
+                self.addSubviews()
+                self.configureConstraints()
+                self.applySurfConditionImageLabel()
+                self.setChart()
+                self.applyBackground()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    [self.weekWeatherTableView, self.chart].forEach{ view in
+                        UIView.animate(withDuration: 0.5) {
+                            view.alpha = 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+    private func configureDelegate() {
+        weekWeatherTableView.delegate = self
+        weekWeatherTableView.dataSource = self
+        chart.delegate = self
+    }
+    private func addSubviews() {
+        [backgroundImageView, cityLabel, temperatureLabel, degreeLabel, tempStackView, descriptionLabel, surfImageView, waveWindLabel, weekWeatherTableView, chart].forEach {
+            view.addSubview($0)
+        }
+    }
     private func setChart() {
         var waveHeightArray: [Double] = []
         var wavePeriodArray: [Double] = []
@@ -303,27 +296,17 @@ class RegionWeatherViewController: UIViewController {
         if model.snowDepth > 0.1 {
             backgroundImageName = "snowFull.png"
         }
-        let background = UIImage(named: backgroundImageName)
-        var imageView: UIImageView!
-        imageView = UIImageView(frame: view.bounds)
-        imageView.contentMode = UIView.ContentMode.scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.image = background
-        imageView.center = view.center
-        imageView.layer.name = "backgroundImageView"
-        view.addSubview(imageView)
-        self.view.sendSubviewToBack(imageView)
+        let image = UIImage(named: backgroundImageName)
+        self.backgroundImageView.image = image
     }
     
     func applyData() {
         guard let model = weatherForecastModel.first else { return }
-    
         cityLabel.text = self.regionModel.regionName
         minTemperatureLabel.text = "최저: " + lowestWaveHeight.description + "m"
         maxTemperatureLabel.text = "최고: " + highestWaveHeight.description + "m"
         temperatureLabel.text = model.airTemperature.description
-        
-        setWaveWindLabel(wave: model.waveHeight, wavePeriod: model.wavePeriod, wind: model.windSpeed)
+        self.setWaveWindLabel(wave: model.waveHeight, wavePeriod: model.wavePeriod, wind: model.windSpeed)
     }
     
     private func setWaveWindLabel(wave: Double, wavePeriod: Double, wind: Double) {
@@ -410,6 +393,11 @@ class RegionWeatherViewController: UIViewController {
     }
     
     private func configureConstraints() {
+        backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
         cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         cityLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.005).isActive = true
         

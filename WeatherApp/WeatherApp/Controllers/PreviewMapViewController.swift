@@ -21,10 +21,12 @@ class PreviewMapViewController: UIViewController {
     private func addSubview() {
         view.addSubview(mapView)
         view.addSubview(handle)
+        view.addSubview(subHandle)
     }
     private func setConstraint() {
         mapView.translatesAutoresizingMaskIntoConstraints = false
         handle.translatesAutoresizingMaskIntoConstraints = false
+        subHandle.translatesAutoresizingMaskIntoConstraints = false
         
         mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
@@ -35,6 +37,11 @@ class PreviewMapViewController: UIViewController {
         handle.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         handle.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.2).isActive = true
         handle.heightAnchor.constraint(equalToConstant: 5).isActive = true
+        
+        subHandle.topAnchor.constraint(equalTo: handle.bottomAnchor).isActive = true
+        subHandle.leadingAnchor.constraint(equalTo: handle.leadingAnchor).isActive = true
+        subHandle.trailingAnchor.constraint(equalTo: handle.trailingAnchor).isActive = true
+        subHandle.heightAnchor.constraint(equalToConstant: 15).isActive = true
     }
     
     private let mapView: MKMapView = {
@@ -49,6 +56,11 @@ class PreviewMapViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = .gray
         view.layer.cornerRadius = 2.5
+        return view
+    }()
+    private let subHandle: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
         return view
     }()
 }

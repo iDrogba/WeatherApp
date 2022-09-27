@@ -9,6 +9,9 @@ import UIKit
 import MapKit
 
 class PreviewMapViewController: UIViewController {
+    var searchCompleter = MKLocalSearchCompleter()
+    var searchResults = [MKLocalSearchCompletion]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -16,6 +19,8 @@ class PreviewMapViewController: UIViewController {
             self.addSubview()
             self.setConstraint()
             self.mapView.delegate = self
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTappedMapView(_:)))
+            self.mapView.addGestureRecognizer(tap)
         }
     }
     private func addSubview() {
@@ -49,6 +54,7 @@ class PreviewMapViewController: UIViewController {
         mapView.pointOfInterestFilter = MKPointOfInterestFilter.init(including: [.beach])
         mapView.showsUserLocation = true
 //        mapView.setCenter(mapView.userLocation.coordinate, animated: true)
+        
         return mapView
     }()
     
@@ -66,5 +72,65 @@ class PreviewMapViewController: UIViewController {
 }
 
 extension PreviewMapViewController: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        debugPrint(annotation)
+        
+        return nil
+    }
+    func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
+        print("===========================================")
+        debugPrint(annotation)
+        print("===========================================")
+    }
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+
+        mapView.camera.centerCoordinate
+    }
+}
+extension PreviewMapViewController {
+    /// 제스처 조작
+    @objc
+    private func didTappedMapView(_ sender: UITapGestureRecognizer) {
+        let location: CGPoint = sender.location(in: self.mapView)
+        let mapPoint: CLLocationCoordinate2D = self.mapView.convert(location, toCoordinateFrom: self.mapView)
+        
+        if sender.state == .ended {
+            self.searchLocation(mapPoint)
+        }
+    }
     
+    /// 하나만 출력하기 위하여 모든 포인트를 삭제
+    private func removeAllAnnotations() {
+        let allAnnotations = self.mapView.annotations
+        self.mapView.removeAnnotations(allAnnotations)
+    }
+    
+    /// 해당 포인트의 주소를 검색
+    private func searchLocation(_ point: CLLocationCoordinate2D) {
+        let geocoder: CLGeocoder = CLGeocoder()
+        let location = CLLocation(latitude: point.latitude, longitude: point.longitude)
+        
+        // 포인트 리셋
+        self.removeAllAnnotations()
+        
+        geocoder.reverseGeocodeLocation(location) { (placeMarks, error) in
+            if error == nil, let marks = placeMarks {
+                marks.forEach { (placeMark) in
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude)
+                    
+                    print( """
+                    \(placeMark.administrativeArea ?? "")
+                    \(placeMark.locality ?? "")
+                    \(placeMark.thoroughfare ?? "")
+                    \(placeMark.subThoroughfare ?? "")
+                    """)
+                    
+                    self.mapView.addAnnotation(annotation)
+                }
+            } else {
+                print("검색 실패")
+            }
+        }
+    }
 }

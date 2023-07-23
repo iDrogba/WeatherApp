@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Charts
+import DGCharts
 
 class RegionWeatherViewController: UIViewController {
     public var regionalCode: String = ""
